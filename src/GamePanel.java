@@ -78,7 +78,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
         int posx;
         int posy;
         
-	static int Width = 15*16;
+        static int Width = 15*16;
         static int Height = 15*16;
         Timer timer;
 	
