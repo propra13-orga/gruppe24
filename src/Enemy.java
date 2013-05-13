@@ -47,6 +47,7 @@ public class Enemy extends Sprite {
                 y=oldY*16;
             }else
                 y--;
+           oldY =(int) y;
 
         }
         private void MoveYEd(){
@@ -59,6 +60,7 @@ public class Enemy extends Sprite {
                 y=oldY*16;
             }else
                 y++;
+            oldY = (int)y;
 
         }
         private void MoveXEr(){
@@ -94,7 +96,7 @@ public class Enemy extends Sprite {
             
             if(this.intersects(s)){
                 if(s instanceof Enemy){
-                    if(getY() > this.getY()){
+                    /*if(getY() > this.getY()){
                         MoveYEh();                 
                     }
                     if(getY() < this.getY()){
@@ -105,7 +107,13 @@ public class Enemy extends Sprite {
                     }
                     if(getX() < this.getX()){
                         MoveXEr(); 
-                    }
+                    }*/
+                	if(s.getY()>this.getY()){
+                		s.y = oldY;
+                		this.y = this.oldY;
+                	}
+                	
+                	
                     return true;
                 }
             }

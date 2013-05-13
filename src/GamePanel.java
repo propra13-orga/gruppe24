@@ -69,10 +69,11 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
         int moveEX;
         int moveEY;
         
-        boolean dirU = false;
-        boolean dirD = false;
-        boolean dirL = false;
-        boolean dirR = false;
+        int dir;
+        //boolean dirU = false;
+        //boolean dirD = false;
+        //boolean dirL = false;
+        //boolean dirR = false;
         int oldX;
         int oldY;
         int posx;
@@ -92,22 +93,23 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
                 this.setBackground(Color.BLACK);
 		
                 
-                /*final JButton b0 = new JButton("Start");
+                final JButton b0 = new JButton("Start");
                 b0.addActionListener(new ActionListener(){
                     @Override
                     public void actionPerformed(ActionEvent arg0){
                         b0.setVisible(false);
                         frame.pack();
-                        startGame();                   
+                        startGame();  
+                        frame.requestFocus();
                    }
-                });*/
+                });
                 
         frame = new JFrame ("Insert Name here");
 		frame.setLocation(960-(Width/2), 600-(Height));
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         frame.add(this); 
-        //frame.add(b0, BorderLayout.EAST);
+        frame.add(b0, BorderLayout.EAST);
         frame.addKeyListener(this);
         frame.setResizable(false);
 		frame.pack();                
@@ -132,7 +134,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
                 painter3    = new Vector<Sprite>();
 
                 soundlib = new SoundLib();
-                soundlib.loadSound("test", "sounds/Test.wav");
+                //soundlib.loadSound("test", "sounds/Test.wav");
                                 
                 ground();
                 SpawnPlayer();
@@ -341,7 +343,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
             if(status){
                 doInitializations();
                 System.out.println("Start");
-                soundlib.loopSound("test");
+                //soundlib.loopSound("test");
                 setStarted(true);
             }
         }
@@ -350,7 +352,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
             setStarted(false);
             lvl = 1;
             timer.stop();
-            soundlib.stopLoopingSound();
+            //soundlib.stopLoopingSound();
         }
         
         
@@ -498,22 +500,22 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
         
         if(e.getKeyCode()==KeyEvent.VK_UP){
             up = true;
-            dirU=true;
+            dir=1;
         }
         
         if(e.getKeyCode()==KeyEvent.VK_DOWN){
             down = true;
-            dirD=true;
+            dir=3;
         }
         
         if(e.getKeyCode()==KeyEvent.VK_LEFT){
             left = true;
-            dirL=true;
+            dir=2;
         }
         
         if(e.getKeyCode()==KeyEvent.VK_RIGHT){
             right = true;
-            dirR=true;
+            dir=4;
         }
     }
 
@@ -521,22 +523,18 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
     public void keyReleased(KeyEvent e) {
         if(e.getKeyCode()==KeyEvent.VK_UP){
             up = false;
-            dirU=false;
         }
         
         if(e.getKeyCode()==KeyEvent.VK_DOWN){
             down = false;
-            dirD=false;
         }
         
         if(e.getKeyCode()==KeyEvent.VK_LEFT){
             left = false;
-            dirL=false;
         }
         
         if(e.getKeyCode()==KeyEvent.VK_RIGHT){
             right = false;
-            dirR=false;
         }
         
         if(e.getKeyCode()==KeyEvent.VK_ENTER){
