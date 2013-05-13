@@ -92,7 +92,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
                 this.setBackground(Color.BLACK);
 		
                 
-                final JButton b0 = new JButton("Start");
+                /*final JButton b0 = new JButton("Start");
                 b0.addActionListener(new ActionListener(){
                     @Override
                     public void actionPerformed(ActionEvent arg0){
@@ -100,14 +100,14 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
                         frame.pack();
                         startGame();                   
                    }
-                });
+                });*/
                 
         frame = new JFrame ("Insert Name here");
 		frame.setLocation(960-(Width/2), 600-(Height));
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         frame.add(this); 
-        frame.add(b0, BorderLayout.EAST);
+        //frame.add(b0, BorderLayout.EAST);
         frame.addKeyListener(this);
         frame.setResizable(false);
 		frame.pack();                
