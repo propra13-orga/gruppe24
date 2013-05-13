@@ -134,7 +134,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
                 painter3    = new Vector<Sprite>();
 
                 soundlib = new SoundLib();
-                //soundlib.loadSound("test", "sounds/Test.wav");
+                //soundlib.loadSound("test", "res/sounds/Test.wav");
                                 
                 ground();
                 SpawnPlayer();
@@ -564,8 +564,8 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
         switch(lvl){
             case 1: try {             // Datei öffnen
             
-            java.io.BufferedReader oReader = new java.io.BufferedReader(new java.io.InputStreamReader(new java.io.FileInputStream(new java.io.File("C:\\Users\\Tobias\\Documents\\NetBeansProjects\\JavaGame\\src\\lvl\\lvl1.level"))));  // Zeile für Zeile einlesen 
-            
+            java.io.BufferedReader oReader = new java.io.BufferedReader(new java.io.InputStreamReader(new java.io.FileInputStream(new java.io.File("res/lvl/lvl1.level"))));  // Zeile für Zeile einlesen 
+
             i=0; 
 
             while ((sTemp = oReader.readLine()) != null) { 
@@ -602,7 +602,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
                 break;
             case 2: try {             // Datei öffnen
             
-            java.io.BufferedReader oReader = new java.io.BufferedReader(new java.io.InputStreamReader(new java.io.FileInputStream(new java.io.File("C:\\Users\\Tobias\\Documents\\NetBeansProjects\\JavaGame\\src\\lvl\\lvl2.level"))));  // Zeile für Zeile einlesen 
+            java.io.BufferedReader oReader = new java.io.BufferedReader(new java.io.InputStreamReader(new java.io.FileInputStream(new java.io.File("res/lvl/lvl2.level"))));  // Zeile für Zeile einlesen 
 
             i=0; 
 
@@ -640,7 +640,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
                 break;
             case 3: try {             // Datei öffnen
             
-            java.io.BufferedReader oReader = new java.io.BufferedReader(new java.io.InputStreamReader(new java.io.FileInputStream(new java.io.File("C:\\Users\\Tobias\\Documents\\NetBeansProjects\\JavaGame\\src\\lvl\\lvl3.level"))));  // Zeile für Zeile einlesen 
+            java.io.BufferedReader oReader = new java.io.BufferedReader(new java.io.InputStreamReader(new java.io.FileInputStream(new java.io.File("res/lvl/lvl3.level"))));  // Zeile für Zeile einlesen 
 
             i=0; 
 
