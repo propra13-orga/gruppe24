@@ -11,38 +11,44 @@ public class MagicBolt extends Sprite {
 	boolean bDown = false;
 	boolean bLeft = false;
 	boolean bRight = false;
+	// boolean hit = false;
 
 	Rectangle2D.Double target;
 
 	public MagicBolt(BufferedImage[] i, double x, double y, long delay,
 			GamePanel p) {
 		super(i, x, y, delay, p);
-
+		// hit = false;
 		this.x = x;
 		this.y = y;
 
-		if (parent.dir==1) {
+		if (parent.dir == 1) {
 			bUp = true;
 		}
-		if(parent.dir==3){
+		if (parent.dir == 3) {
 			bDown = true;
 		}
-		if(parent.dir==2){
+		if (parent.dir == 2) {
 			bLeft = true;
 		}
-		if(parent.dir==4){
+		if (parent.dir == 4) {
 			bRight = true;
 		}
+
+		/*
+		 * if(hit=true){ System.out.println("triggered"); Enemy.hit=true; hit =
+		 * false; }
+		 */
 	}
 
 	@Override
 	public void doLogic(long delta) {
 		super.doLogic(delta);
-			
-		if(bUp && getY() > 0){
+
+		if (bUp && getY() > 0) {
 			y -= 10;
 		}
-		if (bDown && getY()/16 < 15){
+		if (bDown && getY() / 16 < 15) {
 			y += 10;
 		}
 		if (bLeft && getX() > 0) {
@@ -63,6 +69,7 @@ public class MagicBolt extends Sprite {
 		if (getY() / 16 == 15) {
 			remove = true;
 		}
+
 	}
 
 	@Override
@@ -73,8 +80,11 @@ public class MagicBolt extends Sprite {
 				// parent.createExplosion((int)getX(),(int)getY());
 				// parent.createExplosion((int)s.getX(),(int)s.getY());
 				remove = true;
-				s.remove = true;
-				System.out.println("Test");
+				// hit = true;
+				/*
+				 * if(Enemy.dead==true){ s.remove = true; }
+				 * System.out.println("Test");
+				 */
 				return true;
 			}
 		}
