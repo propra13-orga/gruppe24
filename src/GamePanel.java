@@ -14,7 +14,8 @@ public class GamePanel extends JPanel implements Runnable, KeyListener,
 		ActionListener {
 
 	private static final long serialVersionUID = 1L;
-
+	private JButton b0;
+	private JButton b1;
 	JFrame frame;
 
 	long delta = 0;
@@ -76,8 +77,12 @@ public class GamePanel extends JPanel implements Runnable, KeyListener,
 		this.setPreferredSize(new Dimension(w, h));
 		this.setBackground(Color.BLACK);
 
-		final JButton b0 = new JButton("Start");
-		final JButton b1 = new JButton("Close");
+		frame = new JFrame("Insert Name here");
+		frame.setLocation(960 - (Width / 2), 600 - (Height));
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		
+		b0 = new JButton("Start");
+		b1 = new JButton("Close");
 		b0.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
@@ -95,17 +100,13 @@ public class GamePanel extends JPanel implements Runnable, KeyListener,
 				frame.dispose();
 			}
 		});
-
-		frame = new JFrame("Insert Name here");
-		frame.setLocation(960 - (Width / 2), 600 - (Height));
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-		frame.add(this);
+		
 		frame.add(b0, BorderLayout.EAST);
 		frame.add(b1, BorderLayout.WEST);
+		frame.add(this);
 		frame.addKeyListener(this);
-		frame.setResizable(false);
 		frame.pack();
+		frame.setResizable(false);		
 		frame.setVisible(true);
 
 		Thread th = new Thread(this);
@@ -197,10 +198,6 @@ public class GamePanel extends JPanel implements Runnable, KeyListener,
 		}
 		hero.setFrame(moveX * 16, moveY * 16, 16, 16);
 		if (leveldata[moveY][moveX] == 9) {
-			if(lvl==1){
-				savex = moveX-1;
-				savey = moveY;
-			}
 			lvl++;
 			read();
 			actors.clear();
@@ -561,7 +558,6 @@ public class GamePanel extends JPanel implements Runnable, KeyListener,
 		if (e.getKeyCode() == KeyEvent.VK_UP) {
 			up = true;
 			dir = 1;
-			hero.loadPics("pics/playerUp.gif", 3);
 		}
 
 		if (e.getKeyCode() == KeyEvent.VK_DOWN) {
@@ -598,17 +594,17 @@ public class GamePanel extends JPanel implements Runnable, KeyListener,
 			right = false;
 		}
 
-		if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+		/*if (e.getKeyCode() == KeyEvent.VK_ENTER) {
 			if (!isStarted()) {
 				startGame();
 			}
-		}
+		}*/
 
 		if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
 			if (isStarted()) {
 				stopGame();
-			} else {
-				frame.dispose();
+				b0.setVisible(true);
+				b1.setVisible(true);
 			}
 		}
 		if (e.getKeyCode() == KeyEvent.VK_F) {
