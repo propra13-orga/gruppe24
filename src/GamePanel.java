@@ -2,7 +2,6 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ListIterator;
 import java.util.Vector;
@@ -20,7 +19,6 @@ public class GamePanel extends JPanel implements Runnable, KeyListener,
 
 	long delta = 0;
 	long last = 0;
-	long fps = 0;
 	long gameover = 0;
 
 	Player hero;
@@ -464,7 +462,6 @@ public class GamePanel extends JPanel implements Runnable, KeyListener,
 
 		delta = System.nanoTime() - last;
 		last = System.nanoTime();
-		fps = ((long) 1e9) / delta;
 	}
 
 	@Override
@@ -472,7 +469,6 @@ public class GamePanel extends JPanel implements Runnable, KeyListener,
 		super.paintComponent(g);
 
 		g.setColor(Color.red);
-		g.drawString("FPS: " + Long.toString(fps), 20, 10);
 
 		if (!started) {
 			return;
@@ -614,6 +610,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener,
 		}
 	}
 
+	@SuppressWarnings("resource")
 	public void read() {
 
 		java.lang.String sTemp;

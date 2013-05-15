@@ -1,7 +1,5 @@
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class MagicBolt extends Sprite {
 

@@ -40,7 +40,6 @@ public class Enemy extends Sprite {
 		}
 		oldX = (int) x;
 		oldY = (int) y;
-
 	}
 
 	/*
