@@ -80,11 +80,8 @@ public class MagicBolt extends Sprite {
 				// parent.createExplosion((int)getX(),(int)getY());
 				// parent.createExplosion((int)s.getX(),(int)s.getY());
 				remove = true;
-				// hit = true;
-				/*
-				 * if(Enemy.dead==true){ s.remove = true; }
-				 * System.out.println("Test");
-				 */
+				s.remove = true;
+				System.out.println("Treffer");
 				return true;
 			}
 		}

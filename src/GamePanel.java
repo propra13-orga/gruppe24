@@ -2,6 +2,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ListIterator;
 import java.util.Vector;
@@ -13,23 +14,6 @@ public class GamePanel extends JPanel implements Runnable, KeyListener,
 		ActionListener {
 
 	private static final long serialVersionUID = 1L;
-
-	// final static int [][]leveldata ={
-	// {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-	// {1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1},
-	// {1, 0, 3, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1},
-	// {1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 3, 0, 1},
-	// {1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1},
-	// {1, 0, 0, 0, 1, 4, 4, 4, 4, 4, 1, 0, 0, 0, 1},
-	// {1, 0, 0, 0, 1, 4, 4, 4, 4, 4, 1, 0, 0, 0, 1},
-	// {1, 0, 0, 0, 1, 4, 4, 4, 4, 4, 1, 0, 0, 0, 1},
-	// {1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1},
-	// {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1},
-	// {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1},
-	// {1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1},
-	// {1, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-	// {1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-	// {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}};
 
 	JFrame frame;
 
@@ -53,9 +37,11 @@ public class GamePanel extends JPanel implements Runnable, KeyListener,
 
 	int[][] leveldata;
 	int lvl = 1;
+	BufferedImage player;
+	BufferedImage playerU;
 
 	SoundLib soundlib;
-	
+
 	double x;
 	double y;
 
@@ -65,21 +51,18 @@ public class GamePanel extends JPanel implements Runnable, KeyListener,
 	boolean right;
 	boolean started;
 	boolean status = false;
-	int speed = 50;
+
 	int moveX;
 	int moveY;
 	int moveEX;
 	int moveEY;
-
 	int dir = 0;
-	// boolean dirU = false;
-	// boolean dirD = false;
-	// boolean dirL = false;
-	// boolean dirR = false;
 	int oldX;
 	int oldY;
 	int posx;
 	int posy;
+	int savex;
+	int savey;
 
 	static int Width = 15 * 16;
 	static int Height = 15 * 16;
@@ -94,13 +77,22 @@ public class GamePanel extends JPanel implements Runnable, KeyListener,
 		this.setBackground(Color.BLACK);
 
 		final JButton b0 = new JButton("Start");
+		final JButton b1 = new JButton("Close");
 		b0.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				b0.setVisible(false);
+				b1.setVisible(false);
 				frame.pack();
-				startGame();
 				frame.requestFocus();
+				startGame();
+
+			}
+		});
+		b1.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				frame.dispose();
 			}
 		});
 
@@ -110,10 +102,12 @@ public class GamePanel extends JPanel implements Runnable, KeyListener,
 
 		frame.add(this);
 		frame.add(b0, BorderLayout.EAST);
+		frame.add(b1, BorderLayout.WEST);
 		frame.addKeyListener(this);
 		frame.setResizable(false);
 		frame.pack();
 		frame.setVisible(true);
+
 		Thread th = new Thread(this);
 		th.start();
 
@@ -132,7 +126,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener,
 		painter3 = new Vector<Sprite>();
 
 		soundlib = new SoundLib();
-		// soundlib.loadSound("test", "res/sounds/Test.wav");
+		soundlib.loadSound("test", "sounds/Test.wav");
 
 		ground();
 		SpawnPlayer();
@@ -185,7 +179,6 @@ public class GamePanel extends JPanel implements Runnable, KeyListener,
 	}
 
 	private void doLogic() {
-
 		for (ListIterator<Sprite> it = actors.listIterator(); it.hasNext();) {
 			Sprite r = it.next();
 			r.doLogic(delta);
@@ -202,9 +195,12 @@ public class GamePanel extends JPanel implements Runnable, KeyListener,
 			Sprite r = co.next();
 			r.doLogic(delta);
 		}
-
 		hero.setFrame(moveX * 16, moveY * 16, 16, 16);
 		if (leveldata[moveY][moveX] == 9) {
+			if(lvl==1){
+				savex = moveX-1;
+				savey = moveY;
+			}
 			lvl++;
 			read();
 			actors.clear();
@@ -212,6 +208,18 @@ public class GamePanel extends JPanel implements Runnable, KeyListener,
 			collision.clear();
 			ground();
 			SpawnPlayer();
+			SpawnEnemy();
+		}
+		if(leveldata[moveY][moveX]==8){
+			lvl--;
+			read();
+			actors.clear();
+			enviroment.clear();
+			collision.clear();
+			ground();
+			SpawnPlayer();
+			moveX = savex;
+			moveY = savey;
 			SpawnEnemy();
 		}
 
@@ -272,12 +280,35 @@ public class GamePanel extends JPanel implements Runnable, KeyListener,
 					wt = new TileBlock(water, posx * 16, posy * 16, 500, this);
 					collision.add(wt);
 				}
+				if(leveldata[row][col]==7){
+					posy = row;
+					posx = col;
+					BufferedImage[] floor = loadPics("pics/floor.png",1);
+					ground = new Tile(floor, posx*16, posy*16 , 0, this);
+					enviroment.add(ground);
+					savex = col;
+					savey = row;
+				}
+				if(leveldata[row][col]==8){
+					posy = row;
+					posx = col;
+					BufferedImage[] pstart = loadPics("pics/pstart.png", 1);
+					ps = new Tile(pstart, posx *16, posy *16, 0 ,this);
+					enviroment.add(ps);
+				}
 				if (leveldata[row][col] == 9) {
 					posy = row;
 					posx = col;
 					BufferedImage[] pstart = loadPics("pics/pstart.png", 1);
 					ps = new Tile(pstart, posx * 16, posy * 16, 0, this);
 					enviroment.add(ps);
+				}
+				if(leveldata[row][col] ==2 && lvl >1){
+					posy = row;
+					posx = col;
+					BufferedImage[] floor = loadPics("pics/floor.png",1);
+					ground = new Tile(floor, posx*16,posy*16,1,this);
+					enviroment.add(ground);
 				}
 			}
 		}
@@ -306,11 +337,9 @@ public class GamePanel extends JPanel implements Runnable, KeyListener,
 				if (leveldata[row][col] == 2) {
 					moveY = row;
 					moveX = col;
+					BufferedImage[] player = loadPics("pics/player.gif", 4);
 
-					BufferedImage[] player = loadPics("pics/player.gif", 4); // Player
-																				// Image
-																				// wird
-																				// geladen
+
 					hero = new Player(player, 16 * moveX, moveY * 16, 100, this);
 					actors.add(hero);
 				}
@@ -320,20 +349,17 @@ public class GamePanel extends JPanel implements Runnable, KeyListener,
 
 	private void createBolt() {
 
-		if(dir == 1){
+		if (dir == 1) {
 			x = hero.getX();
-			y = hero.getY()-8;
-		}else
-		if(dir == 2){
-			x = hero.getX()-8;
+			y = hero.getY() - 8;
+		} else if (dir == 2) {
+			x = hero.getX() - 8;
 			y = hero.getY();
-		}else
-		if(dir == 3){
+		} else if (dir == 3) {
 			x = hero.getX();
-			y = hero.getY()+8;
-		}else
-		if(dir == 4){
-			x = hero.getX()+8;
+			y = hero.getY() + 8;
+		} else if (dir == 4) {
+			x = hero.getX() + 8;
 			y = hero.getY();
 		}
 
@@ -350,7 +376,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener,
 		if (status) {
 			doInitializations();
 			System.out.println("Start");
-			// soundlib.loopSound("test");
+			soundlib.loopSound("test");
 			setStarted(true);
 		}
 	}
@@ -359,7 +385,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener,
 		setStarted(false);
 		lvl = 1;
 		timer.stop();
-		// soundlib.stopLoopingSound();
+		soundlib.stopLoopingSound();
 	}
 
 	public void MoveYh() {
@@ -535,6 +561,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener,
 		if (e.getKeyCode() == KeyEvent.VK_UP) {
 			up = true;
 			dir = 1;
+			hero.loadPics("pics/playerUp.gif", 3);
 		}
 
 		if (e.getKeyCode() == KeyEvent.VK_DOWN) {
