@@ -15,7 +15,7 @@ public abstract class Sprite extends Rectangle2D.Double implements Drawable, Mov
 	protected double dx; //Instanzvariable für die horizontale Veränderung
 	protected double dy; //Instanzvariable für die vertikale Veränderung
         
-        int loop_from;
+    int loop_from;
 	int loop_to;
 	
 	boolean remove;
@@ -29,8 +29,8 @@ public abstract class Sprite extends Rectangle2D.Double implements Drawable, Mov
 		this.width = pics[0].getWidth();
 		this.height = pics[0].getHeight();
 		parent = p;
-                loop_from = 0;
-                loop_to = pics.length-1;
+        loop_from = 0;
+        loop_to = pics.length-1;
 	}
 	
 	public void drawObjects(Graphics g){	

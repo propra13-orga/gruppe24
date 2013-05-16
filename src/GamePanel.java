@@ -5,16 +5,15 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ListIterator;
 import java.util.Vector;
-
 import javax.imageio.ImageIO;
 import javax.swing.*;
 
-public class GamePanel extends JPanel implements Runnable, KeyListener,
-		ActionListener {
+public class GamePanel extends JPanel implements Runnable, KeyListener,	ActionListener {
 
 	private static final long serialVersionUID = 1L;
 	private JButton b0;
 	private JButton b1;
+	
 	JFrame frame;
 
 	long delta = 0;
@@ -36,8 +35,6 @@ public class GamePanel extends JPanel implements Runnable, KeyListener,
 
 	int[][] leveldata;
 	int lvl = 1;
-	BufferedImage player;
-	BufferedImage playerU;
 
 	SoundLib soundlib;
 
@@ -65,6 +62,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener,
 
 	static int Width = 15 * 16;
 	static int Height = 15 * 16;
+	
 	Timer timer;
 
 	public static void main(String[] args) {
@@ -278,7 +276,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener,
 					wt = new TileBlock(water, posx * 16, posy * 16, 500, this);
 					collision.add(wt);
 				}
-				if(leveldata[row][col]==7){
+				if(leveldata[row][col] == 7){
 					posy = row;
 					posx = col;
 					BufferedImage[] floor = loadPics("pics/floor.png",1);
@@ -287,7 +285,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener,
 					savex = col;
 					savey = row;
 				}
-				if(leveldata[row][col]==8){
+				if(leveldata[row][col] == 8){
 					posy = row;
 					posx = col;
 					BufferedImage[] pstart = loadPics("pics/pstart.png", 1);
@@ -301,7 +299,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener,
 					ps = new Tile(pstart, posx * 16, posy * 16, 0, this);
 					enviroment.add(ps);
 				}
-				if(leveldata[row][col] ==2 && lvl >1){
+				if(leveldata[row][col] == 2 && lvl > 1){
 					posy = row;
 					posx = col;
 					BufferedImage[] floor = loadPics("pics/floor.png",1);
@@ -338,7 +336,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener,
 					BufferedImage[] player = loadPics("pics/playerLeft.gif", 3);
 
 
-					hero = new Player(player, 16 * moveX, (moveY * 16)-16, 100, this);
+					hero = new Player(player, 16 * moveX, (moveY * 16), 100, this);
 					actors.add(hero);
 				}
 			}
@@ -352,13 +350,13 @@ public class GamePanel extends JPanel implements Runnable, KeyListener,
 			y = hero.getY() - 8;
 		} else if (dir == 2) {
 			x = hero.getX() - 8;
-			y = hero.getY();
+			y = hero.getY() + 16;
 		} else if (dir == 3) {
 			x = hero.getX();
 			y = hero.getY() + 8;
 		} else if (dir == 4) {
 			x = hero.getX() + 8;
-			y = hero.getY();
+			y = hero.getY() +16;
 		}
 
 		BufferedImage[] Bolt = loadPics("pics/Bolt.png", 3);
