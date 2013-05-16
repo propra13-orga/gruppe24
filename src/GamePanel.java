@@ -194,7 +194,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener,
 			Sprite r = co.next();
 			r.doLogic(delta);
 		}
-		hero.setFrame(moveX * 16, moveY * 16, 16, 16);
+		hero.setFrame(moveX * 16, moveY * 16-16, 16, 16);
 		if (leveldata[moveY][moveX] == 9) {
 			lvl++;
 			read();
@@ -216,6 +216,9 @@ public class GamePanel extends JPanel implements Runnable, KeyListener,
 			moveX = savex;
 			moveY = savey;
 			SpawnEnemy();
+		}
+		if(gameover ==1){
+			stopGame();
 		}
 
 		for (int i = 0; i < actors.size(); i++) {
@@ -332,10 +335,10 @@ public class GamePanel extends JPanel implements Runnable, KeyListener,
 				if (leveldata[row][col] == 2) {
 					moveY = row;
 					moveX = col;
-					BufferedImage[] player = loadPics("pics/player.gif", 4);
+					BufferedImage[] player = loadPics("pics/playerLeft.gif", 3);
 
 
-					hero = new Player(player, 16 * moveX, moveY * 16, 100, this);
+					hero = new Player(player, 16 * moveX, (moveY * 16)-16, 100, this);
 					actors.add(hero);
 				}
 			}
@@ -377,6 +380,8 @@ public class GamePanel extends JPanel implements Runnable, KeyListener,
 	}
 
 	private void stopGame() {
+		b0.setVisible(true);
+		b1.setVisible(true);
 		setStarted(false);
 		lvl = 1;
 		timer.stop();
@@ -599,8 +604,6 @@ public class GamePanel extends JPanel implements Runnable, KeyListener,
 		if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
 			if (isStarted()) {
 				stopGame();
-				b0.setVisible(true);
-				b1.setVisible(true);
 			}
 		}
 		if (e.getKeyCode() == KeyEvent.VK_F) {
