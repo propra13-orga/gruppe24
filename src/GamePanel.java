@@ -192,7 +192,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener,	ActionLi
 			Sprite r = co.next();
 			r.doLogic(delta);
 		}
-		hero.setFrame(moveX * 16, moveY * 16-16, 16, 16);
+		hero.setFrame(moveX * 16, moveY * 16, 16, 16);
 		if (leveldata[moveY][moveX] == 9) {
 			lvl++;
 			read();
@@ -333,7 +333,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener,	ActionLi
 				if (leveldata[row][col] == 2) {
 					moveY = row;
 					moveX = col;
-					BufferedImage[] player = loadPics("pics/playerLeft.gif", 3);
+					BufferedImage[] player = loadPics("pics/player.gif", 4);
 
 
 					hero = new Player(player, 16 * moveX, (moveY * 16), 100, this);
@@ -350,13 +350,13 @@ public class GamePanel extends JPanel implements Runnable, KeyListener,	ActionLi
 			y = hero.getY() - 8;
 		} else if (dir == 2) {
 			x = hero.getX() - 8;
-			y = hero.getY() + 16;
+			y = hero.getY();
 		} else if (dir == 3) {
 			x = hero.getX();
 			y = hero.getY() + 8;
 		} else if (dir == 4) {
 			x = hero.getX() + 8;
-			y = hero.getY() +16;
+			y = hero.getY();
 		}
 
 		BufferedImage[] Bolt = loadPics("pics/Bolt.png", 3);
