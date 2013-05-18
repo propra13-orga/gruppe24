@@ -1,3 +1,4 @@
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 
 public class MagicBolt extends Sprite {
@@ -9,6 +10,7 @@ public class MagicBolt extends Sprite {
 	boolean bLeft = false;
 	boolean bRight = false;
 
+	Rectangle2D.Double target;
 
 	public MagicBolt(BufferedImage[] i, double x, double y, long delay,
 			GamePanel p) {
@@ -28,7 +30,6 @@ public class MagicBolt extends Sprite {
 		if (parent.dir == 4) {
 			bRight = true;
 		}
-
 	}
 
 	@Override

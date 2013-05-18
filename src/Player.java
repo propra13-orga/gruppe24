@@ -16,7 +16,6 @@ public class Player extends Sprite {
 	public void doLogic(long delta) {
 		super.doLogic(delta);
 
-
 	}
 	
 	BufferedImage[] loadPics(String path, int pics) { // Methode bekommt Speicherort und Anzahl der Einzelbilder übergeben
