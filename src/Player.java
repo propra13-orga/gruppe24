@@ -50,11 +50,14 @@ public class Player extends Sprite {
 	}
 	@Override
 	public boolean collidedWith(Sprite s) {
+		if(remove){
+			return false;
+		}
 		if (this.intersects(s)) {
 			if (s instanceof Enemy) {
 				remove = true;
+				parent.dead = true;
 				System.out.println("Tot");
-				parent.gameover = 1;
 				return true;
 			}
 		}

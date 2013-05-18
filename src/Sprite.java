@@ -89,5 +89,81 @@ public abstract class Sprite extends Rectangle2D.Double implements Drawable, Mov
 		this.dy = dy;
 	}
         
-        public abstract boolean collidedWith(Sprite s);
+    public abstract boolean collidedWith(Sprite s);
+    
+    public boolean checkOpaqueColorCollisions(Sprite s){
+    	
+    	//Rechteck zur erstellung der Schnittmenge
+    	Rectangle2D.Double cut = (Double) this.createIntersection(s);
+    	
+    	if((cut.width<1)||(cut.height<1)){
+    		return false;
+    	}
+    	
+    	//Rechtecke in Bezug auf die jeweiligen Images
+    	Rectangle2D.Double sub_me = getSubRec(this,cut);
+    	Rectangle2D.Double sub_him = getSubRec(s,cut);
+    	
+    	//Schnittmenge der beiden Bilder wird ermittelt
+    	BufferedImage img_me = pics[currentpic].getSubimage((int)sub_me.x, (int)sub_me.y, (int)sub_me.width, (int)sub_me.height);
+    	BufferedImage img_him = s.pics[s.currentpic].getSubimage((int)sub_him.x,(int)sub_him.y, (int)sub_him.width, (int)sub_him.height);
+    	
+    	//Überprüfung ob nicht transparente Pixel in beiden Bildern vorhanden sind
+    	for(int i=0;i<img_me.getWidth();i++){
+    		for(int n=0;n<img_him.getHeight();n++){
+    			
+    			int rgb1 = img_me.getRGB(i, n);
+    			int rgb2 = img_him.getRGB(i, n);
+    			
+    			//Wenn Pixel gefunden wurde gib Kollsion zurück
+    			if(isOpaque(rgb1)&& isOpaque(rgb2)){
+    				return true;
+    			}
+    		}
+    	}
+    	return false;
+    }
+    
+    protected Rectangle2D.Double getSubRec(Rectangle2D.Double source, Rectangle2D.Double part){
+    	
+    	//Rechtecke erzeugen
+    	Rectangle2D.Double sub = new Rectangle2D.Double();
+    	
+    	//getX mit Rechteck vergleichen
+    	if(source.x>part.x){
+    		sub.x = 0;
+    	}else{
+    		sub.x = part.x - source.x;
+    	}
+    	
+    	if(source.y>part.y){
+    		sub.y = 0;
+    	}else{
+    		sub.y = part.y - source.y;
+    	}
+    	
+    	sub.width = part.width;
+    	sub.height = part.height;
+    	
+    	return sub;
+    	
+    	//Die Methode errechnet die Koordinaten der Schnittmenge bezogen auf die Position des ersten Rechtecks (source)
+    }
+    
+    protected boolean isOpaque(int rgb){
+    	
+    	//Durch den übergebenen RGB Wert wird der Alpha-Wert per Bitverschiebung ermittelt
+    	
+    	int alpha = (rgb >> 24) & 0xff;
+    	//red 	= (rgb >> 16) & 0xff;
+    	//green = (rgb >>  8) & 0xff;
+    	//blue	= (rgb ) & 0xff;
+    	
+    	if(alpha==0){
+    		return false;
+    	}
+    	
+    	return true;
+    }
+        
 }

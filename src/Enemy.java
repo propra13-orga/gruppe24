@@ -13,9 +13,6 @@ public class Enemy extends Sprite {
 	public Enemy(BufferedImage[] i, double x, double y, long delay, GamePanel p) {
 		super(i, x, y, delay, p);
 
-		this.x = x;
-		this.y = y;
-
 		/*
 		 * life = 100; if (hit) { System.out.println("test"); reduceLife(); if
 		 * (life == 0) { dead = true; } hit = false; }
@@ -25,21 +22,20 @@ public class Enemy extends Sprite {
 	@Override
 	public void doLogic(long delta) {
 		super.doLogic(delta);
-
-		if (getY() > parent.hero.getY()) {
-			MoveYEh();
+		if (!parent.dead) {
+			if (getY() > parent.hero.getY()) {
+				MoveYEh();
+			}
+			if (getY() < parent.hero.getY()) {
+				MoveYEd();
+			}
+			if (getX() > parent.hero.getX()) {
+				MoveXEl();
+			}
+			if (getX() < parent.hero.getX()) {
+				MoveXEr();
+			}
 		}
-		if (getY() < parent.hero.getY()) {
-			MoveYEd();
-		}
-		if (getX() > parent.hero.getX()) {
-			MoveXEl();
-		}
-		if (getX() < parent.hero.getX()) {
-			MoveXEr();
-		}
-		oldX = (int) x;
-		oldY = (int) y;
 	}
 
 	/*
@@ -79,7 +75,7 @@ public class Enemy extends Sprite {
 
 		oldX = ((int) (x / 16));
 
-		if (parent.leveldata[((int) (y / 16))][((int) (x / 16)) + 1] == 1) {
+		if (parent.leveldata[((int) (y / 16))][((int)(x / 16)) + 1] == 1) {
 			x = oldX * 16;
 		} else if (parent.leveldata[((int) (y / 16))][((int) (x / 16)) + 1] == 4) {
 			x = oldX * 16;
@@ -112,6 +108,10 @@ public class Enemy extends Sprite {
 					this.y = this.oldY;
 				}
 
+				return true;
+			}
+			if(s instanceof Player){
+				s.remove = true;
 				return true;
 			}
 		}

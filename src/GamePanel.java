@@ -8,12 +8,13 @@ import java.util.Vector;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 
-public class GamePanel extends JPanel implements Runnable, KeyListener,	ActionListener {
+public class GamePanel extends JPanel implements Runnable, KeyListener,
+		ActionListener {
 
 	private static final long serialVersionUID = 1L;
 	private JButton b0;
 	private JButton b1;
-	
+
 	JFrame frame;
 
 	long delta = 0;
@@ -24,6 +25,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener,	ActionLi
 	Enemy ene;
 	Tile ground;
 	Tile ps;
+	Tile ex;
 	TileBlock wl;
 	TileBlock wt;
 	Vector<Sprite> actors;
@@ -32,6 +34,8 @@ public class GamePanel extends JPanel implements Runnable, KeyListener,	ActionLi
 	Vector<Sprite> painter3;
 	Vector<Enviroment> enviroment;
 	Vector<Enviroment> painter2;
+	String gameov = "Game Over!";
+	String finish = "Goal!";
 
 	int[][] leveldata;
 	int lvl = 1;
@@ -47,6 +51,8 @@ public class GamePanel extends JPanel implements Runnable, KeyListener,	ActionLi
 	boolean right;
 	boolean started;
 	boolean status = false;
+	boolean dead = false;
+	boolean finished = false;
 
 	int moveX;
 	int moveY;
@@ -62,7 +68,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener,	ActionLi
 
 	static int Width = 15 * 16;
 	static int Height = 15 * 16;
-	
+
 	Timer timer;
 
 	public static void main(String[] args) {
@@ -76,7 +82,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener,	ActionLi
 		frame = new JFrame("Insert Name here");
 		frame.setLocation(960 - (Width / 2), 600 - (Height));
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		
+
 		b0 = new JButton("Start");
 		b1 = new JButton("Close");
 		b0.addActionListener(new ActionListener() {
@@ -96,15 +102,15 @@ public class GamePanel extends JPanel implements Runnable, KeyListener,	ActionLi
 				frame.dispose();
 			}
 		});
-		
+
 		frame.add(b0, BorderLayout.EAST);
 		frame.add(b1, BorderLayout.WEST);
 		frame.add(this);
 		frame.addKeyListener(this);
 		frame.pack();
-		frame.setResizable(false);		
+		frame.setResizable(false);
 		frame.setVisible(true);
-
+		
 		Thread th = new Thread(this);
 		th.start();
 
@@ -152,7 +158,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener,	ActionLi
 			repaint();
 
 			try {
-				Thread.sleep(90);
+				Thread.sleep(70);
 			} catch (InterruptedException e) {
 			}
 
@@ -192,7 +198,9 @@ public class GamePanel extends JPanel implements Runnable, KeyListener,	ActionLi
 			Sprite r = co.next();
 			r.doLogic(delta);
 		}
+		
 		hero.setFrame(moveX * 16, moveY * 16, 16, 16);
+		
 		if (leveldata[moveY][moveX] == 9) {
 			lvl++;
 			read();
@@ -203,7 +211,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener,	ActionLi
 			SpawnPlayer();
 			SpawnEnemy();
 		}
-		if(leveldata[moveY][moveX]==8){
+		if (leveldata[moveY][moveX] == 8) {
 			lvl--;
 			read();
 			actors.clear();
@@ -215,8 +223,10 @@ public class GamePanel extends JPanel implements Runnable, KeyListener,	ActionLi
 			moveY = savey;
 			SpawnEnemy();
 		}
-		if(gameover ==1){
+		if(leveldata[moveY][moveX]==42){
+			finished = true;
 			stopGame();
+			
 		}
 
 		for (int i = 0; i < actors.size(); i++) {
@@ -236,6 +246,15 @@ public class GamePanel extends JPanel implements Runnable, KeyListener,	ActionLi
 			}
 		}
 
+		if (hero.remove && gameover == 0) {
+			gameover = System.currentTimeMillis();
+		}
+
+		if (gameover > 0) {
+			if (System.currentTimeMillis() - gameover > 3000) {
+				stopGame();
+			}
+		}
 	}
 
 	public void ground() {
@@ -276,20 +295,20 @@ public class GamePanel extends JPanel implements Runnable, KeyListener,	ActionLi
 					wt = new TileBlock(water, posx * 16, posy * 16, 500, this);
 					collision.add(wt);
 				}
-				if(leveldata[row][col] == 7){
+				if (leveldata[row][col] == 7) {
 					posy = row;
 					posx = col;
-					BufferedImage[] floor = loadPics("pics/floor.png",1);
-					ground = new Tile(floor, posx*16, posy*16 , 0, this);
+					BufferedImage[] floor = loadPics("pics/floor.png", 1);
+					ground = new Tile(floor, posx * 16, posy * 16, 0, this);
 					enviroment.add(ground);
 					savex = col;
 					savey = row;
 				}
-				if(leveldata[row][col] == 8){
+				if (leveldata[row][col] == 8) {
 					posy = row;
 					posx = col;
 					BufferedImage[] pstart = loadPics("pics/pstart.png", 1);
-					ps = new Tile(pstart, posx *16, posy *16, 0 ,this);
+					ps = new Tile(pstart, posx * 16, posy * 16, 0, this);
 					enviroment.add(ps);
 				}
 				if (leveldata[row][col] == 9) {
@@ -299,12 +318,19 @@ public class GamePanel extends JPanel implements Runnable, KeyListener,	ActionLi
 					ps = new Tile(pstart, posx * 16, posy * 16, 0, this);
 					enviroment.add(ps);
 				}
-				if(leveldata[row][col] == 2 && lvl > 1){
+				if (leveldata[row][col] == 2 && lvl > 1) {
 					posy = row;
 					posx = col;
-					BufferedImage[] floor = loadPics("pics/floor.png",1);
-					ground = new Tile(floor, posx*16,posy*16,1,this);
+					BufferedImage[] floor = loadPics("pics/floor.png", 1);
+					ground = new Tile(floor, posx * 16, posy * 16, 1, this);
 					enviroment.add(ground);
+				}
+				if(leveldata[row][col] == 42){
+					posy = row;
+					posx = col;
+					BufferedImage[] exit = loadPics("pics/exit.png", 1);
+					ex = new Tile(exit, posx*16, posy*16, 1, this);
+					enviroment.add(ex);
 				}
 			}
 		}
@@ -333,9 +359,8 @@ public class GamePanel extends JPanel implements Runnable, KeyListener,	ActionLi
 				if (leveldata[row][col] == 2) {
 					moveY = row;
 					moveX = col;
+					
 					BufferedImage[] player = loadPics("pics/player.gif", 4);
-
-
 					hero = new Player(player, 16 * moveX, (moveY * 16), 100, this);
 					actors.add(hero);
 				}
@@ -374,6 +399,8 @@ public class GamePanel extends JPanel implements Runnable, KeyListener,	ActionLi
 			System.out.println("Start");
 			soundlib.loopSound("test");
 			setStarted(true);
+			dead = false;
+			finished = false;
 		}
 	}
 
@@ -468,14 +495,24 @@ public class GamePanel extends JPanel implements Runnable, KeyListener,	ActionLi
 	}
 
 	@Override
-	public void paintComponent(Graphics g) {
+	protected void paintComponent(Graphics g) {
 		super.paintComponent(g);
 
 		g.setColor(Color.red);
 
+		if(dead) {
+			g.setColor(Color.red);
+			g.drawString(gameov, 20, Height / 2);
+		}
+		if(finished){
+			g.setColor(Color.red);
+			g.drawString(finish, 40, Height / 2);
+			repaint();
+		}
 		if (!started) {
 			return;
 		}
+
 		for (ListIterator<Enviroment> ev = painter2.listIterator(); ev
 				.hasNext();) {
 			Enviroment e = ev.next();
@@ -553,62 +590,60 @@ public class GamePanel extends JPanel implements Runnable, KeyListener,	ActionLi
 
 	@Override
 	public void keyPressed(KeyEvent e) {
+		if (!dead) {
+			if (e.getKeyCode() == KeyEvent.VK_UP) {
+				up = true;
+				dir = 1;
+			}
 
-		if (e.getKeyCode() == KeyEvent.VK_UP) {
-			up = true;
-			dir = 1;
-		}
+			if (e.getKeyCode() == KeyEvent.VK_DOWN) {
+				down = true;
+				dir = 3;
+			}
 
-		if (e.getKeyCode() == KeyEvent.VK_DOWN) {
-			down = true;
-			dir = 3;
-		}
+			if (e.getKeyCode() == KeyEvent.VK_LEFT) {
+				left = true;
+				dir = 2;
+			}
 
-		if (e.getKeyCode() == KeyEvent.VK_LEFT) {
-			left = true;
-			dir = 2;
-		}
-
-		if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
-			right = true;
-			dir = 4;
+			if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
+				right = true;
+				dir = 4;
+			}
 		}
 	}
 
 	@Override
 	public void keyReleased(KeyEvent e) {
-		if (e.getKeyCode() == KeyEvent.VK_UP) {
-			up = false;
-		}
 
-		if (e.getKeyCode() == KeyEvent.VK_DOWN) {
-			down = false;
-		}
-
-		if (e.getKeyCode() == KeyEvent.VK_LEFT) {
-			left = false;
-		}
-
-		if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
-			right = false;
-		}
-
-		/*if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-			if (!isStarted()) {
-				startGame();
+			if (e.getKeyCode() == KeyEvent.VK_UP) {
+				up = false;
 			}
-		}*/
 
-		if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
-			if (isStarted()) {
-				stopGame();
+			if (e.getKeyCode() == KeyEvent.VK_DOWN) {
+				down = false;
 			}
-		}
-		if (e.getKeyCode() == KeyEvent.VK_F) {
-			if (dir != 0) {
-				createBolt();
+
+			if (e.getKeyCode() == KeyEvent.VK_LEFT) {
+				left = false;
 			}
-		}
+
+			if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
+				right = false;
+			}
+
+			if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+				if (isStarted()) {
+					stopGame();
+				}
+			}
+			if (e.getKeyCode() == KeyEvent.VK_F) {
+				if (!dead) {
+					if (dir != 0) {
+						createBolt();
+					}
+				}
+			}
 	}
 
 	@SuppressWarnings("resource")
