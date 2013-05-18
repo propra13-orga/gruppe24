@@ -9,7 +9,7 @@ public abstract class Sprite extends Rectangle2D.Double implements Drawable, Mov
 	long delay;			//Instanzvariable zum umschalten zwischen den Bildern des Image-Arrays in millisekunden
 	long animation = 0;
 	GamePanel parent;	//Referenz auf GamePanel
-	BufferedImage[] pics;	//Image-Array zum speicher unserer Animation in Einzelbildern
+	BufferedImage[] pics;	//Image-Array zum speichern unserer Animation in Einzelbildern
 	int currentpic = 0; //Zähler für das aktuelle anzuzeigende Bild
 	
 	protected double dx; //Instanzvariable für die horizontale Veränderung

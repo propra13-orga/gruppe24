@@ -6,17 +6,10 @@ public class Enemy extends Sprite {
 	int oldX;
 	int oldY;
 
-	// static boolean hit = false;
-	// static boolean dead = false;
-	// int life;
 
 	public Enemy(BufferedImage[] i, double x, double y, long delay, GamePanel p) {
 		super(i, x, y, delay, p);
 
-		/*
-		 * life = 100; if (hit) { System.out.println("test"); reduceLife(); if
-		 * (life == 0) { dead = true; } hit = false; }
-		 */
 	}
 
 	@Override
@@ -38,10 +31,6 @@ public class Enemy extends Sprite {
 		}
 	}
 
-	/*
-	 * private void reduceLife() { life = life - 50; System.out.println("hit");
-	 * }
-	 */
 
 	private void MoveYEh() {
 
@@ -81,6 +70,8 @@ public class Enemy extends Sprite {
 			x = oldX * 16;
 		} else
 			x++;
+		
+		oldX = (int)x;
 
 	}
 
@@ -94,6 +85,8 @@ public class Enemy extends Sprite {
 			x = oldX * 16;
 		} else
 			x--;
+		
+		oldX = (int)x;
 
 	}
 
@@ -101,24 +94,11 @@ public class Enemy extends Sprite {
 	public boolean collidedWith(Sprite s) {
 
 		if (this.intersects(s)) {
-			if (s instanceof Enemy) {
-
-				if (s.getY() > this.getY()) {
-					s.y = oldY;
-					this.y = this.oldY;
-				}
-
-				return true;
-			}
 			if(s instanceof Player){
 				s.remove = true;
 				return true;
 			}
 		}
-		/*
-		 * if (this.intersects(s)) { if (s instanceof MagicBolt) { reduceLife();
-		 * if (life == 0) { dead = true; } return true; } }
-		 */
 		return false;
 	}
 }

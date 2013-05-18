@@ -1,4 +1,3 @@
-import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 
 public class MagicBolt extends Sprite {
@@ -9,14 +8,11 @@ public class MagicBolt extends Sprite {
 	boolean bDown = false;
 	boolean bLeft = false;
 	boolean bRight = false;
-	// boolean hit = false;
 
-	Rectangle2D.Double target;
 
 	public MagicBolt(BufferedImage[] i, double x, double y, long delay,
 			GamePanel p) {
 		super(i, x, y, delay, p);
-		// hit = false;
 		this.x = x;
 		this.y = y;
 
@@ -33,10 +29,6 @@ public class MagicBolt extends Sprite {
 			bRight = true;
 		}
 
-		/*
-		 * if(hit=true){ System.out.println("triggered"); Enemy.hit=true; hit =
-		 * false; }
-		 */
 	}
 
 	@Override

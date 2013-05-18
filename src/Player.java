@@ -7,7 +7,6 @@ import javax.imageio.ImageIO;
 public class Player extends Sprite {
 
 	private static final long serialVersionUID = 1L;
-	//BufferedImage[] player[];
 
 	public Player(BufferedImage[] i, double x, double y, long delay, GamePanel p) {
 		super(i, x, y, delay, p);
@@ -17,16 +16,6 @@ public class Player extends Sprite {
 	public void doLogic(long delta) {
 		super.doLogic(delta);
 
-		/*switch (parent.dir) {
-
-		case 1:
-			BufferedImage[1] player = parent.loadPics("pics/player.gif", 4);
-			break;
-		case 2:
-			parent.player[2] = loadPics("pics/playerleft", 3);
-			break;
-		case 3:
-		}*/
 
 	}
 	
