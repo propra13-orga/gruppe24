@@ -199,7 +199,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener,
 			r.doLogic(delta);
 		}
 		
-		hero.setFrame(moveX * 16, moveY * 16, 16, 16);
+		hero.setFrame(moveX * 16, moveY * 16-16, 16, 16);
 		
 		if (leveldata[moveY][moveX] == 9) {
 			lvl++;
@@ -263,14 +263,14 @@ public class GamePanel extends JPanel implements Runnable, KeyListener,
 				if (leveldata[row][col] == 0) {
 					posy = row;
 					posx = col;
-					BufferedImage[] floor = loadPics("pics/floor.png", 1);
+					BufferedImage[] floor = loadPics("pics/floor.gif", 1);
 					ground = new Tile(floor, posx * 16, posy * 16, 1, this);
 					enviroment.add(ground);
 				}
 				if (leveldata[row][col] == 1) {
 					posy = row;
 					posx = col;
-					BufferedImage[] wall = loadPics("pics/wall.png", 1);
+					BufferedImage[] wall = loadPics("pics/wall.gif", 1);
 					wl = new TileBlock(wall, posx * 16, posy * 16, 0, this);
 					collision.add(wl);
 				}
@@ -284,7 +284,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener,
 				if (leveldata[row][col] == 3) {
 					posy = row;
 					posx = col;
-					BufferedImage[] floor = loadPics("pics/floor.png", 1);
+					BufferedImage[] floor = loadPics("pics/floor.gif", 1);
 					ground = new Tile(floor, posx * 16, posy * 16, 1, this);
 					enviroment.add(ground);
 				}
@@ -298,7 +298,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener,
 				if (leveldata[row][col] == 7) {
 					posy = row;
 					posx = col;
-					BufferedImage[] floor = loadPics("pics/floor.png", 1);
+					BufferedImage[] floor = loadPics("pics/floor.gif", 1);
 					ground = new Tile(floor, posx * 16, posy * 16, 0, this);
 					enviroment.add(ground);
 					savex = col;
@@ -321,7 +321,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener,
 				if (leveldata[row][col] == 2 && lvl > 1) {
 					posy = row;
 					posx = col;
-					BufferedImage[] floor = loadPics("pics/floor.png", 1);
+					BufferedImage[] floor = loadPics("pics/floor.gif", 1);
 					ground = new Tile(floor, posx * 16, posy * 16, 1, this);
 					enviroment.add(ground);
 				}
@@ -344,7 +344,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener,
 					moveEX = col;
 					moveEY = row;
 
-					BufferedImage[] enemy = loadPics("pics/player.gif", 4);
+					BufferedImage[] enemy = loadPics("pics/Enemy.png", 1);
 					ene = new Enemy(enemy, 16 * moveEX, 16 * moveEY, 100, this);
 					actors.add(ene);
 
@@ -360,7 +360,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener,
 					moveY = row;
 					moveX = col;
 					
-					BufferedImage[] player = loadPics("pics/player.gif", 4);
+					BufferedImage[] player = loadPics("pics/player.png", 1);
 					hero = new Player(player, 16 * moveX, (moveY * 16), 100, this);
 					actors.add(hero);
 				}
