@@ -12,8 +12,10 @@ public abstract class Sprite extends Rectangle2D.Double implements Drawable, Mov
 	BufferedImage[] pics;	//Image-Array zum speicher unserer Animation in Einzelbildern
 	int currentpic = 0; //Zähler für das aktuelle anzuzeigende Bild
 	
-	protected double dx; //Instanzvariable für die horizontale Veränderung
-	protected double dy; //Instanzvariable für die vertikale Veränderung
+	protected double dmg; //Instanzvariable für die horizontale Veränderung
+	protected double dx;
+	protected double dy;
+	protected double health = 100;
         
     int loop_from;
 	int loop_to;
@@ -73,22 +75,15 @@ public abstract class Sprite extends Rectangle2D.Double implements Drawable, Mov
 		}
 	}
 	
-	public double getHorizontalSpeed(){
-		return dx;
+	public boolean calcDmg(double dmg) {
+		this.health = health - dmg;
+		if(health <= 0){
+			return true;
+		}else
+			return false;
 	}
 	
-	public void setHorizontalSpeed(double dx){
-		this.dx = dx;
-	}
 	
-	public double getVerticalSpeed(){
-		return dy;
-	}
-	
-	public void setVerticalSpeed(double dy){
-		this.dy = dy;
-	}
-        
     public abstract boolean collidedWith(Sprite s);
     
     public boolean checkOpaqueColorCollisions(Sprite s){
@@ -110,7 +105,7 @@ public abstract class Sprite extends Rectangle2D.Double implements Drawable, Mov
     	
     	//Überprüfung ob nicht transparente Pixel in beiden Bildern vorhanden sind
     	for(int i=0;i<img_me.getWidth();i++){
-    		for(int n=0;n<img_him.getHeight();n++){
+    		for(int n=0;n<img_him.getHeight()-16;n++){
     			
     			int rgb1 = img_me.getRGB(i, n);
     			int rgb2 = img_him.getRGB(i, n);

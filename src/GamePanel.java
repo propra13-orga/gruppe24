@@ -375,13 +375,13 @@ public class GamePanel extends JPanel implements Runnable, KeyListener,
 			y = hero.getY() - 8;
 		} else if (dir == 2) {
 			x = hero.getX() - 8;
-			y = hero.getY();
+			y = hero.getY() +16;
 		} else if (dir == 3) {
 			x = hero.getX();
-			y = hero.getY() + 8;
+			y = hero.getY() +16;
 		} else if (dir == 4) {
 			x = hero.getX() + 8;
-			y = hero.getY();
+			y = hero.getY() +16;
 		}
 
 		BufferedImage[] Bolt = loadPics("pics/Bolt.png", 3);
