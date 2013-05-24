@@ -32,6 +32,7 @@ public class MagicBolt extends Sprite {
 		}
 	}
 
+	@SuppressWarnings("static-access")
 	@Override
 	public void doLogic(long delta) {
 		super.doLogic(delta);
@@ -39,25 +40,25 @@ public class MagicBolt extends Sprite {
 		if (bUp && getY() > 0) {
 			y -= 10;
 		}
-		if (bDown && getY() / 16 < 15) {
+		if (bDown && getY() / parent.Tilesize < 15) {
 			y += 10;
 		}
 		if (bLeft && getX() > 0) {
 			x -= 10;
 		}
-		if (bRight && getX() / 16 < 15) {
+		if (bRight && getX() / parent.Tilesize < 15) {
 			x += 10;
 		}
 		if (getX() == 0) {
 			remove = true;
 		}
-		if (getX() / 16 == 15) {
+		if (getX() / parent.Tilesize == 15) {
 			remove = true;
 		}
 		if (getY() == 0) {
 			remove = true;
 		}
-		if (getY() / 16 == 15) {
+		if (getY() / parent.Tilesize == 15) {
 			remove = true;
 		}
 
@@ -71,11 +72,12 @@ public class MagicBolt extends Sprite {
 				// parent.createExplosion((int)getX(),(int)getY());
 				// parent.createExplosion((int)s.getX(),(int)s.getY());
 				remove = true;
+				System.out.println("Treffer"+s.health);
 				if(s.calcDmg(50)==true){
 					s.remove = true;
 				}else
 					s.calcDmg(50);
-				System.out.println("Treffer"+s.health);
+				
 				return true;
 			}
 		}
@@ -85,7 +87,6 @@ public class MagicBolt extends Sprite {
 				return true;
 			}
 		}
-
 		return false;
 	}
 

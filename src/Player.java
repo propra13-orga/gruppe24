@@ -43,9 +43,13 @@ public class Player extends Sprite {
 		}
 		if (this.intersects(s)) {
 			if (s instanceof Enemy) {
-				remove = true;
-				parent.dead = true;
-				System.out.println("Tot");
+				System.out.println("Leben: "+ this.phealth);
+				if(this.calcDmgPlayer()==true){
+					remove = true;
+					parent.dead = true;
+					System.out.println("Tot");
+				}else
+					this.calcDmgPlayer();				
 				return true;
 			}
 		}

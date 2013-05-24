@@ -29,58 +29,58 @@ public class Enemy extends Sprite {
 			}
 		}
 	}
-
+	@SuppressWarnings("static-access")
 	private void MoveYEh() {
 
-		oldY = ((int) (y / 16));
+		oldY = ((int) (y / parent.Tilesize));
 
-		if (parent.leveldata[((int) (y / 16)) - 1][((int) (x / 16))] == 1) {
-			y = oldY * 16;
-		} else if (parent.leveldata[((int) (y / 16)) - 1][((int) (x / 16))] == 4) {
-			y = oldY * 16;
+		if (parent.leveldata[((int) (y / parent.Tilesize)) - 1][((int) (x / parent.Tilesize))] == 1) {
+			y = oldY * parent.Tilesize;
+		} else if (parent.leveldata[((int) (y / parent.Tilesize)) - 1][((int) (x / parent.Tilesize))] == 4) {
+			y = oldY * parent.Tilesize;
 		} else
 			y--;
 		oldY = (int) y;
 
 	}
-
+	@SuppressWarnings("static-access")
 	private void MoveYEd() {
 
-		oldY = ((int) (y / 16));
+		oldY = ((int) (y / parent.Tilesize));
 
-		if (parent.leveldata[((int) (y / 16)) + 1][((int) (x / 16))] == 1) {
-			y = oldY * 16;
-		} else if (parent.leveldata[((int) (y / 16)) + 1][((int) (x / 16))] == 4) {
-			y = oldY * 16;
+		if (parent.leveldata[((int) (y / parent.Tilesize)) + 1][((int) (x / parent.Tilesize))] == 1) {
+			y = oldY * parent.Tilesize;
+		} else if (parent.leveldata[((int) (y / parent.Tilesize)) + 1][((int) (x / parent.Tilesize))] == 4) {
+			y = oldY * parent.Tilesize;
 		} else
 			y++;
 		oldY = (int) y;
 
 	}
-
+	@SuppressWarnings("static-access")
 	private void MoveXEr() {
 
-		oldX = ((int) (x / 16));
+		oldX = ((int) (x / parent.Tilesize));
 
-		if (parent.leveldata[((int) (y / 16))][((int)(x / 16)) + 1] == 1) {
-			x = oldX * 16;
-		} else if (parent.leveldata[((int) (y / 16))][((int) (x / 16)) + 1] == 4) {
-			x = oldX * 16;
+		if (parent.leveldata[((int) (y / parent.Tilesize))][((int)(x / parent.Tilesize)) + 1] == 1) {
+			x = oldX * parent.Tilesize;
+		} else if (parent.leveldata[((int) (y / parent.Tilesize))][((int) (x / parent.Tilesize)) + 1] == 4) {
+			x = oldX * parent.Tilesize;
 		} else
 			x++;
 		
 		oldX = (int)x;
 
 	}
-
+	@SuppressWarnings("static-access")
 	private void MoveXEl() {
 
-		oldX = ((int) (x / 16));
+		oldX = ((int) (x / parent.Tilesize));
 
-		if (parent.leveldata[((int) (y / 16))][((int) (x / 16)) - 1] == 1) {
-			x = oldX * 16;
-		} else if (parent.leveldata[((int) (y / 16))][((int) (x / 16)) - 1] == 4) {
-			x = oldX * 16;
+		if (parent.leveldata[((int) (y / parent.Tilesize))][((int) (x / parent.Tilesize)) - 1] == 1) {
+			x = oldX * parent.Tilesize;
+		} else if (parent.leveldata[((int) (y / parent.Tilesize))][((int) (x / parent.Tilesize)) - 1] == 4) {
+			x = oldX * parent.Tilesize;
 		} else
 			x--;
 		

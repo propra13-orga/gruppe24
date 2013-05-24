@@ -65,9 +65,10 @@ public class GamePanel extends JPanel implements Runnable, KeyListener,
 	int posy;
 	int savex;
 	int savey;
+	static int Tilesize = 16;
 
-	static int Width = 15 * 16;
-	static int Height = 15 * 16;
+	static int Width = 15 * Tilesize;
+	static int Height = 15 * Tilesize;
 
 	Timer timer;
 
@@ -199,7 +200,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener,
 			r.doLogic(delta);
 		}
 		
-		hero.setFrame(moveX * 16, moveY * 16-16, 16, 16);
+		hero.setFrame(moveX * Tilesize, moveY * Tilesize-Tilesize, Tilesize, Tilesize);
 		
 		if (leveldata[moveY][moveX] == 9) {
 			lvl++;
@@ -264,42 +265,42 @@ public class GamePanel extends JPanel implements Runnable, KeyListener,
 					posy = row;
 					posx = col;
 					BufferedImage[] floor = loadPics("pics/floor.gif", 1);
-					ground = new Tile(floor, posx * 16, posy * 16, 1, this);
+					ground = new Tile(floor, posx * Tilesize, posy * Tilesize, 1, this);
 					enviroment.add(ground);
 				}
 				if (leveldata[row][col] == 1) {
 					posy = row;
 					posx = col;
 					BufferedImage[] wall = loadPics("pics/wall.gif", 1);
-					wl = new TileBlock(wall, posx * 16, posy * 16, 0, this);
+					wl = new TileBlock(wall, posx * Tilesize, posy * Tilesize, 0, this);
 					collision.add(wl);
 				}
 				if (leveldata[row][col] == 2) {
 					posy = row;
 					posx = col;
 					BufferedImage[] pstart = loadPics("pics/pstart.png", 1);
-					ps = new Tile(pstart, posx * 16, posy * 16, 0, this);
+					ps = new Tile(pstart, posx * Tilesize, posy * Tilesize, 0, this);
 					enviroment.add(ps);
 				}
 				if (leveldata[row][col] == 3) {
 					posy = row;
 					posx = col;
 					BufferedImage[] floor = loadPics("pics/floor.gif", 1);
-					ground = new Tile(floor, posx * 16, posy * 16, 1, this);
+					ground = new Tile(floor, posx * Tilesize, posy * Tilesize, 1, this);
 					enviroment.add(ground);
 				}
 				if (leveldata[row][col] == 4) {
 					posy = row;
 					posx = col;
 					BufferedImage[] water = loadPics("pics/water.gif", 2);
-					wt = new TileBlock(water, posx * 16, posy * 16, 500, this);
+					wt = new TileBlock(water, posx * Tilesize, posy * Tilesize, 500, this);
 					collision.add(wt);
 				}
 				if (leveldata[row][col] == 7) {
 					posy = row;
 					posx = col;
 					BufferedImage[] floor = loadPics("pics/floor.gif", 1);
-					ground = new Tile(floor, posx * 16, posy * 16, 0, this);
+					ground = new Tile(floor, posx * Tilesize, posy * Tilesize, 0, this);
 					enviroment.add(ground);
 					savex = col;
 					savey = row;
@@ -308,28 +309,28 @@ public class GamePanel extends JPanel implements Runnable, KeyListener,
 					posy = row;
 					posx = col;
 					BufferedImage[] pstart = loadPics("pics/pstart.png", 1);
-					ps = new Tile(pstart, posx * 16, posy * 16, 0, this);
+					ps = new Tile(pstart, posx * Tilesize, posy * Tilesize, 0, this);
 					enviroment.add(ps);
 				}
 				if (leveldata[row][col] == 9) {
 					posy = row;
 					posx = col;
 					BufferedImage[] pstart = loadPics("pics/pstart.png", 1);
-					ps = new Tile(pstart, posx * 16, posy * 16, 0, this);
+					ps = new Tile(pstart, posx * Tilesize, posy * Tilesize, 0, this);
 					enviroment.add(ps);
 				}
 				if (leveldata[row][col] == 2 && lvl > 1) {
 					posy = row;
 					posx = col;
 					BufferedImage[] floor = loadPics("pics/floor.gif", 1);
-					ground = new Tile(floor, posx * 16, posy * 16, 1, this);
+					ground = new Tile(floor, posx * Tilesize, posy * Tilesize, 1, this);
 					enviroment.add(ground);
 				}
 				if(leveldata[row][col] == 42){
 					posy = row;
 					posx = col;
 					BufferedImage[] exit = loadPics("pics/exit.png", 1);
-					ex = new Tile(exit, posx*16, posy*16, 1, this);
+					ex = new Tile(exit, posx*Tilesize, posy*Tilesize, 1, this);
 					enviroment.add(ex);
 				}
 			}
@@ -345,7 +346,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener,
 					moveEY = row;
 
 					BufferedImage[] enemy = loadPics("pics/Enemy.png", 1);
-					ene = new Enemy(enemy, 16 * moveEX, 16 * moveEY, 100, this);
+					ene = new Enemy(enemy, Tilesize * moveEX, Tilesize * moveEY, 100, this);
 					actors.add(ene);
 
 				}
@@ -361,7 +362,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener,
 					moveX = col;
 					
 					BufferedImage[] player = loadPics("pics/player.png", 1);
-					hero = new Player(player, 16 * moveX, (moveY * 16), 100, this);
+					hero = new Player(player, Tilesize * moveX, (moveY * Tilesize), 100, this);
 					actors.add(hero);
 				}
 			}
@@ -370,18 +371,18 @@ public class GamePanel extends JPanel implements Runnable, KeyListener,
 
 	private void createBolt() {
 
-		if (dir == 1) {
+		if (dir == 1) {				//hoch
 			x = hero.getX();
 			y = hero.getY() - 8;
-		} else if (dir == 2) {
+		} else if (dir == 2) {		//links
 			x = hero.getX() - 8;
-			y = hero.getY() +16;
-		} else if (dir == 3) {
+			y = hero.getY() +Tilesize;
+		} else if (dir == 3) {		//runter
 			x = hero.getX();
-			y = hero.getY() +16;
-		} else if (dir == 4) {
+			y = hero.getY() +24;
+		} else if (dir == 4) {		//rechts
 			x = hero.getX() + 8;
-			y = hero.getY() +16;
+			y = hero.getY() +Tilesize;
 		}
 
 		BufferedImage[] Bolt = loadPics("pics/Bolt.png", 3);
