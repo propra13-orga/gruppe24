@@ -1,15 +1,23 @@
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.URL;
 
 import javax.imageio.ImageIO;
+import javax.swing.Timer;
 
-public class Player extends Sprite {
+public class Player extends Sprite /*implements ActionListener*/ {
 
 	private static final long serialVersionUID = 1L;
+	
+	//Timer timer;
 
 	public Player(BufferedImage[] i, double x, double y, long delay, GamePanel p) {
 		super(i, x, y, delay, p);
+		
+		/*timer = new Timer(300, this);
+		timer.start();*/
 	}
 
 	@Override
@@ -43,11 +51,10 @@ public class Player extends Sprite {
 		}
 		if (this.intersects(s)) {
 			if (s instanceof Enemy) {
-				System.out.println("Leben: "+ this.phealth);
+				parent.phealth=this.phealth;
 				if(this.calcDmgPlayer()==true){
 					remove = true;
 					parent.dead = true;
-					System.out.println("Tot");
 				}else
 					this.calcDmgPlayer();				
 				return true;
@@ -56,4 +63,12 @@ public class Player extends Sprite {
 		
 		return false;
 	}
+
+	/*@Override
+	public void actionPerformed(ActionEvent e) {
+		if(e.getSource().equals(timer)){
+			this.mana+=30;
+		}
+		
+	}*/
 }

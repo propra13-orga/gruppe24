@@ -72,7 +72,6 @@ public class MagicBolt extends Sprite {
 				// parent.createExplosion((int)getX(),(int)getY());
 				// parent.createExplosion((int)s.getX(),(int)s.getY());
 				remove = true;
-				System.out.println("Treffer"+s.health);
 				if(s.calcDmg(50)==true){
 					s.remove = true;
 				}else

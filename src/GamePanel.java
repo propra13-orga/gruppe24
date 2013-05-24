@@ -44,6 +44,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener,
 
 	double x;
 	double y;
+	double phealth = 130;
 
 	boolean up;
 	boolean down;
@@ -53,6 +54,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener,
 	boolean status = false;
 	boolean dead = false;
 	boolean finished = false;
+	boolean OoM = false;
 
 	int moveX;
 	int moveY;
@@ -65,6 +67,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener,
 	int posy;
 	int savex;
 	int savey;
+	int mana = 100;
 	static int Tilesize = 16;
 
 	static int Width = 15 * Tilesize;
@@ -73,7 +76,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener,
 	Timer timer;
 
 	public static void main(String[] args) {
-		new GamePanel(Width, Height);
+		new GamePanel(Width, Height+20);
 	}
 
 	public GamePanel(int w, int h) {
@@ -390,7 +393,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener,
 
 		ListIterator<Sprite> it = actors.listIterator();
 		it.add(mb);
-
+		hero.redMana(25);
 	}
 
 	private void startGame() {
@@ -498,8 +501,19 @@ public class GamePanel extends JPanel implements Runnable, KeyListener,
 	@Override
 	protected void paintComponent(Graphics g) {
 		super.paintComponent(g);
-
-		g.setColor(Color.red);
+		
+		g.setColor(Color.white);
+		g.fillRect(0, Height, Width, frame.getHeight()-Height);
+		if(!dead){
+			g.setColor(Color.red);
+			g.drawString("HP: "+(Math.round(phealth)*100/130), 2, 253);
+		}
+		if(!dead){
+			g.setColor(Color.blue);
+			g.drawString("Mana: "+mana, 50, 253);
+		}
+		
+		//g.setColor(Color.red);
 
 		if(dead) {
 			g.setColor(Color.red);
@@ -640,8 +654,10 @@ public class GamePanel extends JPanel implements Runnable, KeyListener,
 			}
 			if (e.getKeyCode() == KeyEvent.VK_F) {
 				if (!dead) {
-					if (dir != 0) {
-						createBolt();
+					if(!OoM){
+						if (dir != 0) {
+							createBolt();
+						}
 					}
 				}
 			}

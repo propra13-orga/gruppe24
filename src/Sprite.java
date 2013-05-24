@@ -17,6 +17,7 @@ public abstract class Sprite extends Rectangle2D.Double implements Drawable, Mov
 	protected double dy;
 	protected double health = 100;
 	protected double phealth = 130;
+	protected int mana = 100;
         
     int loop_from;
 	int loop_to;
@@ -86,10 +87,25 @@ public abstract class Sprite extends Rectangle2D.Double implements Drawable, Mov
 	
 	public boolean calcDmgPlayer(){
 		this.phealth = phealth - ((130*5)/100);
-		if(phealth<=0){
+		if(this.phealth<0){
+			this.phealth=0;
+		}
+		if(phealth==0){
 			return true;
 		}else
 			return false;
+	}
+	
+	public void redMana(int red){
+		this.mana = mana - red;
+
+		if(this.mana>100){
+			this.mana = 100;
+		}else if(this.mana<=0){
+			this.mana = 0;
+			parent.OoM = true;
+		}
+		parent.mana = this.mana;
 	}
 	
     public abstract boolean collidedWith(Sprite s);
