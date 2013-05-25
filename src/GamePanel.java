@@ -20,6 +20,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener,
 	long delta = 0;
 	long last = 0;
 	long gameover = 0;
+	long mreg;
 
 	Player hero;
 	Enemy ene;
@@ -205,6 +206,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener,
 		
 		hero.setFrame(moveX * Tilesize, moveY * Tilesize-Tilesize, Tilesize, Tilesize);
 		
+
 		if (leveldata[moveY][moveX] == 9) {
 			lvl++;
 			read();
@@ -259,6 +261,23 @@ public class GamePanel extends JPanel implements Runnable, KeyListener,
 				stopGame();
 			}
 		}
+		
+		if(started && mreg==0){
+			mreg = System.currentTimeMillis();
+		}
+		
+		if (mreg > 0) {
+			if (System.currentTimeMillis() - mreg > 5000) {
+				mana = mana + 5;
+				OoM = false;
+			}
+			if(mana>100){
+				mana = 100;
+				hero.mana = 100;
+				mreg = 0;
+			}
+		}
+		
 	}
 
 	public void ground() {
@@ -501,19 +520,14 @@ public class GamePanel extends JPanel implements Runnable, KeyListener,
 	@Override
 	protected void paintComponent(Graphics g) {
 		super.paintComponent(g);
-		
-		g.setColor(Color.white);
-		g.fillRect(0, Height, Width, frame.getHeight()-Height);
-		if(!dead){
+		if(started){
+			g.setColor(Color.white);
+			g.fillRect(0, Height, Width, frame.getHeight()-Height);
 			g.setColor(Color.red);
 			g.drawString("HP: "+(Math.round(phealth)*100/130), 2, 253);
-		}
-		if(!dead){
 			g.setColor(Color.blue);
 			g.drawString("Mana: "+mana, 50, 253);
 		}
-		
-		//g.setColor(Color.red);
 
 		if(dead) {
 			g.setColor(Color.red);

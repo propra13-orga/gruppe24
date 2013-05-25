@@ -1,28 +1,24 @@
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.URL;
 
 import javax.imageio.ImageIO;
-import javax.swing.Timer;
 
-public class Player extends Sprite /*implements ActionListener*/ {
+public class Player extends Sprite{
 
 	private static final long serialVersionUID = 1L;
 	
-	//Timer timer;
 
 	public Player(BufferedImage[] i, double x, double y, long delay, GamePanel p) {
-		super(i, x, y, delay, p);
+		super(i, x, y, delay, p);	
 		
-		/*timer = new Timer(300, this);
-		timer.start();*/
+		
 	}
 
 	@Override
 	public void doLogic(long delta) {
 		super.doLogic(delta);
+
 
 	}
 	
@@ -64,11 +60,4 @@ public class Player extends Sprite /*implements ActionListener*/ {
 		return false;
 	}
 
-	/*@Override
-	public void actionPerformed(ActionEvent e) {
-		if(e.getSource().equals(timer)){
-			this.mana+=30;
-		}
-		
-	}*/
 }
