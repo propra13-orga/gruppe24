@@ -90,22 +90,6 @@ public class Enemy extends Sprite {
 
 	@Override
 	public boolean collidedWith(Sprite s) {
-
-		if (this.intersects(s)) {
-			if (s instanceof Enemy) {
-
-				if (s.getY() > this.getY()) {
-					s.y = oldY;
-					this.y = this.oldY;
-				}
-
-				return true;
-			}
-			if(s instanceof Player){
-				s.remove = true;
-				return true;
-			}
-		}
 		return false;
 	}
 }

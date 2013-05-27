@@ -84,7 +84,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener,
 		this.setPreferredSize(new Dimension(w, h));
 		this.setBackground(Color.BLACK);
 
-		frame = new JFrame("Insert Name here");
+		frame = new JFrame("Hero Quest");
 		frame.setLocation(960 - (Width / 2), 600 - (Height));
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
@@ -392,7 +392,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener,
 	}
 
 	private void createBolt() {
-
+		
 		if (dir == 1) {				//hoch
 			x = hero.getX();
 			y = hero.getY() - 8;
