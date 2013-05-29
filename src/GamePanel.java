@@ -1,12 +1,11 @@
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
+import java.io.*;
 import java.net.URL;
-import java.util.ListIterator;
-import java.util.Vector;
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import java.util.*;
 
 public class GamePanel extends JPanel implements Runnable, KeyListener,
 		ActionListener {
@@ -73,9 +72,13 @@ public class GamePanel extends JPanel implements Runnable, KeyListener,
 
 	static int Width = 15 * Tilesize;
 	static int Height = 15 * Tilesize;
-
-	Timer timer;
-
+	
+	BufferedImage[] floor = loadPics("pics/floor.gif", 1);
+	BufferedImage[] wall = loadPics("pics/wall.gif", 1);
+	BufferedImage[] pstart = loadPics("pics/pstart.png", 1);
+	BufferedImage[] water = loadPics("pics/water.gif", 2);
+	BufferedImage[] exit = loadPics("pics/exit.png", 1);
+	
 	public static void main(String[] args) {
 		new GamePanel(Width, Height+20);
 	}
@@ -139,11 +142,6 @@ public class GamePanel extends JPanel implements Runnable, KeyListener,
 		ground();
 		SpawnPlayer();
 		SpawnEnemy();
-		System.out.println("" + moveX + "," + moveY);
-
-		timer = new Timer(300, this);
-		timer.start();
-
 		started = true;
 	}
 
@@ -283,75 +281,47 @@ public class GamePanel extends JPanel implements Runnable, KeyListener,
 	public void ground() {
 		for (int row = 0; row < leveldata.length; row++) {
 			for (int col = 0; col < leveldata[row].length; col++) {
+				posy = row;
+				posx = col;
 				if (leveldata[row][col] == 0) {
-					posy = row;
-					posx = col;
-					BufferedImage[] floor = loadPics("pics/floor.gif", 1);
 					ground = new Tile(floor, posx * Tilesize, posy * Tilesize, 1, this);
 					enviroment.add(ground);
 				}
 				if (leveldata[row][col] == 1) {
-					posy = row;
-					posx = col;
-					BufferedImage[] wall = loadPics("pics/wall.gif", 1);
 					wl = new TileBlock(wall, posx * Tilesize, posy * Tilesize, 0, this);
 					collision.add(wl);
 				}
 				if (leveldata[row][col] == 2) {
-					posy = row;
-					posx = col;
-					BufferedImage[] pstart = loadPics("pics/pstart.png", 1);
 					ps = new Tile(pstart, posx * Tilesize, posy * Tilesize, 0, this);
 					enviroment.add(ps);
 				}
 				if (leveldata[row][col] == 3) {
-					posy = row;
-					posx = col;
-					BufferedImage[] floor = loadPics("pics/floor.gif", 1);
 					ground = new Tile(floor, posx * Tilesize, posy * Tilesize, 1, this);
 					enviroment.add(ground);
 				}
 				if (leveldata[row][col] == 4) {
-					posy = row;
-					posx = col;
-					BufferedImage[] water = loadPics("pics/water.gif", 2);
 					wt = new TileBlock(water, posx * Tilesize, posy * Tilesize, 500, this);
 					collision.add(wt);
 				}
 				if (leveldata[row][col] == 7) {
-					posy = row;
-					posx = col;
-					BufferedImage[] floor = loadPics("pics/floor.gif", 1);
 					ground = new Tile(floor, posx * Tilesize, posy * Tilesize, 0, this);
 					enviroment.add(ground);
 					savex = col;
 					savey = row;
 				}
 				if (leveldata[row][col] == 8) {
-					posy = row;
-					posx = col;
-					BufferedImage[] pstart = loadPics("pics/pstart.png", 1);
 					ps = new Tile(pstart, posx * Tilesize, posy * Tilesize, 0, this);
 					enviroment.add(ps);
 				}
 				if (leveldata[row][col] == 9) {
-					posy = row;
-					posx = col;
-					BufferedImage[] pstart = loadPics("pics/pstart.png", 1);
 					ps = new Tile(pstart, posx * Tilesize, posy * Tilesize, 0, this);
 					enviroment.add(ps);
 				}
 				if (leveldata[row][col] == 2 && lvl > 1) {
-					posy = row;
-					posx = col;
-					BufferedImage[] floor = loadPics("pics/floor.gif", 1);
 					ground = new Tile(floor, posx * Tilesize, posy * Tilesize, 1, this);
 					enviroment.add(ground);
 				}
 				if(leveldata[row][col] == 42){
-					posy = row;
-					posx = col;
-					BufferedImage[] exit = loadPics("pics/exit.png", 1);
 					ex = new Tile(exit, posx*Tilesize, posy*Tilesize, 1, this);
 					enviroment.add(ex);
 				}
@@ -366,7 +336,6 @@ public class GamePanel extends JPanel implements Runnable, KeyListener,
 				if (leveldata[row][col] == 3) {
 					moveEX = col;
 					moveEY = row;
-
 					BufferedImage[] enemy = loadPics("pics/Enemy.png", 1);
 					ene = new Enemy(enemy, Tilesize * moveEX, Tilesize * moveEY, 100, this);
 					actors.add(ene);
@@ -382,7 +351,6 @@ public class GamePanel extends JPanel implements Runnable, KeyListener,
 				if (leveldata[row][col] == 2) {
 					moveY = row;
 					moveX = col;
-					
 					BufferedImage[] player = loadPics("pics/player.png", 1);
 					hero = new Player(player, Tilesize * moveX, (moveY * Tilesize), 100, this);
 					actors.add(hero);
@@ -432,81 +400,64 @@ public class GamePanel extends JPanel implements Runnable, KeyListener,
 		b1.setVisible(true);
 		setStarted(false);
 		lvl = 1;
-		timer.stop();
 		soundlib.stopLoopingSound();
 	}
 
-	public void MoveYh() {
 
-		oldY = moveY;
-		oldX = moveX;
 
-		if (leveldata[moveY - 1][moveX] == 1) {
-			moveY = oldY;
-		} else if (leveldata[moveY - 1][moveX] == 4) {
-			moveY = oldY;
-		} else
-			moveY--;
-
-	}
-
-	public void MoveYd() {
-
-		oldY = moveY;
-		oldX = moveX;
-
-		if (leveldata[moveY + 1][moveX] == 1) {
-			moveY = oldY;
-		} else if (leveldata[moveY + 1][moveX] == 4) {
-			moveY = oldY;
-		} else
-			moveY++;
-
-	}
-
-	private void MoveXl() {
-
-		oldY = moveY;
-		oldX = moveX;
-
-		if (leveldata[moveY][moveX - 1] == 1) {
-			moveX = oldX;
-		} else if (leveldata[moveY][moveX - 1] == 4) {
-			moveX = oldX;
-		} else
-			moveX--;
-
-	}
-
-	private void MoveXr() {
-
-		oldY = moveY;
-		oldX = moveX;
-
-		if (leveldata[moveY][moveX + 1] == 1) {
-			moveX = oldX;
-		} else if (leveldata[moveY][moveX + 1] == 4) {
-			moveX = oldX;
-		} else
-			moveX++;
-	}
 
 	private void checkKeys() {
 
 		if (up) {
-			MoveYh();
+			
+			oldY = moveY;
+			oldX = moveX;
+
+			if (leveldata[moveY - 1][moveX] == 1) {
+				moveY = oldY;
+			} else if (leveldata[moveY - 1][moveX] == 4) {
+				moveY = oldY;
+			} else
+				moveY--;
 		}
 
 		if (down) {
-			MoveYd();
+			
+			oldY = moveY;
+			oldX = moveX;
+
+			if (leveldata[moveY + 1][moveX] == 1) {
+				moveY = oldY;
+			} else if (leveldata[moveY + 1][moveX] == 4) {
+				moveY = oldY;
+			} else
+				moveY++;
 		}
 
 		if (left) {
-			MoveXl();
+			
+			oldY = moveY;
+			oldX = moveX;
+
+			if (leveldata[moveY][moveX - 1] == 1) {
+				moveX = oldX;
+			} else if (leveldata[moveY][moveX - 1] == 4) {
+				moveX = oldX;
+			} else
+				moveX--;
 		}
 
 		if (right) {
-			MoveXr();
+			
+			oldY = moveY;
+			oldX = moveX;
+
+			if (leveldata[moveY][moveX + 1] == 1) {
+				moveX = oldX;
+			} else if (leveldata[moveY][moveX + 1] == 4) {
+				moveX = oldX;
+			} else
+				moveX++;
 		}
 
 	}
@@ -542,8 +493,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener,
 			return;
 		}
 
-		for (ListIterator<Enviroment> ev = painter2.listIterator(); ev
-				.hasNext();) {
+		for (ListIterator<Enviroment> ev = painter2.listIterator(); ev.hasNext();) {
 			Enviroment e = ev.next();
 			e.drawObjects(g);
 		}
@@ -679,158 +629,62 @@ public class GamePanel extends JPanel implements Runnable, KeyListener,
 
 	@SuppressWarnings("resource")
 	public void read() {
-
-		java.lang.String sTemp;
+		try{
+		String sTemp;
+		String rest = null;
 		int i, j;
-		leveldata = new int[15][15];
+		leveldata = new int[Height/Tilesize][Width/Tilesize];
 		switch (lvl) {
-		case 1:
-			try { // Datei öffnen
-
-				java.io.BufferedReader oReader = new java.io.BufferedReader(
-						new java.io.InputStreamReader(
-								new java.io.FileInputStream(new java.io.File(
-										"res/lvl/lvl1.level")))); // Zeile für
-																	// Zeile
-																	// einlesen
-
-				i = 0;
-
-				while ((sTemp = oReader.readLine()) != null) {
-
-					// Zeile in Einzelteile zerlegen (wir trennen durch ;
-
-					java.util.StringTokenizer stWerte = new java.util.StringTokenizer(
-							sTemp, ";");
-
-					j = 0;
-
-					// Nun eintragen in den Array. Es wird nicht überprüft, ob
-					// die Grenzen überschritten werden!
-
-					while (stWerte.hasMoreTokens()) {
-
-						leveldata[i][j] = java.lang.Integer.parseInt(stWerte
-								.nextToken());
-
-						j++;
-
-					}
-
-					i++;
-
-				}
-				status = true;
-			} catch (java.io.FileNotFoundException e) {
-
-				e.printStackTrace(); // Fehler ausdrucken
-
-			} catch (java.io.IOException e) {
-
-				e.printStackTrace(); // Fehler ausdrucken
-
-			}
+		case 1: 
+			rest = "lvl1.level";
 			break;
-		case 2:
-			try { // Datei öffnen
-
-				java.io.BufferedReader oReader = new java.io.BufferedReader(
-						new java.io.InputStreamReader(
-								new java.io.FileInputStream(new java.io.File(
-										"res/lvl/lvl2.level")))); // Zeile für
-																	// Zeile
-																	// einlesen
-
-				i = 0;
-
-				while ((sTemp = oReader.readLine()) != null) {
-
-					// Zeile in Einzelteile zerlegen (wir trennen durch ;
-
-					java.util.StringTokenizer stWerte = new java.util.StringTokenizer(
-							sTemp, ";");
-
-					j = 0;
-
-					// Nun eintragen in den Array. Es wird nicht überprüft, ob
-					// die Grenzen überschritten werden!
-
-					while (stWerte.hasMoreTokens()) {
-
-						leveldata[i][j] = java.lang.Integer.parseInt(stWerte
-								.nextToken());
-
-						j++;
-
-					}
-
-					i++;
-
-				}
-				status = true;
-			} catch (java.io.FileNotFoundException e) {
-
-				e.printStackTrace(); // Fehler ausdrucken
-
-			} catch (java.io.IOException e) {
-
-				e.printStackTrace(); // Fehler ausdrucken
-
-			}
+		case 2: 
+			rest = "lvl2.level";
 			break;
-		case 3:
-			try { // Datei öffnen
-
-				java.io.BufferedReader oReader = new java.io.BufferedReader(
-						new java.io.InputStreamReader(
-								new java.io.FileInputStream(new java.io.File(
-										"res/lvl/lvl3.level")))); // Zeile für
-																	// Zeile
-																	// einlesen
-
-				i = 0;
-
-				while ((sTemp = oReader.readLine()) != null) {
-
-					// Zeile in Einzelteile zerlegen (wir trennen durch ;
-
-					java.util.StringTokenizer stWerte = new java.util.StringTokenizer(
-							sTemp, ";");
-
-					j = 0;
-
-					// Nun eintragen in den Array. Es wird nicht überprüft, ob
-					// die Grenzen überschritten werden!
-
-					while (stWerte.hasMoreTokens()) {
-
-						leveldata[i][j] = java.lang.Integer.parseInt(stWerte
-								.nextToken());
-
-						j++;
-
-					}
-
-					i++;
-
-				}
-				status = true;
-			} catch (java.io.FileNotFoundException e) {
-
-				e.printStackTrace(); // Fehler ausdrucken
-
-			} catch (java.io.IOException e) {
-
-				e.printStackTrace(); // Fehler ausdrucken
-
-			}
+		case 3: 
+			rest = "lvl3.level";
 			break;
 		default:
 			System.out.println("Level existiert nicht");
 			frame.dispose();
 			break;
-		}
+		}		
+		BufferedReader oReader = new BufferedReader(
+				new InputStreamReader(
+						new FileInputStream(new File("res/lvl/"+rest)))); // Zeile für
+															// Zeile
+															// einlesen
 
+		i = 0;
+
+		while ((sTemp = oReader.readLine())!= null) {
+
+			// Zeile in Einzelteile zerlegen (wir trennen durch ;
+
+			java.util.StringTokenizer stWerte = new StringTokenizer(sTemp, ";");
+
+			j = 0;
+
+			// Nun eintragen in den Array. Es wird nicht überprüft, ob
+			// die Grenzen überschritten werden!
+
+			while (stWerte.hasMoreTokens()) {
+
+				leveldata[i][j] = Integer.parseInt(stWerte.nextToken());
+				j++;
+			}
+			i++;
+		}
+		status = true;
+	} catch (FileNotFoundException e) {
+
+		e.printStackTrace(); // Fehler ausdrucken
+
+	} catch (IOException e) {
+
+		e.printStackTrace(); // Fehler ausdrucken
+
+	}
 	}
 
 	@Override
