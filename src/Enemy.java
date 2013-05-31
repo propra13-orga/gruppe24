@@ -92,4 +92,8 @@ public class Enemy extends Sprite {
 	public boolean collidedWith(Sprite s) {
 		return false;
 	}
+
+	public void remove() {
+		this.remove();		
+	}
 }

@@ -73,11 +73,15 @@ public class GamePanel extends JPanel implements Runnable, KeyListener,
 	static int Width = 15 * Tilesize;
 	static int Height = 15 * Tilesize;
 	
+	
 	BufferedImage[] floor = loadPics("pics/floor.gif", 1);
 	BufferedImage[] wall = loadPics("pics/wall.gif", 1);
 	BufferedImage[] pstart = loadPics("pics/pstart.png", 1);
 	BufferedImage[] water = loadPics("pics/water.gif", 2);
 	BufferedImage[] exit = loadPics("pics/exit.png", 1);
+	
+	private GameClient socketClient;
+	private GameServer socketServer;
 	
 	public static void main(String[] args) {
 		new GamePanel(Width, Height+20);
@@ -143,6 +147,8 @@ public class GamePanel extends JPanel implements Runnable, KeyListener,
 		SpawnPlayer();
 		SpawnEnemy();
 		started = true;
+
+		
 	}
 
 	@Override
@@ -286,44 +292,36 @@ public class GamePanel extends JPanel implements Runnable, KeyListener,
 				if (leveldata[row][col] == 0) {
 					ground = new Tile(floor, posx * Tilesize, posy * Tilesize, 1, this);
 					enviroment.add(ground);
-				}
-				if (leveldata[row][col] == 1) {
+				}else if (leveldata[row][col] == 1) {
 					wl = new TileBlock(wall, posx * Tilesize, posy * Tilesize, 0, this);
 					collision.add(wl);
-				}
-				if (leveldata[row][col] == 2) {
+				}else if (leveldata[row][col] == 2) {
 					ps = new Tile(pstart, posx * Tilesize, posy * Tilesize, 0, this);
 					enviroment.add(ps);
-				}
-				if (leveldata[row][col] == 3) {
+				}else if (leveldata[row][col] == 3) {
 					ground = new Tile(floor, posx * Tilesize, posy * Tilesize, 1, this);
 					enviroment.add(ground);
-				}
-				if (leveldata[row][col] == 4) {
+				}else if (leveldata[row][col] == 4) {
 					wt = new TileBlock(water, posx * Tilesize, posy * Tilesize, 500, this);
 					collision.add(wt);
-				}
-				if (leveldata[row][col] == 7) {
+				}else if (leveldata[row][col] == 7) {
 					ground = new Tile(floor, posx * Tilesize, posy * Tilesize, 0, this);
 					enviroment.add(ground);
 					savex = col;
 					savey = row;
-				}
-				if (leveldata[row][col] == 8) {
+				}else if (leveldata[row][col] == 8) {
 					ps = new Tile(pstart, posx * Tilesize, posy * Tilesize, 0, this);
 					enviroment.add(ps);
-				}
-				if (leveldata[row][col] == 9) {
+				}else if (leveldata[row][col] == 9) {
 					ps = new Tile(pstart, posx * Tilesize, posy * Tilesize, 0, this);
 					enviroment.add(ps);
+				}else if(leveldata[row][col] == 42){
+					ex = new Tile(exit, posx*Tilesize, posy*Tilesize, 1, this);
+					enviroment.add(ex);
 				}
 				if (leveldata[row][col] == 2 && lvl > 1) {
 					ground = new Tile(floor, posx * Tilesize, posy * Tilesize, 1, this);
 					enviroment.add(ground);
-				}
-				if(leveldata[row][col] == 42){
-					ex = new Tile(exit, posx*Tilesize, posy*Tilesize, 1, this);
-					enviroment.add(ex);
 				}
 			}
 		}
@@ -354,6 +352,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener,
 					BufferedImage[] player = loadPics("pics/player.png", 1);
 					hero = new Player(player, Tilesize * moveX, (moveY * Tilesize), 100, this);
 					actors.add(hero);
+					socketClient.sendData("ping".getBytes());
 				}
 			}
 		}
@@ -386,12 +385,19 @@ public class GamePanel extends JPanel implements Runnable, KeyListener,
 	private void startGame() {
 		read();
 		if (status) {
+			if(JOptionPane.showConfirmDialog(this, "Do you want to run the Server?")==0){
+				socketServer = new GameServer(this);
+				socketServer.start();
+			}
+			socketClient = new GameClient(this, "localhost");
+			socketClient.start();
 			doInitializations();
 			System.out.println("Start");
 			soundlib.loopSound("test");
 			setStarted(true);
 			dead = false;
 			finished = false;
+
 		}
 	}
 
