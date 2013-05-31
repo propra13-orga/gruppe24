@@ -30,7 +30,7 @@ public class GameServer extends Thread {
 				e.printStackTrace();
 			}
 			String message = new String(packet.getData());
-			System.out.println("CLIENT ["+packet.getAddress().getHostAddress()+":"+packet.getPort()+"] > "+message); 
+			System.out.println("CLIENT ["+packet.getAddress().getHostAddress()+":"+packet.getPort()+"] > "+message.trim()); 
 			if(message.trim().equalsIgnoreCase("ping")){
 				sendData("pong".getBytes(), packet.getAddress(), packet.getPort());
 			}

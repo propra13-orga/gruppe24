@@ -55,6 +55,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener,
 	boolean dead = false;
 	boolean finished = false;
 	boolean OoM = false;
+	boolean ServerRunning = false;
 
 	int moveX;
 	int moveY;
@@ -69,10 +70,10 @@ public class GamePanel extends JPanel implements Runnable, KeyListener,
 	int savey;
 	int mana = 100;
 	static int Tilesize = 16;
-
 	static int Width = 15 * Tilesize;
 	static int Height = 15 * Tilesize;
 	
+	public String Username;
 	
 	BufferedImage[] floor = loadPics("pics/floor.gif", 1);
 	BufferedImage[] wall = loadPics("pics/wall.gif", 1);
@@ -145,6 +146,9 @@ public class GamePanel extends JPanel implements Runnable, KeyListener,
 
 		ground();
 		SpawnPlayer();
+		if(ServerRunning){
+		socketClient.sendData("ping".getBytes());
+		}
 		SpawnEnemy();
 		started = true;
 
@@ -352,7 +356,6 @@ public class GamePanel extends JPanel implements Runnable, KeyListener,
 					BufferedImage[] player = loadPics("pics/player.png", 1);
 					hero = new Player(player, Tilesize * moveX, (moveY * Tilesize), 100, this);
 					actors.add(hero);
-					socketClient.sendData("ping".getBytes());
 				}
 			}
 		}
@@ -388,9 +391,13 @@ public class GamePanel extends JPanel implements Runnable, KeyListener,
 			if(JOptionPane.showConfirmDialog(this, "Do you want to run the Server?")==0){
 				socketServer = new GameServer(this);
 				socketServer.start();
+				ServerRunning = true;
 			}
-			socketClient = new GameClient(this, "localhost");
-			socketClient.start();
+			if(ServerRunning){
+				socketClient = new GameClient(this, JOptionPane.showInputDialog("Please enter the IP: "));
+				socketClient.start();
+				this.Username = JOptionPane.showInputDialog("Please enter your Playername"); 
+			}
 			doInitializations();
 			System.out.println("Start");
 			soundlib.loopSound("test");
