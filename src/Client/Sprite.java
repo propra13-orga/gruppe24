@@ -56,8 +56,8 @@ public abstract class Sprite extends Rectangle2D.Double implements Drawable, Mov
 
 		currentpic++;
 		
-		if(currentpic>=pics.length){
-			currentpic=0;
+		if(currentpic>loop_to){
+			currentpic=loop_from;
 		}
 		
 	}

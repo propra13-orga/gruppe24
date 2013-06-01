@@ -78,19 +78,19 @@ public class GamePanel extends JPanel implements Runnable, KeyListener,
 	static int Tilesize = 16;
 	static int Width = 15 * Tilesize;
 	static int Height = 15 * Tilesize;
-	
+
 	public String Username;
-	
+
 	BufferedImage[] floor = loadPics("pics/floor.gif", 1);
 	BufferedImage[] wall = loadPics("pics/wall.gif", 1);
 	BufferedImage[] pstart = loadPics("pics/pstart.png", 1);
 	BufferedImage[] water = loadPics("pics/water.gif", 2);
 	BufferedImage[] exit = loadPics("pics/exit.png", 1);
-	
+
 	private GameClient socketClient;
-	
+
 	public static void main(String[] args) {
-		new GamePanel(Width, Height+20);
+		new GamePanel(Width, Height + 20);
 	}
 
 	public GamePanel(int w, int h) {
@@ -127,7 +127,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener,
 		b2.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				new GUI(50,50);
+				new GUI(50, 50);
 			}
 		});
 		b3.addActionListener(new ActionListener() {
@@ -155,10 +155,9 @@ public class GamePanel extends JPanel implements Runnable, KeyListener,
 		frame.setVisible(true);
 		TRun();
 
-
 	}
-	
-	private synchronized void TRun(){
+
+	private synchronized void TRun() {
 		Thread th = new Thread(this);
 		th.start();
 	}
@@ -180,13 +179,12 @@ public class GamePanel extends JPanel implements Runnable, KeyListener,
 
 		ground();
 		SpawnPlayer();
-		if(GUI.running||join){
-		socketClient.sendData("ping".getBytes());
+		if (GUI.running || join) {
+			socketClient.sendData("ping".getBytes());
 		}
 		SpawnEnemy();
 		started = true;
 
-		
 	}
 
 	@Override
@@ -245,9 +243,9 @@ public class GamePanel extends JPanel implements Runnable, KeyListener,
 			Sprite r = co.next();
 			r.doLogic(delta);
 		}
-		
-		hero.setFrame(moveX * Tilesize, moveY * Tilesize-Tilesize, Tilesize, Tilesize);
-		
+
+		hero.setFrame(moveX * Tilesize, moveY * Tilesize - Tilesize, Tilesize,
+				Tilesize);
 
 		if (leveldata[moveY][moveX] == 9) {
 			lvl++;
@@ -271,10 +269,10 @@ public class GamePanel extends JPanel implements Runnable, KeyListener,
 			moveY = savey;
 			SpawnEnemy();
 		}
-		if(leveldata[moveY][moveX]==42){
+		if (leveldata[moveY][moveX] == 42) {
 			finished = true;
 			stopGame();
-			
+
 		}
 
 		for (int i = 0; i < actors.size(); i++) {
@@ -303,23 +301,23 @@ public class GamePanel extends JPanel implements Runnable, KeyListener,
 				stopGame();
 			}
 		}
-		
-		if(started && mreg==0){
+
+		if (started && mreg == 0) {
 			mreg = System.currentTimeMillis();
 		}
-		
+
 		if (mreg > 0) {
 			if (System.currentTimeMillis() - mreg > 5000) {
 				mana = mana + 5;
 				OoM = false;
 			}
-			if(mana>100){
+			if (mana > 100) {
 				mana = 100;
 				hero.mana = 100;
 				mreg = 0;
 			}
 		}
-		
+
 	}
 
 	public void ground() {
@@ -328,37 +326,47 @@ public class GamePanel extends JPanel implements Runnable, KeyListener,
 				posy = row;
 				posx = col;
 				if (leveldata[row][col] == 0) {
-					ground = new Tile(floor, posx * Tilesize, posy * Tilesize, 1, this);
+					ground = new Tile(floor, posx * Tilesize, posy * Tilesize,
+							1, this);
 					enviroment.add(ground);
-				}else if (leveldata[row][col] == 1) {
-					wl = new TileBlock(wall, posx * Tilesize, posy * Tilesize, 0, this);
+				} else if (leveldata[row][col] == 1) {
+					wl = new TileBlock(wall, posx * Tilesize, posy * Tilesize,
+							0, this);
 					collision.add(wl);
-				}else if (leveldata[row][col] == 2) {
-					ps = new Tile(pstart, posx * Tilesize, posy * Tilesize, 0, this);
+				} else if (leveldata[row][col] == 2) {
+					ps = new Tile(pstart, posx * Tilesize, posy * Tilesize, 0,
+							this);
 					enviroment.add(ps);
-				}else if (leveldata[row][col] == 3) {
-					ground = new Tile(floor, posx * Tilesize, posy * Tilesize, 1, this);
+				} else if (leveldata[row][col] == 3) {
+					ground = new Tile(floor, posx * Tilesize, posy * Tilesize,
+							1, this);
 					enviroment.add(ground);
-				}else if (leveldata[row][col] == 4) {
-					wt = new TileBlock(water, posx * Tilesize, posy * Tilesize, 500, this);
+				} else if (leveldata[row][col] == 4) {
+					wt = new TileBlock(water, posx * Tilesize, posy * Tilesize,
+							500, this);
 					collision.add(wt);
-				}else if (leveldata[row][col] == 7) {
-					ground = new Tile(floor, posx * Tilesize, posy * Tilesize, 0, this);
+				} else if (leveldata[row][col] == 7) {
+					ground = new Tile(floor, posx * Tilesize, posy * Tilesize,
+							0, this);
 					enviroment.add(ground);
 					savex = col;
 					savey = row;
-				}else if (leveldata[row][col] == 8) {
-					ps = new Tile(pstart, posx * Tilesize, posy * Tilesize, 0, this);
+				} else if (leveldata[row][col] == 8) {
+					ps = new Tile(pstart, posx * Tilesize, posy * Tilesize, 0,
+							this);
 					enviroment.add(ps);
-				}else if (leveldata[row][col] == 9) {
-					ps = new Tile(pstart, posx * Tilesize, posy * Tilesize, 0, this);
+				} else if (leveldata[row][col] == 9) {
+					ps = new Tile(pstart, posx * Tilesize, posy * Tilesize, 0,
+							this);
 					enviroment.add(ps);
-				}else if(leveldata[row][col] == 42){
-					ex = new Tile(exit, posx*Tilesize, posy*Tilesize, 1, this);
+				} else if (leveldata[row][col] == 42) {
+					ex = new Tile(exit, posx * Tilesize, posy * Tilesize, 1,
+							this);
 					enviroment.add(ex);
 				}
 				if (leveldata[row][col] == 2 && lvl > 1) {
-					ground = new Tile(floor, posx * Tilesize, posy * Tilesize, 1, this);
+					ground = new Tile(floor, posx * Tilesize, posy * Tilesize,
+							1, this);
 					enviroment.add(ground);
 				}
 			}
@@ -373,7 +381,8 @@ public class GamePanel extends JPanel implements Runnable, KeyListener,
 					moveEX = col;
 					moveEY = row;
 					BufferedImage[] enemy = loadPics("pics/Enemy.png", 1);
-					ene = new Enemy(enemy, Tilesize * moveEX, Tilesize * moveEY, 100, this);
+					ene = new Enemy(enemy, Tilesize * moveEX,
+							Tilesize * moveEY, 100, this);
 					actors.add(ene);
 
 				}
@@ -387,28 +396,30 @@ public class GamePanel extends JPanel implements Runnable, KeyListener,
 				if (leveldata[row][col] == 2) {
 					moveY = row;
 					moveX = col;
-					BufferedImage[] player = loadPics("pics/player.png", 1);
-					hero = new Player(player, Tilesize * moveX, (moveY * Tilesize), 100, this);
+					BufferedImage[] player = loadPics("pics/player.png", 12);
+					hero = new Player(player, Tilesize * moveX,
+							(moveY * Tilesize), 100, this);
 					actors.add(hero);
+					hero.setLoop(0, 0);
 				}
 			}
 		}
 	}
 
 	private void createBolt() {
-		
-		if (dir == 1) {				//hoch
+
+		if (dir == 1) { // hoch
 			x = hero.getX();
 			y = hero.getY() - 8;
-		} else if (dir == 2) {		//links
+		} else if (dir == 2) { // links
 			x = hero.getX() - 8;
-			y = hero.getY() +Tilesize;
-		} else if (dir == 3) {		//runter
+			y = hero.getY() + Tilesize;
+		} else if (dir == 3) { // runter
 			x = hero.getX();
-			y = hero.getY() +24;
-		} else if (dir == 4) {		//rechts
+			y = hero.getY() + 24;
+		} else if (dir == 4) { // rechts
 			x = hero.getX() + 8;
-			y = hero.getY() +Tilesize;
+			y = hero.getY() + Tilesize;
 		}
 
 		BufferedImage[] Bolt = loadPics("pics/Bolt.png", 3);
@@ -422,10 +433,12 @@ public class GamePanel extends JPanel implements Runnable, KeyListener,
 	private void startGame() {
 		read();
 		if (status) {
-			if(GUI.running || join){
-				socketClient = new GameClient(this, JOptionPane.showInputDialog("Please enter the IP: "));
+			if (GUI.running || join) {
+				socketClient = new GameClient(this,
+						JOptionPane.showInputDialog("Please enter the IP: "));
 				socketClient.start();
-				this.Username = JOptionPane.showInputDialog("Please enter your Playername"); 
+				this.Username = JOptionPane
+						.showInputDialog("Please enter your Playername");
 			}
 			doInitializations();
 			System.out.println("Start");
@@ -448,13 +461,10 @@ public class GamePanel extends JPanel implements Runnable, KeyListener,
 		soundlib.stopLoopingSound();
 	}
 
-
-
-
 	private void checkKeys() {
 
 		if (up) {
-			
+
 			oldY = moveY;
 			oldX = moveX;
 
@@ -467,7 +477,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener,
 		}
 
 		if (down) {
-			
+
 			oldY = moveY;
 			oldX = moveX;
 
@@ -480,7 +490,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener,
 		}
 
 		if (left) {
-			
+
 			oldY = moveY;
 			oldX = moveX;
 
@@ -493,7 +503,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener,
 		}
 
 		if (right) {
-			
+
 			oldY = moveY;
 			oldX = moveX;
 
@@ -516,20 +526,20 @@ public class GamePanel extends JPanel implements Runnable, KeyListener,
 	@Override
 	protected void paintComponent(Graphics g) {
 		super.paintComponent(g);
-		if(started){
+		if (started) {
 			g.setColor(Color.white);
-			g.fillRect(0, Height, Width, frame.getHeight()-Height);
+			g.fillRect(0, Height, Width, frame.getHeight() - Height);
 			g.setColor(Color.red);
-			g.drawString("HP: "+(Math.round(phealth)*100/130), 2, 253);
+			g.drawString("HP: " + (Math.round(phealth) * 100 / 130), 2, 253);
 			g.setColor(Color.blue);
-			g.drawString("Mana: "+mana, 50, 253);
+			g.drawString("Mana: " + mana, 50, 253);
 		}
 
-		if(dead) {
+		if (dead) {
 			g.setColor(Color.red);
 			g.drawString(gameov, 20, Height / 2);
 		}
-		if(finished){
+		if (finished) {
 			g.setColor(Color.red);
 			g.drawString(finish, 40, Height / 2);
 			repaint();
@@ -538,7 +548,8 @@ public class GamePanel extends JPanel implements Runnable, KeyListener,
 			return;
 		}
 
-		for (ListIterator<Enviroment> ev = painter2.listIterator(); ev.hasNext();) {
+		for (ListIterator<Enviroment> ev = painter2.listIterator(); ev
+				.hasNext();) {
 			Enviroment e = ev.next();
 			e.drawObjects(g);
 		}
@@ -618,21 +629,25 @@ public class GamePanel extends JPanel implements Runnable, KeyListener,
 			if (e.getKeyCode() == KeyEvent.VK_UP) {
 				up = true;
 				dir = 1;
+				hero.setLoop(0, 2);
 			}
 
 			if (e.getKeyCode() == KeyEvent.VK_DOWN) {
 				down = true;
 				dir = 3;
+				hero.setLoop(6, 8);
 			}
 
 			if (e.getKeyCode() == KeyEvent.VK_LEFT) {
 				left = true;
 				dir = 2;
+				hero.setLoop(9, 11);
 			}
 
 			if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
 				right = true;
 				dir = 4;
+				hero.setLoop(3, 5);
 			}
 		}
 	}
@@ -640,96 +655,101 @@ public class GamePanel extends JPanel implements Runnable, KeyListener,
 	@Override
 	public void keyReleased(KeyEvent e) {
 
-			if (e.getKeyCode() == KeyEvent.VK_UP) {
-				up = false;
-			}
+		if (e.getKeyCode() == KeyEvent.VK_UP) {
+			hero.setLoop(0, 0);
+			up = false;
+		}
 
-			if (e.getKeyCode() == KeyEvent.VK_DOWN) {
-				down = false;
-			}
+		if (e.getKeyCode() == KeyEvent.VK_DOWN) {
+			hero.setLoop(6, 6);
+			down = false;			
+		}
 
-			if (e.getKeyCode() == KeyEvent.VK_LEFT) {
-				left = false;
-			}
+		if (e.getKeyCode() == KeyEvent.VK_LEFT) {
+			hero.setLoop(9, 9);
+			left = false;			
+		}
 
-			if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
-				right = false;
-			}
+		if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
+			hero.setLoop(3, 3);
+			right = false;
+		}
 
-			if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
-				if (isStarted()) {
-					stopGame();
-				}
+		if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+			if (isStarted()) {
+				stopGame();
 			}
-			if (e.getKeyCode() == KeyEvent.VK_F) {
-				if (!dead) {
-					if(!OoM){
-						if (dir != 0) {
-							createBolt();
-						}
+		}
+		if (e.getKeyCode() == KeyEvent.VK_F) {
+			if (!dead) {
+				if (!OoM) {
+					if (dir != 0) {
+						createBolt();
 					}
 				}
 			}
+		}
 	}
 
 	@SuppressWarnings("resource")
 	public void read() {
-		try{
-		String sTemp;
-		String rest = null;
-		int i, j;
-		leveldata = new int[Height/Tilesize][Width/Tilesize];
-		switch (lvl) {
-		case 1: 
-			rest = "lvl1.level";
-			break;
-		case 2: 
-			rest = "lvl2.level";
-			break;
-		case 3: 
-			rest = "lvl3.level";
-			break;
-		default:
-			System.out.println("Level existiert nicht");
-			frame.dispose();
-			break;
-		}		
-		BufferedReader oReader = new BufferedReader(
-				new InputStreamReader(
-						new FileInputStream(new File("res/lvl/"+rest)))); // Zeile für
-															// Zeile
-															// einlesen
-
-		i = 0;
-
-		while ((sTemp = oReader.readLine())!= null) {
-
-			// Zeile in Einzelteile zerlegen (wir trennen durch ;
-
-			java.util.StringTokenizer stWerte = new StringTokenizer(sTemp, ";");
-
-			j = 0;
-
-			// Nun eintragen in den Array. Es wird nicht überprüft, ob
-			// die Grenzen überschritten werden!
-
-			while (stWerte.hasMoreTokens()) {
-
-				leveldata[i][j] = Integer.parseInt(stWerte.nextToken());
-				j++;
+		try {
+			String sTemp;
+			String rest = null;
+			int i, j;
+			leveldata = new int[Height / Tilesize][Width / Tilesize];
+			switch (lvl) {
+			case 1:
+				rest = "lvl1.level";
+				break;
+			case 2:
+				rest = "lvl2.level";
+				break;
+			case 3:
+				rest = "lvl3.level";
+				break;
+			default:
+				System.out.println("Level existiert nicht");
+				frame.dispose();
+				break;
 			}
-			i++;
+			BufferedReader oReader = new BufferedReader(new InputStreamReader(
+					new FileInputStream(new File("res/lvl/" + rest)))); // Zeile
+																		// für
+			// Zeile
+			// einlesen
+
+			i = 0;
+
+			while ((sTemp = oReader.readLine()) != null) {
+
+				// Zeile in Einzelteile zerlegen (wir trennen durch ;
+
+				java.util.StringTokenizer stWerte = new StringTokenizer(sTemp,
+						";");
+
+				j = 0;
+
+				// Nun eintragen in den Array. Es wird nicht überprüft, ob
+				// die Grenzen überschritten werden!
+
+				while (stWerte.hasMoreTokens()) {
+
+					leveldata[i][j] = Integer.parseInt(stWerte.nextToken());
+					j++;
+				}
+				i++;
+			}
+			status = true;
+		} catch (FileNotFoundException e) {
+
+			e.printStackTrace(); // Fehler ausdrucken
+
+		} catch (IOException e) {
+
+			e.printStackTrace(); // Fehler ausdrucken
+
 		}
-		status = true;
-	} catch (FileNotFoundException e) {
-
-		e.printStackTrace(); // Fehler ausdrucken
-
-	} catch (IOException e) {
-
-		e.printStackTrace(); // Fehler ausdrucken
-
-	}
 	}
 
 	@Override
