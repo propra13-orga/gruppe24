@@ -31,12 +31,12 @@ public class GameClient extends Thread {
 			byte[] data = new byte[1024];
 			DatagramPacket packet = new DatagramPacket(data, data.length);
 			try {
-				this.socket.receive(packet);
+				socket.receive(packet);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 			String message = new String(packet.getData());
-			System.out.println("SERVER > " + message);
+			System.out.println("SERVER > " + message.trim());
 		}
 	}
 

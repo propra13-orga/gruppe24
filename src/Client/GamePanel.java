@@ -10,8 +10,7 @@ import javax.swing.*;
 import java.util.*;
 import Server.*;
 
-public class GamePanel extends JPanel implements Runnable, KeyListener,
-		ActionListener {
+public class GamePanel extends JPanel implements Runnable, KeyListener, ActionListener {
 
 	private static final long serialVersionUID = 1L;
 	private JButton b0;
@@ -86,6 +85,10 @@ public class GamePanel extends JPanel implements Runnable, KeyListener,
 	BufferedImage[] pstart = loadPics("pics/pstart.png", 1);
 	BufferedImage[] water = loadPics("pics/water.gif", 2);
 	BufferedImage[] exit = loadPics("pics/exit.png", 1);
+	BufferedImage[] player = loadPics("pics/player.png", 12);
+	BufferedImage[] enemy = loadPics("pics/Enemy.png", 1);
+
+
 
 	private GameClient socketClient;
 
@@ -158,8 +161,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener,
 	}
 
 	private synchronized void TRun() {
-		Thread th = new Thread(this);
-		th.start();
+		new Thread(this).start();
 	}
 
 	private void doInitializations() {
@@ -203,7 +205,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener,
 			repaint();
 
 			try {
-				Thread.sleep(70);
+				Thread.sleep(75);
 			} catch (InterruptedException e) {
 			}
 
@@ -380,7 +382,6 @@ public class GamePanel extends JPanel implements Runnable, KeyListener,
 				if (leveldata[row][col] == 3) {
 					moveEX = col;
 					moveEY = row;
-					BufferedImage[] enemy = loadPics("pics/Enemy.png", 1);
 					ene = new Enemy(enemy, Tilesize * moveEX,
 							Tilesize * moveEY, 100, this);
 					actors.add(ene);
@@ -396,7 +397,6 @@ public class GamePanel extends JPanel implements Runnable, KeyListener,
 				if (leveldata[row][col] == 2) {
 					moveY = row;
 					moveX = col;
-					BufferedImage[] player = loadPics("pics/player.png", 12);
 					hero = new Player(player, Tilesize * moveX,
 							(moveY * Tilesize), 100, this);
 					actors.add(hero);
@@ -434,11 +434,9 @@ public class GamePanel extends JPanel implements Runnable, KeyListener,
 		read();
 		if (status) {
 			if (GUI.running || join) {
-				socketClient = new GameClient(this,
-						JOptionPane.showInputDialog("Please enter the IP: "));
+				socketClient = new GameClient(this, JOptionPane.showInputDialog("Please enter the IP: "));
 				socketClient.start();
-				this.Username = JOptionPane
-						.showInputDialog("Please enter your Playername");
+				//this.Username = JOptionPane.showInputDialog("Please enter your Playername");
 			}
 			doInitializations();
 			System.out.println("Start");
@@ -450,7 +448,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener,
 		}
 	}
 
-	private void stopGame() {
+	public void stopGame() {
 		b0.setVisible(true);
 		b1.setVisible(true);
 		b2.setVisible(true);
@@ -630,24 +628,36 @@ public class GamePanel extends JPanel implements Runnable, KeyListener,
 				up = true;
 				dir = 1;
 				hero.setLoop(0, 2);
+				down = false;
+				left = false;
+				right = false;
 			}
 
 			if (e.getKeyCode() == KeyEvent.VK_DOWN) {
 				down = true;
 				dir = 3;
 				hero.setLoop(6, 8);
+				up = false;
+				left = false;
+				right = false;
 			}
 
 			if (e.getKeyCode() == KeyEvent.VK_LEFT) {
 				left = true;
 				dir = 2;
 				hero.setLoop(9, 11);
+				down = false;
+				up = false;
+				right = false;
 			}
 
 			if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
 				right = true;
 				dir = 4;
 				hero.setLoop(3, 5);
+				down = false;
+				left = false;
+				up = false;
 			}
 		}
 	}
@@ -656,22 +666,22 @@ public class GamePanel extends JPanel implements Runnable, KeyListener,
 	public void keyReleased(KeyEvent e) {
 
 		if (e.getKeyCode() == KeyEvent.VK_UP) {
-			hero.setLoop(0, 0);
+			//hero.setLoop(0, 0);
 			up = false;
 		}
 
 		if (e.getKeyCode() == KeyEvent.VK_DOWN) {
-			hero.setLoop(6, 6);
+			//hero.setLoop(6, 6);
 			down = false;			
 		}
 
 		if (e.getKeyCode() == KeyEvent.VK_LEFT) {
-			hero.setLoop(9, 9);
+			//hero.setLoop(9, 9);
 			left = false;			
 		}
 
 		if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
-			hero.setLoop(3, 3);
+			//hero.setLoop(3, 3);
 			right = false;
 		}
 

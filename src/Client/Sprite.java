@@ -8,13 +8,13 @@ import java.awt.image.BufferedImage;
 public abstract class Sprite extends Rectangle2D.Double implements Drawable, Movable{
 
 	private static final long serialVersionUID = 1L;
-	long delay;			//Instanzvariable zum umschalten zwischen den Bildern des Image-Arrays in millisekunden
+	long delay;				//Instanzvariable zum umschalten zwischen den Bildern des Image-Arrays in millisekunden
 	long animation = 0;
-	GamePanel parent;	//Referenz auf GamePanel
+	GamePanel parent;		//Referenz auf GamePanel
 	BufferedImage[] pics;	//Image-Array zum speicher unserer Animation in Einzelbildern
-	int currentpic = 0; //Zähler für das aktuelle anzuzeigende Bild
+	int currentpic = 0; 	//Zähler für das aktuelle anzuzeigende Bild
 	
-	protected double dmg; //Instanzvariable für die horizontale Veränderung
+	protected double dmg; 	//Instanzvariable für die horizontale Veränderung
 	protected double dx;
 	protected double dy;
 	protected double health = 100;

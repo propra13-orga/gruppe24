@@ -19,7 +19,7 @@ public class GUI extends JPanel implements Runnable {
 	private JButton b1;
 	
 	private GameServer socketServer;
-	private GamePanel game;
+	private GamePanel parent;
 	
 	JFrame console;
 	
@@ -41,6 +41,7 @@ public class GUI extends JPanel implements Runnable {
 			public void actionPerformed(ActionEvent arg0) {
 				b0.setVisible(true);
 				b1.setVisible(true);
+				b0.setEnabled(false);
 				console.pack();
 				console.requestFocus();
 				startServer();
@@ -50,8 +51,8 @@ public class GUI extends JPanel implements Runnable {
 		b1.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				console.dispose();
 				stopServer();
+				
 			}
 		});
 
@@ -64,9 +65,10 @@ public class GUI extends JPanel implements Runnable {
 	}
 
 	private synchronized void startServer() {
-		Thread th = new Thread(this);
-		th.start();
-		socketServer = new GameServer(game);
+		//Thread th = new Thread(this);
+		//th.start();
+		new Thread(this).start();
+		socketServer = new GameServer(parent);
 		socketServer.start();
 		running = true;
 		
@@ -74,7 +76,10 @@ public class GUI extends JPanel implements Runnable {
 	
 	private synchronized void stopServer(){
 		socketServer.interrupt();
-		running = false;		
+		running = false;	
+		console.dispose();
+		parent.stopGame();
+
 	}
 
 	@Override
