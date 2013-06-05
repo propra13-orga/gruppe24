@@ -408,18 +408,48 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 
 	private void createBolt() {
 
+		int x1,y1;
+		
 		if (dir == 1) { // hoch
 			x = hero.getX();
 			y = hero.getY() - 8;
+			x1 = (int) (x/Tilesize);
+			y1 = (int) ((y+8)/Tilesize);
+			System.out.print(x1 +" ");
+			System.out.println(y1);
+			if(leveldata[x1][y1-1] == 1){
+				return;
+			}
 		} else if (dir == 2) { // links
 			x = hero.getX() - 8;
 			y = hero.getY() + Tilesize;
+			x1 = (int) ((x+8)/Tilesize);
+			y1 = (int) ((y)/Tilesize);
+			System.out.print(x1 +" ");
+			System.out.println(y1);
+			if(leveldata[x1-1][y1] == 1){
+				return;
+			}
 		} else if (dir == 3) { // runter
 			x = hero.getX();
 			y = hero.getY() + 24;
+			x1 = (int) (x/Tilesize);
+			y1 = (int) ((y-24)/Tilesize);
+			System.out.print(x1 +" ");
+			System.out.println(y1);
+			if(leveldata[x1][y1+1] == 1){
+				return;
+			}
 		} else if (dir == 4) { // rechts
 			x = hero.getX() + 8;
 			y = hero.getY() + Tilesize;
+			x1 = (int) ((x-8)/Tilesize);
+			y1 = (int) ((y)/Tilesize);
+			System.out.print(x1 +" ");
+			System.out.println(y1);
+			if(leveldata[x1+1][y1] == 1){
+				return;
+			}
 		}
 
 		BufferedImage[] Bolt = loadPics("pics/Bolt.png", 3);
