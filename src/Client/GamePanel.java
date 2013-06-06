@@ -414,7 +414,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 			x = hero.getX();
 			y = hero.getY() - 8;
 			x1 = (int) (x/Tilesize);
-			y1 = (int) ((y+8)/Tilesize);
+			y1 = (int) ((y+8)/Tilesize)+1;
 			System.out.print(x1 +" ");
 			System.out.println(y1);
 			if(leveldata[x1][y1-1] == 1){
@@ -424,7 +424,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 			x = hero.getX() - 8;
 			y = hero.getY() + Tilesize;
 			x1 = (int) ((x+8)/Tilesize);
-			y1 = (int) ((y)/Tilesize);
+			y1 = (int) ((y-Tilesize)/Tilesize)+1;
 			System.out.print(x1 +" ");
 			System.out.println(y1);
 			if(leveldata[x1-1][y1] == 1){
@@ -434,7 +434,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 			x = hero.getX();
 			y = hero.getY() + 24;
 			x1 = (int) (x/Tilesize);
-			y1 = (int) ((y-24)/Tilesize);
+			y1 = (int) ((y-24)/Tilesize)+1;
 			System.out.print(x1 +" ");
 			System.out.println(y1);
 			if(leveldata[x1][y1+1] == 1){
@@ -444,7 +444,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 			x = hero.getX() + 8;
 			y = hero.getY() + Tilesize;
 			x1 = (int) ((x-8)/Tilesize);
-			y1 = (int) ((y)/Tilesize);
+			y1 = (int) ((y-Tilesize)/Tilesize)+1;
 			System.out.print(x1 +" ");
 			System.out.println(y1);
 			if(leveldata[x1+1][y1] == 1){
