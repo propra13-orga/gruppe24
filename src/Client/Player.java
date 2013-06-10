@@ -9,7 +9,7 @@ import javax.imageio.ImageIO;
 public class Player extends Sprite{
 
 	private static final long serialVersionUID = 1L;
-	private String username;//
+	public String Username;
 
 	public Player(BufferedImage[] i, double x, double y, long delay, GamePanel p) {//
 		super(i, x, y, delay, p);	
@@ -62,6 +62,6 @@ public class Player extends Sprite{
 		return false;
 	}
     public String getUsername() {//
-        return this.username;//
+        return this.Username;//
     }//
 }
