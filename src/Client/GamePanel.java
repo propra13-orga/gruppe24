@@ -824,6 +824,21 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 			case 4:
 				rest = "lvl4.level";
 				break;
+			case 5:
+				rest = "lvl5.level";
+				break;
+			case 6:
+				rest = "lvl6.level";
+				break;
+			case 7:
+				rest = "lvl7.level";
+				break;
+			case 8:
+				rest = "lvl8.level";
+				break;
+			case 9:
+				rest = "lvl9.level";
+				break;
 			default:
 				System.out.println("Level existiert nicht");
 				frame.dispose();
