@@ -13,24 +13,29 @@ public class MagicBolt extends Sprite {
 	boolean bRight = false;
 
 	Rectangle2D.Double target;
+	EnemyBoss bs;
+	GamePanel gp;
 
 	public MagicBolt(BufferedImage[] i, double x, double y, long delay,
-			GamePanel p) {
+			GamePanel p, boolean b) {
 		super(i, x, y, delay, p);
 		this.x = x;
 		this.y = y;
-
-		if (parent.dir == 1) {
-			bUp = true;
-		}
-		if (parent.dir == 3) {
+		if(!b){
+			if (parent.dir == 1) {
+				bUp = true;
+			}
+			if (parent.dir == 3) {
+				bDown = true;
+			}
+			if (parent.dir == 2) {
+				bLeft = true;
+			}
+			if (parent.dir == 4) {
+				bRight = true;
+			}
+		}else{
 			bDown = true;
-		}
-		if (parent.dir == 2) {
-			bLeft = true;
-		}
-		if (parent.dir == 4) {
-			bRight = true;
 		}
 	}
 
@@ -74,10 +79,25 @@ public class MagicBolt extends Sprite {
 				// parent.createExplosion((int)getX(),(int)getY());
 				// parent.createExplosion((int)s.getX(),(int)s.getY());
 				remove = true;
-				if(s.calcDmg(50)==true){
+				if(s.calcDmg(50, false)==true){
 					s.remove = true;
+					parent.EnemyCounter--;
+					parent.Coins = parent.Coins+2;
 				}else
-					s.calcDmg(50);
+					s.calcDmg(50, false);
+				
+				return true;
+			}
+			if (s instanceof EnemyBoss) {
+				// parent.createExplosion((int)getX(),(int)getY());
+				// parent.createExplosion((int)s.getX(),(int)s.getY());
+				remove = true;
+				if(s.calcDmg(50, true)==true){
+					s.remove = true;
+					parent.finished = true;
+					parent.stopGame();
+				}else
+					s.calcDmg(50, true);
 				
 				return true;
 			}

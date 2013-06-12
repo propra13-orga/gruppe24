@@ -23,6 +23,7 @@ public class Player extends Sprite{
 		
 		NPC.getCoor((int)this.x, (int)this.y);
 		Enemy.getCoor((int)this.x, (int)this.y);
+		EnemyBoss.getCoor((int)this.x, (int)this.y);
 
 	}
 	
@@ -59,7 +60,19 @@ public class Player extends Sprite{
 					this.calcDmgPlayer();				
 				return true;
 			}
+			
+			if (s instanceof MagicBolt) {
+				parent.phealth=this.phealth;
+				if(this.calcDmgPlayer()==true){
+					remove = true;
+					parent.dead = true;
+				}else
+					this.calcDmgPlayer();				
+				return true;
+			}
 		}
+		
+
 		
 		return false;
 	}

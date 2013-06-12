@@ -5,10 +5,12 @@ import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.URL;
+import java.util.StringTokenizer;
+import java.util.Vector;
+import java.util.ListIterator;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 
-import java.util.*;
 import Server.*;
 
 public class GamePanel extends JPanel implements Runnable, KeyListener, ActionListener {
@@ -25,13 +27,17 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 	long last = 0;
 	long gameover = 0;
 	long mreg;
+	long l1 = System.currentTimeMillis() ;
+	long l2 = System.currentTimeMillis();
 
 	Player hero;
 	Enemy ene;
 	NPC npc;
+	EnemyBoss bs;
 	Tile ground;
 	Tile ps;
 	Tile ex;
+	Tile wlb;
 	TileBlock wl;
 	TileBlock wt;
 	Vector<Sprite> actors;
@@ -45,6 +51,8 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 
 	int[][] leveldata;
 	int lvl = 1;
+	int EnemyCounter = 0;
+	int Coins = 0;
 
 	SoundLib soundlib;
 
@@ -65,6 +73,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 	boolean OoM = false;
 	boolean ServerRunning = false;
 	boolean join = false;
+	boolean boss = false;
 
 	int dis;
 	int moveX;
@@ -94,11 +103,14 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 	BufferedImage[] player = loadPics("pics/player.png", 12);
 	BufferedImage[] enemy = loadPics("pics/Enemy.png", 1);
 	BufferedImage[] np = loadPics("pics/npc.png", 1);
+	BufferedImage[] BS = loadPics("pics/boss.png", 1);
+	BufferedImage[] Bolt = loadPics("pics/Bolt.png", 3);
 
 
 	Thread th;
 	JTextArea npc1 = new JTextArea(5,20);
-
+	
+	
 
 	private GameClient socketClient;
 
@@ -279,6 +291,28 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 		hero.setFrame(moveX * Tilesize, moveY * Tilesize - Tilesize, Tilesize,
 				Tilesize);
 
+		if(boss && bs.locked){
+			if(bs.getX()+bs.getWidth()/2<hero.getX()&& bs.getX()+bs.getWidth()!= getWidth()-16){
+					bs.MoveXEr();
+			}
+			if(bs.getX()+bs.getWidth()/2> hero.getX()+hero.getWidth()){
+					bs.MoveXEl();
+			}
+			if(hero.intersects(bs.t)){	
+				if(System.currentTimeMillis()-l1 > 1000){
+					createBoltBoss(bs.getX(), bs.getY());
+					l1 = System.currentTimeMillis();
+				}		
+			}			
+			if(hero.intersects(bs.t2)){
+				if(System.currentTimeMillis()-l2 > 800){
+					createBoltBoss(bs.getX()+bs.getWidth()-8, bs.getY());
+					l2 = System.currentTimeMillis();
+				}
+			}
+			
+		}	
+		
 		if (leveldata[moveY][moveX] == 9) {
 			lvl++;
 			read();
@@ -288,6 +322,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 			ground();
 			SpawnPlayer();
 			SpawnEnemy();
+			SpawnBoss();
 		}
 		if (leveldata[moveY][moveX] == 8) {
 			lvl--;
@@ -366,6 +401,10 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 					wl = new TileBlock(wall, posx * Tilesize, posy * Tilesize,
 							0, this);
 					collision.add(wl);
+				} else if (rc == 11) {
+					wlb = new Tile(wall, posx * Tilesize, posy * Tilesize,
+							0, this);
+					enviroment.add(wlb);
 				} else if (rc == 2) {
 					ps = new Tile(pstart, posx * Tilesize, posy * Tilesize, 0,
 							this);
@@ -396,6 +435,10 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 					ground = new Tile(floor, posx * Tilesize, posy * Tilesize,
 							1, this);
 					enviroment.add(ground);
+				} else if (rc == 33) {
+					ground = new Tile(floor, posx * Tilesize, posy * Tilesize,
+							1, this);
+					enviroment.add(ground);
 				}else if (rc == 42) {
 					ex = new Tile(exit, posx * Tilesize, posy * Tilesize, 1,
 							this);
@@ -420,7 +463,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 					ene = new Enemy(enemy, Tilesize * moveEX,
 							Tilesize * moveEY, 100, this);
 					actors.add(ene);
-
+					EnemyCounter++;
 				}
 			}
 		}
@@ -454,8 +497,34 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 			}
 		}
 	}
+	
+	public void SpawnBoss() {
+		for (int row = 0; row < leveldata.length; row++) {
+			for (int col = 0; col < leveldata[row].length; col++) {
+				if (leveldata[row][col] == 33) {
+					moveEX = col;
+					moveEY = row;
+					bs = new EnemyBoss(BS, Tilesize * moveEX-Tilesize, Tilesize * moveEY-Tilesize, 100, this);
+					actors.add(bs);
 
-	private void createBolt() {
+				}
+			}
+		}
+	}
+	
+	public void createBoltBoss(double xb, double yb){	
+		double x;
+		double y;
+		x=xb;		
+		y=yb+33;
+		MagicBolt mbb = new MagicBolt(Bolt, x, y, 100, this, true);
+
+		ListIterator<Sprite> it = actors.listIterator();
+		it.add(mbb);
+	}
+	
+
+	public void createBolt() {
 
 		int x1,y1;
 		
@@ -500,9 +569,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 				return;
 			}
 		}
-
-		BufferedImage[] Bolt = loadPics("pics/Bolt.png", 3);
-		MagicBolt mb = new MagicBolt(Bolt, x, y, 100, this);
+		MagicBolt mb = new MagicBolt(Bolt, x, y, 100, this, false);
 
 		ListIterator<Sprite> it = actors.listIterator();
 		it.add(mb);
@@ -534,6 +601,8 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 		setStarted(false);
 		lvl = 1;
 		join = false;
+		phealth = 130;
+		Coins = 0;
 		soundlib.stopLoopingSound();
 	}
 
@@ -544,9 +613,9 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 			oldY = moveY;
 			oldX = moveX;
 
-			if (leveldata[moveY - 1][moveX] == 1) {
+			if (leveldata[moveY - 1][moveX] == 1|| leveldata[moveY - 1][moveX] == 11) {
 				moveY = oldY;
-			} else if (leveldata[moveY - 1][moveX] == 4 || leveldata[moveY - 1][moveX] == 30) {
+			} else if (leveldata[moveY - 1][moveX] == 4 || leveldata[moveY - 1][moveX] == 30|| leveldata[moveY-1][moveX] == 99) {
 				moveY = oldY;
 			} else
 				moveY--;
@@ -557,9 +626,9 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 			oldY = moveY;
 			oldX = moveX;
 
-			if (leveldata[moveY + 1][moveX] == 1) {
+			if (leveldata[moveY + 1][moveX] == 1|| leveldata[moveY + 1][moveX] == 11) {
 				moveY = oldY;
-			} else if (leveldata[moveY + 1][moveX] == 4|| leveldata[moveY + 1][moveX] == 30) {
+			} else if (leveldata[moveY + 1][moveX] == 4|| leveldata[moveY + 1][moveX] == 30|| leveldata[moveY+1][moveX] == 99) {
 				moveY = oldY;
 			} else
 				moveY++;
@@ -570,9 +639,9 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 			oldY = moveY;
 			oldX = moveX;
 
-			if (leveldata[moveY][moveX - 1] == 1) {
+			if (leveldata[moveY][moveX - 1] == 1|| leveldata[moveY][moveX-1] == 11) {
 				moveX = oldX;
-			} else if (leveldata[moveY][moveX - 1] == 4|| leveldata[moveY][moveX-1] == 30) {
+			} else if (leveldata[moveY][moveX - 1] == 4|| leveldata[moveY][moveX-1] == 30|| leveldata[moveY][moveX-1] == 99) {
 				moveX = oldX;
 			} else
 				moveX--;
@@ -583,9 +652,9 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 			oldY = moveY;
 			oldX = moveX;
 
-			if (leveldata[moveY][moveX + 1] == 1) {
+			if (leveldata[moveY][moveX + 1] == 1|| leveldata[moveY][moveX+1] == 11) {
 				moveX = oldX;
-			} else if (leveldata[moveY][moveX + 1] == 4|| leveldata[moveY][moveX+1] == 30) {
+			} else if (leveldata[moveY][moveX + 1] == 4|| leveldata[moveY][moveX+1] == 30|| leveldata[moveY][moveX+1] == 99) {
 				moveX = oldX;
 			} else
 				moveX++;
@@ -609,6 +678,8 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 			g.drawString("HP: " + (Math.round(phealth) * 100 / 130), 2, 253);
 			g.setColor(Color.blue);
 			g.drawString("Mana: " + mana, 50, 253);
+			g.setColor(Color.black);
+			g.drawString("Coins: " + Coins, 120, 253);
 		}
 
 		if (dead) {
@@ -634,7 +705,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 						 "just like you, until... ");
 				break;
 			case 3:
-				npc1.setText("It's dangerous alone outside!");
+				npc1.setText("It's dangerous outside! Take this.");
 				break;
 			}
 			npc1.setVisible(true);
@@ -657,7 +728,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 
 	}
 
-	private BufferedImage[] loadPics(String path, int pics) { // Methode bekommt
+	public BufferedImage[] loadPics(String path, int pics) { // Methode bekommt
 																// Speicherort
 																// und Anzahl
 																// der
@@ -838,6 +909,10 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 				break;
 			case 9:
 				rest = "lvl9.level";
+				break;
+			case 10:
+				rest = "lvlBoss1.level";
+				boss = true;
 				break;
 			default:
 				System.out.println("Level existiert nicht");

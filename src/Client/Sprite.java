@@ -11,6 +11,7 @@ public abstract class Sprite extends Rectangle2D.Double implements Drawable, Mov
 	long delay;				//Instanzvariable zum umschalten zwischen den Bildern des Image-Arrays in millisekunden
 	long animation = 0;
 	GamePanel parent;		//Referenz auf GamePanel
+	EnemyBoss bs;
 	BufferedImage[] pics;	//Image-Array zum speicher unserer Animation in Einzelbildern
 	int currentpic = 0; 	//Zähler für das aktuelle anzuzeigende Bild
 	
@@ -18,6 +19,7 @@ public abstract class Sprite extends Rectangle2D.Double implements Drawable, Mov
 	protected double dx;
 	protected double dy;
 	protected double health = 100;
+	protected double bosshealth = 250;
 	protected double phealth = 130;
 	protected int mana = 100;
         
@@ -79,9 +81,14 @@ public abstract class Sprite extends Rectangle2D.Double implements Drawable, Mov
 		}
 	}
 	
-	public boolean calcDmg(double dmg) {
-		this.health = health - dmg;
-		if(health <= 0){
+	public boolean calcDmg(double dmg, boolean b) {
+		if(b == false){
+			this.health = health - dmg;
+		}
+		if(b == true){
+			this.bosshealth = bosshealth - dmg;
+		}
+		if(health <= 0 || bosshealth <= 0){
 			return true;
 		}else
 			return false;
