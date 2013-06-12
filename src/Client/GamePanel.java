@@ -794,7 +794,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 				}
 			}
 		}
-		if(dis == 1){
+		if(npc.dis == 1){
 			if(e.getKeyCode()== KeyEvent.VK_E){
 				page++;
 				if(page>3)

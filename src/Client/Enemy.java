@@ -7,6 +7,14 @@ public class Enemy extends Sprite {
 	private static final long serialVersionUID = 1L;
 	int oldX;
 	int oldY;
+	
+	double deltaX;
+	double deltaY;
+	int dis;
+	int rn;
+	int rm;
+	static int hx;
+	static int hy;
 
 	public Enemy(BufferedImage[] i, double x, double y, long delay, GamePanel p) {
 		super(i, x, y, delay, p);
@@ -16,19 +24,36 @@ public class Enemy extends Sprite {
 	@Override
 	public void doLogic(long delta) {
 		super.doLogic(delta);
-		if (!parent.dead) {
-			if (getY() > parent.hero.getY()) {
+		
+		deltaX =Math.abs((this.getX()/16)-(hx/16));
+		deltaY =Math.abs(this.getY()/16-hy/16);
+		dis =(int) Math.sqrt((deltaX*deltaX)+(deltaY*deltaY));
+		rn = (int) (Math.random()*9);
+		rm = (int) (Math.random()*15);
+
+		if(dis <= 4){
+			if (!parent.dead) {
+				if (getY() > parent.hero.getY()) {
 				MoveYEh();
-			}
-			if (getY() < parent.hero.getY()) {
+				}
+				if (getY() < parent.hero.getY()) {
 				MoveYEd();
-			}
-			if (getX() > parent.hero.getX()) {
+				}
+				if (getX() > parent.hero.getX()) {
 				MoveXEl();
-			}
-			if (getX() < parent.hero.getX()) {
+				}
+				if (getX() < parent.hero.getX()) {
 				MoveXEr();
+				}
 			}
+		}else if(rn%2 == 0){
+			MoveYEh();
+		}else if(rm%3 == 1){
+			MoveXEl();
+		}else if(rn%2 == 1){
+			MoveYEd();
+		}else if(rm%5 == 0){
+			MoveXEr();
 		}
 	}
 	@SuppressWarnings("static-access")
@@ -97,5 +122,10 @@ public class Enemy extends Sprite {
 
 	public void remove() {
 		this.remove();		
+	}
+	
+	public static void getCoor(int x, int y){
+		hx = x;
+		hy = y;
 	}
 }

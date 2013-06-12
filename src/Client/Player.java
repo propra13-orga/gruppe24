@@ -20,7 +20,9 @@ public class Player extends Sprite{
 	@Override
 	public void doLogic(long delta) {
 		super.doLogic(delta);
-
+		
+		NPC.getCoor((int)this.x, (int)this.y);
+		Enemy.getCoor((int)this.x, (int)this.y);
 
 	}
 	
