@@ -94,6 +94,7 @@ public abstract class Sprite extends Rectangle2D.Double implements Drawable, Mov
 			return false;
 	}
 	
+	
 	public boolean calcDmgPlayer(){
 		this.phealth = phealth - ((130*5)/100);
 		if(this.phealth<0){
@@ -115,6 +116,22 @@ public abstract class Sprite extends Rectangle2D.Double implements Drawable, Mov
 			parent.OoM = true;
 		}
 		parent.mana = this.mana;
+	}
+	
+	public void addMana(int ad){
+		this.mana = mana + ad;
+		if(this.mana>100){
+			this.mana = 100;
+		}
+		parent.mana = this.mana;
+	}
+	
+	public void addHealth(int ad, double h){
+		this.phealth = h + ad;
+		if(this.phealth>130){
+			this.phealth = 130;
+		}
+		parent.phealth = this.phealth;
 	}
 	
     public abstract boolean collidedWith(Sprite s);

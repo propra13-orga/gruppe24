@@ -22,6 +22,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 	private JButton b3;
 
 	JFrame frame;
+	KeyEvent e;
 
 	long delta = 0;
 	long last = 0;
@@ -32,7 +33,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 
 	Player hero;
 	Enemy ene;
-	NPC npc;
+	NPC npc, shopowner;
 	EnemyBoss bs;
 	Tile ground;
 	Tile ps;
@@ -59,8 +60,8 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 	double x;
 	double y;
 	double phealth = 130;
-	double deltaX;
-	double deltaY;
+	double deltaX, deltaY;
+	double deltaXs, deltaYs;
 
 	boolean up;
 	boolean down;
@@ -74,19 +75,15 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 	boolean ServerRunning = false;
 	boolean join = false;
 	boolean boss = false;
+	boolean showtext = false;
 
-	int dis;
-	int moveX;
-	int moveY;
-	int moveEX;
-	int moveEY;
+	int dis, diss;
+	int moveX, moveY;
+	int moveEX, moveEY;
 	int dir = 0;
-	int oldX;
-	int oldY;
-	int posx;
-	int posy;
-	int savex;
-	int savey;
+	int oldX, oldY;
+	int posx, posy;
+	int savex, savey;
 	int mana = 100;
 	int page = 0;
 	static int Tilesize = 16;
@@ -110,6 +107,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 
 	Thread th;
 	JTextArea npc1 = new JTextArea(5,20);
+	JTextArea shop = new JTextArea(5,20);
 	
 	
 
@@ -181,6 +179,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 		frame.setVisible(true);
 		TextBox();
 		add(npc1);
+		add(shop);
 		TRun();
 
 	}
@@ -193,6 +192,14 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 		npc1.setLocation(Width/2-40, Height/2);
 		npc1.setVisible(false);
 		npc1.setEnabled(false);
+		shop.setLineWrap(true);
+		shop.setWrapStyleWord(true);
+		shop.setBackground(Color.black);
+		shop.setForeground(Color.white);
+		shop.setLocation(Width/2, Height/2);
+		shop.setVisible(false);
+		shop.setEnabled(false);
+		
 	}
 	
 	private synchronized void TRun() {
@@ -270,7 +277,13 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 		
 		deltaX =Math.abs((npc.getX()/16)-(hero.getX()/16));
 		deltaY =Math.abs(npc.getY()/16-hero.getY()/16);
+	if(shopowner != null){
+		deltaXs =Math.abs((shopowner.getX()/16)-(hero.getX()/16));
+		deltaYs =Math.abs(shopowner.getY()/16-hero.getY()/16);
+	}
+		
 		dis =(int) Math.sqrt((deltaX*deltaX)+(deltaY*deltaY));
+		diss =(int) Math.sqrt((deltaXs*deltaXs)+(deltaYs*deltaYs));
 		
 		for (ListIterator<Sprite> it = actors.listIterator(); it.hasNext();) {
 			Sprite r = it.next();
@@ -320,9 +333,13 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 			actors.clear();
 			enviroment.clear();
 			collision.clear();
+			painter.clear();
+			painter2.clear();
+			painter3.clear();
 			ground();
 			SpawnPlayer();
 			SpawnEnemy();
+			SpawnNPC();
 			SpawnBoss();
 		}
 		if (leveldata[moveY][moveX] == 8) {
@@ -335,7 +352,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 			SpawnPlayer();
 			moveX = savex;
 			moveY = savey;
-			SpawnEnemy();
+			SpawnNPC();
 		}
 		if (leveldata[moveY][moveX] == 42) {
 			finished = true;
@@ -432,15 +449,11 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 					ps = new Tile(pstart, posx * Tilesize, posy * Tilesize, 0,
 							this);
 					enviroment.add(ps);
-				} else if (rc == 30) {
+				} else if (rc == 30 || rc == 31 || rc ==33) {
 					ground = new Tile(floor, posx * Tilesize, posy * Tilesize,
 							1, this);
 					enviroment.add(ground);
-				} else if (rc == 33) {
-					ground = new Tile(floor, posx * Tilesize, posy * Tilesize,
-							1, this);
-					enviroment.add(ground);
-				}else if (rc == 42) {
+				} else if (rc == 42) {
 					ex = new Tile(exit, posx * Tilesize, posy * Tilesize, 1,
 							this);
 					enviroment.add(ex);
@@ -494,6 +507,11 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 					npc = new NPC(np, Tilesize * moveEX, Tilesize * moveEY-Tilesize, 100, this);
 					actors.add(npc);
 
+				}else if(leveldata[row][col] == 31){
+					moveEX = col;
+					moveEY = row;
+					shopowner = new NPC(np, Tilesize * moveEX, Tilesize * moveEY-Tilesize, 100, this);
+					actors.add(shopowner);
 				}
 			}
 		}
@@ -622,7 +640,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 
 			if (leveldata[moveY - 1][moveX] == 1|| leveldata[moveY - 1][moveX] == 11) {
 				moveY = oldY;
-			} else if (leveldata[moveY - 1][moveX] == 4 || leveldata[moveY - 1][moveX] == 30|| leveldata[moveY-1][moveX] == 99) {
+			} else if (leveldata[moveY - 1][moveX] == 4 || leveldata[moveY - 1][moveX] == 30|| leveldata[moveY-1][moveX] == 31|| leveldata[moveY-1][moveX] == 99) {
 				moveY = oldY;
 			} else
 				moveY--;
@@ -635,7 +653,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 
 			if (leveldata[moveY + 1][moveX] == 1|| leveldata[moveY + 1][moveX] == 11) {
 				moveY = oldY;
-			} else if (leveldata[moveY + 1][moveX] == 4|| leveldata[moveY + 1][moveX] == 30|| leveldata[moveY+1][moveX] == 99) {
+			} else if (leveldata[moveY + 1][moveX] == 4|| leveldata[moveY + 1][moveX] == 30|| leveldata[moveY+1][moveX] == 31|| leveldata[moveY+1][moveX] == 99) {
 				moveY = oldY;
 			} else
 				moveY++;
@@ -648,7 +666,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 
 			if (leveldata[moveY][moveX - 1] == 1|| leveldata[moveY][moveX-1] == 11) {
 				moveX = oldX;
-			} else if (leveldata[moveY][moveX - 1] == 4|| leveldata[moveY][moveX-1] == 30|| leveldata[moveY][moveX-1] == 99) {
+			} else if (leveldata[moveY][moveX - 1] == 4|| leveldata[moveY][moveX-1] == 30|| leveldata[moveY][moveX-1] == 31|| leveldata[moveY][moveX-1] == 99) {
 				moveX = oldX;
 			} else
 				moveX--;
@@ -661,7 +679,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 
 			if (leveldata[moveY][moveX + 1] == 1|| leveldata[moveY][moveX+1] == 11) {
 				moveX = oldX;
-			} else if (leveldata[moveY][moveX + 1] == 4|| leveldata[moveY][moveX+1] == 30|| leveldata[moveY][moveX+1] == 99) {
+			} else if (leveldata[moveY][moveX + 1] == 4|| leveldata[moveY][moveX+1] == 30|| leveldata[moveY][moveX+1] == 31|| leveldata[moveY][moveX+1] == 99) {
 				moveX = oldX;
 			} else
 				moveX++;
@@ -702,7 +720,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 			return;
 		}
 		
-		if(dis==1 && page != 0){
+		if(npc.dis==1 && page != 0){
 			switch(page){
 			case 1:
 				npc1.setText("Hey listen! ");
@@ -718,6 +736,25 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 			npc1.setVisible(true);
 		}else
 			npc1.setVisible(false);
+		if(shopowner != null){
+			if(shopowner.dis==1 && page != 0){
+				switch(page){
+				case 1:
+					shop.setText("What do you wann buy?\n" +
+							"1) Health Potion: 5 Coins\n" +
+							"2) Mana Potion: 7 Coins\n" +
+							"3) Armor: 30 Coins");
+					showtext = true;
+					break;
+				case 2:
+					shop.setText("You dont have enough Coins.");
+				}
+				shop.setVisible(true);
+			}else{
+				shop.setVisible(false);
+				showtext = false;
+			}
+		}
 		
 		for (ListIterator<Enviroment> ev = painter2.listIterator(); ev
 				.hasNext();) {
@@ -872,14 +909,41 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 				}
 			}
 		}
-		if(npc.dis == 1){
-			if(e.getKeyCode()== KeyEvent.VK_E){
-				page++;
-				if(page>3)
-					page=0;
-			}
-		}else
-			page = 0;
+		if(lvl == 1){
+			if(npc.dis == 1 && lvl==1){
+				if(e.getKeyCode()== KeyEvent.VK_E){
+					page++;
+					if(page>3)
+						page=0;
+				}
+			}else
+				page = 0;
+		}
+		if(lvl>1){
+			if(shopowner != null && shopowner.dis == 1){
+				if(e.getKeyCode()==KeyEvent.VK_E){
+					page++;
+					if(page>1)
+						page=0;
+				}
+			}else
+				page = 0;
+		}
+		if(e.getKeyCode() == KeyEvent.VK_1 && this.Coins >=5 && showtext == true){
+			hero.addHealth(25, this.phealth);
+			Coins = Coins - 5;
+			page = 1;
+		}
+		if(e.getKeyCode() == KeyEvent.VK_1 && this.Coins <5 && showtext == true){
+			page = 2;
+		}
+		if(e.getKeyCode() == KeyEvent.VK_2 && this.Coins >=5 && showtext == true){
+			hero.addMana(25);
+			Coins = Coins - 5;
+		}
+		if(e.getKeyCode() == KeyEvent.VK_1 && this.Coins <5 && showtext == true){
+			page = 2;
+		}
 	}
 
 	@SuppressWarnings("resource")

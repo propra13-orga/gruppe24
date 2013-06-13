@@ -1,11 +1,7 @@
 package Client;
 
 import java.awt.image.BufferedImage;
-import java.io.IOException;
 import java.net.InetAddress;
-import java.net.URL;
-
-import javax.imageio.ImageIO;
 
 
 public class PlayerMP extends Player {
