@@ -81,6 +81,7 @@ public class MagicBolt extends Sprite {
 				remove = true;
 				if(s.calcDmg(50, false)==true){
 					s.remove = true;
+					parent.SpawnItem(s.getX(), s.getY());
 					parent.EnemyCounter--;
 					parent.Coins = parent.Coins+2;
 				}else
@@ -92,12 +93,12 @@ public class MagicBolt extends Sprite {
 				// parent.createExplosion((int)getX(),(int)getY());
 				// parent.createExplosion((int)s.getX(),(int)s.getY());
 				remove = true;
-				if(s.calcDmg(50, true)==true){
+				if(s.calcDmg(25, true)==true){
 					s.remove = true;
 					parent.finished = true;
 					parent.stopGame();
 				}else
-					s.calcDmg(50, true);
+					s.calcDmg(25, true);
 				
 				return true;
 			}

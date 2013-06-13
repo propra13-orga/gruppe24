@@ -35,20 +35,19 @@ public class EnemyBoss extends Sprite{
 		deltaX =Math.abs((this.getX()/16)-(hx/16));
 		deltaY =Math.abs(this.getY()/16-hy/16);
 		dis =(int) Math.sqrt((deltaX*deltaX)+(deltaY*deltaY));
-
-		t = new Rectangle2D.Double(getX(), getY(), getX()/16+1, (getY()/16+8)*16);
-		t2 = new Rectangle2D.Double(getX()+getWidth()-8, getY(), getX()/16+1, (getY()/16+8)*16);
+		if(this.remove != true){
+			t = new Rectangle2D.Double(getX(), getY(), getX()/16+1, (getY()/16+8)*16);
+			t2 = new Rectangle2D.Double(getX()+getWidth()-8, getY(), getX()/16+1, (getY()/16+8)*16);
+		}
 		if(dis <= 5){
-		if(!locked&&parent.hero.intersects(t)){
-			locked = true;
-			System.out.println("Target locked");
-		}else if(!locked&&parent.hero.intersects(t2)){
-			locked = true;
-			System.out.println("Target locked");
+			if(!locked&&parent.hero.intersects(t)){
+				locked = true;
+				System.out.println("Target locked");
+			}else if(!locked&&parent.hero.intersects(t2)){
+				locked = true;
+				System.out.println("Target locked");
+			}
 		}
-		}
-		
-
 	}
 	
 	

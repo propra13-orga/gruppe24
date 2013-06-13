@@ -3,6 +3,7 @@ package Client;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.URL;
+import java.util.Random;
 
 import javax.imageio.ImageIO;
 
@@ -63,17 +64,29 @@ public class Player extends Sprite{
 			
 			if (s instanceof MagicBolt) {
 				parent.phealth=this.phealth;
+				s.remove = true;
 				if(this.calcDmgPlayer()==true){
 					remove = true;
 					parent.dead = true;
 				}else
-					this.calcDmgPlayer();				
+					this.calcDmgPlayer();	
+				System.out.println("test dmg");
+				return true;
+			}
+			
+			if( s instanceof Item){
+				s.remove = true;
+				Random r = new Random();
+				int rn = r.nextInt((int)System.currentTimeMillis());
+				if(rn%2 == 0){
+					System.out.println("Health Porion");					
+				}
+				if(rn%2 == 1){
+					System.out.println("Mana Potion");
+				}
 				return true;
 			}
 		}
-		
-
-		
 		return false;
 	}
     public String getUsername() {//

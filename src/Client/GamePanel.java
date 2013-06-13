@@ -105,6 +105,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 	BufferedImage[] np = loadPics("pics/npc.png", 1);
 	BufferedImage[] BS = loadPics("pics/boss.png", 1);
 	BufferedImage[] Bolt = loadPics("pics/Bolt.png", 3);
+	BufferedImage[] IT = loadPics("pics/item.png", 1);
 
 
 	Thread th;
@@ -512,15 +513,21 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 		}
 	}
 	
+	public void SpawnItem(double x, double y) {
+		double xi = x;
+		double yi = y;
+		System.out.println("drop");
+		Item item = new Item(IT, xi, yi+16, 100, this);
+		actors.add(item);
+	}
+	
 	public void createBoltBoss(double xb, double yb){	
 		double x;
 		double y;
 		x=xb;		
 		y=yb+33;
 		MagicBolt mbb = new MagicBolt(Bolt, x, y, 100, this, true);
-
-		ListIterator<Sprite> it = actors.listIterator();
-		it.add(mbb);
+		actors.add(mbb);
 	}
 	
 
