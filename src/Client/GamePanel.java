@@ -313,29 +313,17 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 					bs.MoveXEl();
 			}
 			if(hero.intersects(bs.t)){	
-				if(System.currentTimeMillis()-l1 > 1000){
-					createBoltBoss(bs.getX(), bs.getY());
+				if(System.currentTimeMillis()-l1 > 600){
+					createBoltBoss(bs.getX()+bs.getWidth()/2-5, bs.getY());
 					l1 = System.currentTimeMillis();
 				}		
-			}			
-			if(hero.intersects(bs.t2)){
-				if(System.currentTimeMillis()-l2 > 800){
-					createBoltBoss(bs.getX()+bs.getWidth()-8, bs.getY());
-					l2 = System.currentTimeMillis();
-				}
-			}
-			
+			}				
 		}	
 		
 		if (leveldata[moveY][moveX] == 9) {
 			lvl++;
 			read();
-			actors.clear();
-			enviroment.clear();
-			collision.clear();
-			painter.clear();
-			painter2.clear();
-			painter3.clear();
+			Clear();
 			ground();
 			SpawnPlayer();
 			SpawnEnemy();
@@ -387,7 +375,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 			}
 		}
 
-		if (started && mreg == 0) {
+		/*if (started && mreg == 0) {
 			mreg = System.currentTimeMillis();
 		}
 
@@ -401,8 +389,17 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 				hero.mana = 100;
 				mreg = 0;
 			}
-		}
+		}*/
 
+	}
+	
+	private void Clear(){
+		actors.clear();
+		enviroment.clear();
+		collision.clear();
+		painter.clear();
+		painter2.clear();
+		painter3.clear();
 	}
 
 	public void ground() {
@@ -531,11 +528,11 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 		}
 	}
 	
-	public void SpawnItem(double x, double y) {
+	public void SpawnItem(double x, double y, boolean b) {
 		double xi = x;
 		double yi = y;
 		System.out.println("drop");
-		Item item = new Item(IT, xi, yi+16, 100, this);
+		Item item = new Item(IT, xi, yi+16, 100, this, b);
 		actors.add(item);
 	}
 	
@@ -601,6 +598,27 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 		hero.redMana(25);
 	}
 
+	public void generateItem(boolean h, int hp, boolean m, int mp){
+		
+		if(h == true){
+			int rn =(int) (Math.random()*hp);
+			System.out.println(rn);
+			if(rn%2 == 0 && rn >= 3){
+				System.out.println("Health Porion");
+				hero.addHealth(10, this.phealth);
+			}
+		}
+		if(m == true){
+			int rn =(int) (Math.random()*mp);
+			System.out.println(rn);
+			if(rn%2 == 1 && rn >=3){
+				System.out.println("Mana Potion");
+				hero.addMana(10);
+			}
+		}
+	}
+	
+	
 	private void startGame() {
 		read();
 		if (status) {
@@ -626,8 +644,11 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 		setStarted(false);
 		lvl = 1;
 		join = false;
+		OoM = false;
 		phealth = 130;
+		mana = 100;
 		Coins = 0;
+		Clear();
 		soundlib.stopLoopingSound();
 	}
 
@@ -902,7 +923,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 		}
 		if (e.getKeyCode() == KeyEvent.VK_F) {
 			if (!dead) {
-				if (!OoM) {
+				if (!OoM && mana >= 25) {
 					if (dir != 0) {
 						createBolt();
 					}
@@ -937,11 +958,11 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 		if(e.getKeyCode() == KeyEvent.VK_1 && this.Coins <5 && showtext == true){
 			page = 2;
 		}
-		if(e.getKeyCode() == KeyEvent.VK_2 && this.Coins >=5 && showtext == true){
+		if(e.getKeyCode() == KeyEvent.VK_2 && this.Coins >=7 && showtext == true){
 			hero.addMana(25);
 			Coins = Coins - 5;
 		}
-		if(e.getKeyCode() == KeyEvent.VK_1 && this.Coins <5 && showtext == true){
+		if(e.getKeyCode() == KeyEvent.VK_2 && this.Coins <7 && showtext == true){
 			page = 2;
 		}
 	}

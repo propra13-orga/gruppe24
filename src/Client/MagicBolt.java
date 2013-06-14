@@ -15,12 +15,14 @@ public class MagicBolt extends Sprite {
 	Rectangle2D.Double target;
 	EnemyBoss bs;
 	GamePanel gp;
+	boolean b;
 
 	public MagicBolt(BufferedImage[] i, double x, double y, long delay,
 			GamePanel p, boolean b) {
 		super(i, x, y, delay, p);
 		this.x = x;
 		this.y = y;
+		this.b = b;
 		if(!b){
 			if (parent.dir == 1) {
 				bUp = true;
@@ -69,6 +71,9 @@ public class MagicBolt extends Sprite {
 			remove = true;
 		}
 
+		//if(b == true && this.remove == true){
+		//	parent.SpawnItem(getX(), getY(), true);
+		//}
 	}
 
 	@Override
@@ -81,7 +86,7 @@ public class MagicBolt extends Sprite {
 				remove = true;
 				if(s.calcDmg(50, false)==true){
 					s.remove = true;
-					parent.SpawnItem(s.getX(), s.getY());
+					parent.SpawnItem(s.getX(), s.getY(),false);
 					parent.EnemyCounter--;
 					parent.Coins = parent.Coins+2;
 				}else

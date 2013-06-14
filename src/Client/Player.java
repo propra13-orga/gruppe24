@@ -3,7 +3,6 @@ package Client;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.URL;
-import java.util.Random;
 
 import javax.imageio.ImageIO;
 
@@ -76,14 +75,10 @@ public class Player extends Sprite{
 			
 			if( s instanceof Item){
 				s.remove = true;
-				Random r = new Random();
-				int rn = r.nextInt((int)System.currentTimeMillis());
-				if(rn%2 == 0){
-					System.out.println("Health Porion");					
-				}
-				if(rn%2 == 1){
-					System.out.println("Mana Potion");
-				}
+				if(s.b == true){
+					parent.generateItem(true, 5, true, 20);
+				}else
+					parent.generateItem(true, 9, true, 9);
 				return true;
 			}
 		}

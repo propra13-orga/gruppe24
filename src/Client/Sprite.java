@@ -27,6 +27,7 @@ public abstract class Sprite extends Rectangle2D.Double implements Drawable, Mov
 	int loop_to;
 	
 	boolean remove;
+	boolean b;
         
 	
 	public Sprite(BufferedImage[] i, double x, double y, long delay, GamePanel p){ //Übergabe des Image-Arrays, den Positionswerten, der Verzögerung der animation und Referenz auf GamePanel
@@ -124,6 +125,9 @@ public abstract class Sprite extends Rectangle2D.Double implements Drawable, Mov
 			this.mana = 100;
 		}
 		parent.mana = this.mana;
+		if(this.mana > 0){
+			parent.OoM = false;
+		}
 	}
 	
 	public void addHealth(int ad, double h){
