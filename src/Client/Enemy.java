@@ -117,6 +117,7 @@ public class Enemy extends Sprite {
 				mDirection = -1;
 			} else
 			y--;
+		//	parent.leveldata[(int)y/parent.Tilesize][(int)x/parent.Tilesize]=3;
 			break;
 		case 1:
 			oldY = ((int) (y / parent.Tilesize));
@@ -127,6 +128,7 @@ public class Enemy extends Sprite {
 				mDirection = -1;
 			} else
 			y++;
+		//	parent.leveldata[(int)y/parent.Tilesize][(int)x/parent.Tilesize]=3;
 			break;
 		case 2:
 			oldY = ((int) (y / parent.Tilesize));
@@ -137,6 +139,7 @@ public class Enemy extends Sprite {
 				mDirection = -1;
 			} else
 			x++;
+		//	parent.leveldata[(int)y/parent.Tilesize][(int)x/parent.Tilesize]=3;
 			break;
 		case 3:
 			oldY = ((int) (y / parent.Tilesize));
@@ -147,6 +150,7 @@ public class Enemy extends Sprite {
 				mDirection = -1;
 			} else
 			x--;
+			//parent.leveldata[(int)y/parent.Tilesize][(int)x/parent.Tilesize]=3;
 			break;
 		}
 	}
@@ -158,11 +162,12 @@ public class Enemy extends Sprite {
 
 		if (parent.leveldata[((int) (y / parent.Tilesize))- 1][((int) (x / parent.Tilesize)) ] == 1) {
 			y = oldY * parent.Tilesize;
-		} else if (parent.leveldata[((int) (y / parent.Tilesize) - 1)][((int) (x / parent.Tilesize))] == 4) {
+		} else if (parent.leveldata[((int)(y/parent.Tilesize))-1][((int)(x/parent.Tilesize))]== 2 || parent.leveldata[((int) (y / parent.Tilesize))-1][((int) (x / parent.Tilesize))] == 3 || parent.leveldata[((int) (y / parent.Tilesize) - 1)][((int) (x / parent.Tilesize))] == 4) {
 			y = oldY * parent.Tilesize;
 		} else
 			y--;
 		oldY = (int) y;
+		//parent.leveldata[(int)y/parent.Tilesize][(int)x/parent.Tilesize]=3;
 
 	}
 	@SuppressWarnings("static-access")
@@ -172,11 +177,12 @@ public class Enemy extends Sprite {
 
 		if (parent.leveldata[((int) (y / parent.Tilesize)) + 1][((int) (x / parent.Tilesize))] == 1) {
 			y = oldY * parent.Tilesize;
-		} else if (parent.leveldata[((int) (y / parent.Tilesize)) + 1][((int) (x / parent.Tilesize))] == 4) {
+		} else if (parent.leveldata[((int)(y/parent.Tilesize))+1][((int)(x/parent.Tilesize))]== 2 || parent.leveldata[((int) (y / parent.Tilesize))+1][((int) (x / parent.Tilesize))] == 3 || parent.leveldata[((int) (y / parent.Tilesize)) + 1][((int) (x / parent.Tilesize))] == 4) {
 			y = oldY * parent.Tilesize;
 		} else
 			y++;
 		oldY = (int) y;
+		//parent.leveldata[(int)y/parent.Tilesize][(int)x/parent.Tilesize]=3;
 
 	}
 	@SuppressWarnings("static-access")
@@ -186,12 +192,13 @@ public class Enemy extends Sprite {
 
 		if (parent.leveldata[((int) (y / parent.Tilesize))][((int)(x / parent.Tilesize)) + 1] == 1) {
 			x = oldX * parent.Tilesize;
-		} else if (parent.leveldata[((int) (y / parent.Tilesize))][((int) (x / parent.Tilesize)) + 1] == 4) {
+		} else if (parent.leveldata[((int)(y/parent.Tilesize))][((int)(x/parent.Tilesize))+1]== 2 || parent.leveldata[((int) (y / parent.Tilesize))][((int) (x / parent.Tilesize)) + 1] == 3 || parent.leveldata[((int) (y / parent.Tilesize))][((int) (x / parent.Tilesize)) + 1] == 4) {
 			x = oldX * parent.Tilesize;
 		} else
 			x++;
 		
 		oldX = (int)x;
+		//parent.leveldata[(int)y/parent.Tilesize][(int)x/parent.Tilesize]=3;
 
 	}
 	@SuppressWarnings("static-access")
@@ -201,12 +208,13 @@ public class Enemy extends Sprite {
 
 		if (parent.leveldata[((int) (y / parent.Tilesize))][((int) (x / parent.Tilesize)) - 1] == 1) {
 			x = oldX * parent.Tilesize;
-		} else if (parent.leveldata[((int) (y / parent.Tilesize))][((int) (x / parent.Tilesize)) - 1] == 4) {
+		} else if (parent.leveldata[((int)(y/parent.Tilesize))][((int)(x/parent.Tilesize))-1]== 2 || parent.leveldata[((int) (y / parent.Tilesize))][((int) (x / parent.Tilesize)) - 1] == 3 || parent.leveldata[((int) (y / parent.Tilesize))][((int) (x / parent.Tilesize)) - 1] == 4) {
 			x = oldX * parent.Tilesize;
 		} else
 			x--;
 		
 		oldX = (int)x;
+		//parent.leveldata[(int)y/parent.Tilesize][(int)x/parent.Tilesize]=3;
 
 	}
 

@@ -55,6 +55,9 @@ public class Player extends Sprite{
 				parent.phealth=this.phealth;
 				if(this.calcDmgPlayer()==true){
 					remove = true;
+					parent.life--;
+					if(parent.life < 0){parent.life=0;}
+					System.out.println("Leben: "+parent.life);
 					parent.dead = true;
 				}else
 					this.calcDmgPlayer();				

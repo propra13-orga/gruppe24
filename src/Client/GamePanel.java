@@ -39,6 +39,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 	Tile ps;
 	Tile ex;
 	Tile wlb;
+	Tile check;
 	TileBlock wl;
 	TileBlock wt;
 	Vector<Sprite> actors;
@@ -76,6 +77,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 	boolean join = false;
 	boolean boss = false;
 	boolean showtext = false;
+	boolean checkp = false;
 
 	int dis, diss;
 	int moveX, moveY;
@@ -86,6 +88,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 	int savex, savey;
 	int mana = 100;
 	int page = 0;
+	int life = 3;
 	static int Tilesize = 16;
 	static int Width = 15 * Tilesize;
 	static int Height = 15 * Tilesize;
@@ -96,13 +99,15 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 	BufferedImage[] wall = loadPics("pics/wall.gif", 1);
 	BufferedImage[] pstart = loadPics("pics/pstart.png", 1);
 	BufferedImage[] water = loadPics("pics/water.gif", 2);
-	BufferedImage[] exit = loadPics("pics/exit.png", 1);
+	//BufferedImage[] exit = loadPics("pics/exit.png", 1);
+	BufferedImage[] exit = loadPics("pics/door.png", 4);
 	BufferedImage[] player = loadPics("pics/player.png", 12);
 	BufferedImage[] enemy = loadPics("pics/Enemy.png", 1);
 	BufferedImage[] np = loadPics("pics/npc.png", 1);
 	BufferedImage[] BS = loadPics("pics/boss.png", 1);
 	BufferedImage[] Bolt = loadPics("pics/Bolt.png", 3);
 	BufferedImage[] IT = loadPics("pics/item.png", 1);
+	BufferedImage[] cp = loadPics("pics/checkpoint.png", 2);
 
 
 	Thread th;
@@ -274,10 +279,10 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 	}
 
 	private void doLogic() {
-		
+	if(npc != null){	
 		deltaX =Math.abs((npc.getX()/16)-(hero.getX()/16));
 		deltaY =Math.abs(npc.getY()/16-hero.getY()/16);
-	if(shopowner != null){
+	}if(shopowner != null){
 		deltaXs =Math.abs((shopowner.getX()/16)-(hero.getX()/16));
 		deltaYs =Math.abs(shopowner.getY()/16-hero.getY()/16);
 	}
@@ -347,6 +352,12 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 			stopGame();
 
 		}
+		if(check != null){
+			if(check.getX()== hero.getX()&& check.getY()== hero.getY()+16){
+				check.setLoop(1,1);
+				checkp = true;
+			}
+		}
 
 		for (int i = 0; i < actors.size(); i++) {
 			for (int n = i + 1; n < actors.size(); n++) {
@@ -364,16 +375,33 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 				s1.collidedWith(s2);
 			}
 		}
+		
+		if(mana > 0){
+			OoM = false;
+		}
 
 		if (hero.remove && gameover == 0) {
+			
 			gameover = System.currentTimeMillis();
 		}
 
 		if (gameover > 0) {
 			if (System.currentTimeMillis() - gameover > 3000) {
-				stopGame();
+				if(checkp || life !=0){
+					soundlib.stopLoopingSound();
+					startGame();
+				}else
+					stopGame();
 			}
 		}
+		
+		if(EnemyCounter != 0){
+			ex.setLoop(0,0);
+		}else{
+			ex.setLoop(1, 3);
+			ex.setLoop(3, 3);
+		}
+		
 
 		/*if (started && mreg == 0) {
 			mreg = System.currentTimeMillis();
@@ -420,6 +448,11 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 					wlb = new Tile(wall, posx * Tilesize, posy * Tilesize,
 							0, this);
 					enviroment.add(wlb);
+				} else if (rc == 12) {
+					check = new Tile(cp, posx * Tilesize, posy * Tilesize,
+							0, this);
+					enviroment.add(check);
+					check.setLoop(0, 0);
 				} else if (rc == 2) {
 					ps = new Tile(pstart, posx * Tilesize, posy * Tilesize, 0,
 							this);
@@ -443,9 +476,9 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 							this);
 					enviroment.add(ps);
 				} else if (rc == 9) {
-					ps = new Tile(pstart, posx * Tilesize, posy * Tilesize, 0,
+					ex = new Tile(exit, posx * Tilesize, posy * Tilesize, 0,
 							this);
-					enviroment.add(ps);
+					enviroment.add(ex);
 				} else if (rc == 30 || rc == 31 || rc ==33) {
 					ground = new Tile(floor, posx * Tilesize, posy * Tilesize,
 							1, this);
@@ -620,14 +653,28 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 	
 	
 	private void startGame() {
+		if(checkp){
+			lvl = 6;
+		}else
+			lvl = 1;
 		read();
 		if (status) {
-			if (GUI.running || join) {
-				socketClient = new GameClient(this, JOptionPane.showInputDialog("Please enter the IP: "));
-				socketClient.start();
+			if(!checkp){
+				if (GUI.running || join) {
+					socketClient = new GameClient(this, JOptionPane.showInputDialog("Please enter the IP: "));
+					socketClient.start();
+				}
 			}
 			doInitializations();
+			if(checkp||life != 0){
+				if(check != null)
+					check.setLoop(1, 1);
+				this.phealth = 130;
+				this.mana = 100;
+				EnemyCounter = 0;
+			}
 			System.out.println("Start");
+			System.out.println(EnemyCounter);
 			soundlib.loopSound("test");
 			setStarted(true);
 			dead = false;
@@ -663,8 +710,11 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 				moveY = oldY;
 			} else if (leveldata[moveY - 1][moveX] == 4 || leveldata[moveY - 1][moveX] == 30|| leveldata[moveY-1][moveX] == 31|| leveldata[moveY-1][moveX] == 99) {
 				moveY = oldY;
+			} else if(leveldata[moveY -1][moveX]==9 && EnemyCounter != 0){
+				moveY = oldY;
 			} else
 				moveY--;
+			//leveldata[moveY][moveX]=2;
 		}
 
 		if (down) {
@@ -676,8 +726,11 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 				moveY = oldY;
 			} else if (leveldata[moveY + 1][moveX] == 4|| leveldata[moveY + 1][moveX] == 30|| leveldata[moveY+1][moveX] == 31|| leveldata[moveY+1][moveX] == 99) {
 				moveY = oldY;
-			} else
+			} else if(leveldata[moveY +1][moveX]==9 && EnemyCounter != 0){
+				moveY = oldY;
+			}else
 				moveY++;
+			//leveldata[moveY][moveX]=2;
 		}
 
 		if (left) {
@@ -689,8 +742,11 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 				moveX = oldX;
 			} else if (leveldata[moveY][moveX - 1] == 4|| leveldata[moveY][moveX-1] == 30|| leveldata[moveY][moveX-1] == 31|| leveldata[moveY][moveX-1] == 99) {
 				moveX = oldX;
-			} else
+			} else if(leveldata[moveY][moveX-1]==9 && EnemyCounter != 0){
+				moveX = oldX;
+			}else
 				moveX--;
+			//leveldata[moveY][moveX]=2;
 		}
 
 		if (right) {
@@ -702,8 +758,11 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 				moveX = oldX;
 			} else if (leveldata[moveY][moveX + 1] == 4|| leveldata[moveY][moveX+1] == 30|| leveldata[moveY][moveX+1] == 31|| leveldata[moveY][moveX+1] == 99) {
 				moveX = oldX;
-			} else
+			} else if(leveldata[moveY][moveX+1]==9 && EnemyCounter != 0){
+				moveX = oldX;
+			}else
 				moveX++;
+			//leveldata[moveY][moveX]=2;
 		}
 
 	}
@@ -740,7 +799,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 		if (!started) {
 			return;
 		}
-		
+		if(npc != null)
 		if(npc.dis==1 && page != 0){
 			switch(page){
 			case 1:
