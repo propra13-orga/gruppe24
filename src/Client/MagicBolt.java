@@ -59,21 +59,26 @@ public class MagicBolt extends Sprite {
 			x += 10;
 		}
 		if (getX() == 0) {
-			remove = true;
+			this.remove = true;
 		}
 		if (getX() / parent.Tilesize == 15) {
-			remove = true;
+			this.remove = true;
 		}
 		if (getY() == 0) {
-			remove = true;
+			this.remove = true;
 		}
 		if (getY() / parent.Tilesize == 15) {
-			remove = true;
+			this.remove = true;
 		}
-
-		//if(b == true && this.remove == true){
-		//	parent.SpawnItem(getX(), getY(), true);
-		//}
+		if(b == true && this == parent.mbb){
+			if(this.getY()/parent.Tilesize == 5){
+				int rn = (int) (Math.random()* System.currentTimeMillis());
+					if(rn%2==0){
+						parent.SpawnItem(getX(), getY(), true);
+					}
+				this.remove =true;
+			}
+		}
 	}
 
 	@Override

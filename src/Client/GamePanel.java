@@ -41,8 +41,11 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 	Tile wlb;
 	Tile check;
 	Item sword;
+	Item item;
 	TileBlock wl;
 	TileBlock wt;
+	MagicBolt mbb;
+	MagicBolt mb;
 	Vector<Sprite> actors;
 	Vector<Sprite> painter;
 	Vector<Sprite> collision;
@@ -408,6 +411,9 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 			ex.setLoop(1, 3);
 			ex.setLoop(3, 3);
 		}
+		if(checkp){
+			check.setLoop(1,1);
+		}
 		
 
 		/*if (started && mreg == 0) {
@@ -486,7 +492,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 					ex = new Tile(exit, posx * Tilesize, posy * Tilesize, 0,
 							this);
 					enviroment.add(ex);
-				} else if (rc == 30 || rc == 31 || rc ==33) {
+				} else if (rc == 30 || rc == 31 || rc == 32 || rc ==33) {
 					ground = new Tile(floor, posx * Tilesize, posy * Tilesize,
 							1, this);
 					enviroment.add(ground);
@@ -511,17 +517,21 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 				if (leveldata[row][col] == 3) {
 					moveEX = col;
 					moveEY = row;
-					ene = new Enemy(enemy, Tilesize * moveEX,
-							Tilesize * moveEY, 100, this);
-					actors.add(ene);
-					EnemyCounter++;
-				}else if (leveldata[row][col] == 32) {
-					moveEX = col;
-					moveEY = row;
-					sli = new Enemy(sl, Tilesize * moveEX,
-							Tilesize * moveEY, 1000, this);
-					actors.add(sli);
-					EnemyCounter++;
+					int rn = (int)(Math.random()*5);
+					System.out.println("Randomnr: "+rn);
+					if(rn >= 0 && rn <2){
+						ene = new Enemy(enemy, Tilesize * moveEX,
+								Tilesize * moveEY, 100, this);
+						actors.add(ene);
+						EnemyCounter++;
+					}else if(rn >=2 && rn<=4){
+						moveEX = col;
+						moveEY = row;
+						sli = new Enemy(sl, Tilesize * moveEX,
+								Tilesize * moveEY, 100, this);
+						actors.add(sli);
+						EnemyCounter++;
+					}
 				}
 			}
 		}
@@ -583,7 +593,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 		double xi = x;
 		double yi = y;
 		System.out.println("drop");
-		Item item = new Item(IT, xi, yi+16, 100, this, b);
+		item = new Item(IT, xi, yi+16, 100, this, b);
 		actors.add(item);
 	}
 	
@@ -592,57 +602,27 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 		double y;
 		x=xb;		
 		y=yb+33;
-		MagicBolt mbb = new MagicBolt(Bolt, x, y, 100, this, true);
+		mbb = new MagicBolt(Bolt, x, y, 100, this, true);
 		actors.add(mbb);
 	}
 	
 
 	public void createBolt() {
-
-		int x1,y1;
 		
 		if (dir == 1) { // hoch
 			x = hero.getX();
 			y = hero.getY() - 8;
-			x1 = (int) (x/Tilesize);
-			y1 = (int) ((y+8)/Tilesize)+1;
-			System.out.print(x1 +" ");
-			System.out.println(y1);
-			if(leveldata[x1][y1-1] == 1){
-				return;
-			}
 		} else if (dir == 2) { // links
 			x = hero.getX() - 8;
 			y = hero.getY() + Tilesize;
-			x1 = (int) ((x+8)/Tilesize);
-			y1 = (int) ((y-Tilesize)/Tilesize)+1;
-			System.out.print(x1 +" ");
-			System.out.println(y1);
-			if(leveldata[x1-1][y1] == 1){
-				return;
-			}
 		} else if (dir == 3) { // runter
 			x = hero.getX();
 			y = hero.getY() + 24;
-			x1 = (int) (x/Tilesize);
-			y1 = (int) ((y-24)/Tilesize)+1;
-			System.out.print(x1 +" ");
-			System.out.println(y1);
-			if(leveldata[x1][y1+1] == 1){
-				return;
-			}
 		} else if (dir == 4) { // rechts
 			x = hero.getX() + 8;
 			y = hero.getY() + Tilesize;
-			x1 = (int) ((x-8)/Tilesize);
-			y1 = (int) ((y-Tilesize)/Tilesize)+1;
-			System.out.print(x1 +" ");
-			System.out.println(y1);
-			if(leveldata[x1+1][y1] == 1){
-				return;
-			}
 		}
-		MagicBolt mb = new MagicBolt(Bolt, x, y, 100, this, false);
+		mb = new MagicBolt(Bolt, x, y, 100, this, false);
 
 		ListIterator<Sprite> it = actors.listIterator();
 		it.add(mb);
@@ -999,22 +979,18 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 	public void keyReleased(KeyEvent e) {
 
 		if (e.getKeyCode() == KeyEvent.VK_UP) {
-			//hero.setLoop(0, 0);
 			up = false;
 		}
 
 		if (e.getKeyCode() == KeyEvent.VK_DOWN) {
-			//hero.setLoop(6, 6);
 			down = false;			
 		}
 
 		if (e.getKeyCode() == KeyEvent.VK_LEFT) {
-			//hero.setLoop(9, 9);
 			left = false;			
 		}
 
 		if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
-			//hero.setLoop(3, 3);
 			right = false;
 		}
 

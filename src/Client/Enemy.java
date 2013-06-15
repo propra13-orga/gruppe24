@@ -2,17 +2,24 @@ package Client;
 
 import java.awt.image.BufferedImage;
 
-public class Enemy extends Sprite {
+public class Enemy extends Sprite implements Runnable {
 
 	private static final long serialVersionUID = 1L;
+	
 	int oldX;
 	int oldY;
-	
-	double deltaX;
-	double deltaY;
+	int j;
 	int dis;
 	static int hx;
 	static int hy;
+	
+	double deltaX;
+	double deltaY;
+	
+	boolean resting;
+	boolean moving;
+	
+	long start;
 
 	public Enemy(BufferedImage[] i, double x, double y, long delay, GamePanel p) {
 		super(i, x, y, delay, p);
@@ -26,14 +33,29 @@ public class Enemy extends Sprite {
 		deltaX =Math.abs((this.getX()/16)-(hx/16));
 		deltaY =Math.abs(this.getY()/16-hy/16);
 		dis =(int) Math.sqrt((deltaX*deltaX)+(deltaY*deltaY));
-		
+
 		
 		if(dis <= 4){
-			chasePlayer();
-			
-		} else {
-			moveRandom();
+			chasePlayer();			
+		}else{
+			if(!resting){
+				moving = true;
+				moveRandom();
+				resting = true;					
+			}
 		}
+		//if(!moving){
+		//if(start == 0){
+		//	start = System.currentTimeMillis();
+		//}
+		//if(System.currentTimeMillis()-start > 2500){
+			resting = false;
+		//	start = 0;
+		//}
+		//}
+		
+		
+	}
 		
 //		else if((flag ==0) && (count <=2)){
 //			moveene(flag);
@@ -68,8 +90,7 @@ public class Enemy extends Sprite {
 //		}
 //		if(count == 3)
 //			count = 0;
-		
-	}
+//}
 	
 	private int mDirection = -1;
 	private int mSteps = 0;
@@ -122,51 +143,62 @@ public class Enemy extends Sprite {
 
 	@SuppressWarnings("static-access")
 	private void moveene(int i){
+		//j = 4;
 		switch(i){
 		case 0:
-			oldY = ((int) (y / parent.Tilesize));
-
-			if (parent.leveldata[((int) (y / parent.Tilesize)) - 1][((int) (x / parent.Tilesize))] == 1) {
-				mDirection = -1;
-			} else if (parent.leveldata[((int) (y / parent.Tilesize)) - 1][((int) (x / parent.Tilesize))] == 4) {
-				mDirection = -1;
-			} else
-			y--;
-			
-		//	parent.leveldata[(int)y/parent.Tilesize][(int)x/parent.Tilesize]=3;
+			//while(j!=0){
+				oldY = ((int) (y / parent.Tilesize));	
+				if (parent.leveldata[((int) (y / parent.Tilesize)) - 1][((int) (x / parent.Tilesize))] == 1) {
+					mDirection = -1;
+				} else if (parent.leveldata[((int) (y / parent.Tilesize)) - 1][((int) (x / parent.Tilesize))] == 4) {
+					mDirection = -1;
+				} else
+				y--;
+				//j--;
+			//}
+			//moving = false;
 			break;
 		case 1:
-			oldY = ((int) (y / parent.Tilesize));
-
-			if (parent.leveldata[((int) (y / parent.Tilesize)) + 1][((int) (x / parent.Tilesize))] == 1) {
-				mDirection = -1;
-			} else if (parent.leveldata[((int) (y / parent.Tilesize)) + 1][((int) (x / parent.Tilesize))] == 4) {
-				mDirection = -1;
-			} else
-			y++;
-		//	parent.leveldata[(int)y/parent.Tilesize][(int)x/parent.Tilesize]=3;
+			//while(j!=0){
+				oldY = ((int) (y / parent.Tilesize));
+	
+				if (parent.leveldata[((int) (y / parent.Tilesize)) + 1][((int) (x / parent.Tilesize))] == 1) {
+					mDirection = -1;
+				} else if (parent.leveldata[((int) (y / parent.Tilesize)) + 1][((int) (x / parent.Tilesize))] == 4) {
+					mDirection = -1;
+				} else
+				y++;
+			//	j--;
+			//}
+			//moving = false;
 			break;
 		case 2:
-			oldY = ((int) (y / parent.Tilesize));
-
-			if (parent.leveldata[((int) (y / parent.Tilesize))][((int) (x / parent.Tilesize) + 1)] == 1) {
-				mDirection = -1;
-			} else if (parent.leveldata[((int) (y / parent.Tilesize))][((int) (x / parent.Tilesize) + 1)] == 4) {
-				mDirection = -1;
-			} else
-			x++;
-		//	parent.leveldata[(int)y/parent.Tilesize][(int)x/parent.Tilesize]=3;
+			//while(j!=0){
+				oldX = ((int) (x / parent.Tilesize));
+	
+				if (parent.leveldata[((int) (y / parent.Tilesize))][((int) (x / parent.Tilesize) + 1)] == 1) {
+					mDirection = -1;
+				} else if (parent.leveldata[((int) (y / parent.Tilesize))][((int) (x / parent.Tilesize) + 1)] == 4) {
+					mDirection = -1;
+				} else
+				x++;
+			//	j--;
+			//}
+			//moving = false;
 			break;
 		case 3:
-			oldY = ((int) (y / parent.Tilesize));
-
-			if (parent.leveldata[((int) (y / parent.Tilesize))][((int) (x / parent.Tilesize) - 1)] == 1) {
-				mDirection = -1;
-			} else if (parent.leveldata[((int) (y / parent.Tilesize))][((int) (x / parent.Tilesize) - 1)] == 4) {
-				mDirection = -1;
-			} else
-			x--;
-			//parent.leveldata[(int)y/parent.Tilesize][(int)x/parent.Tilesize]=3;
+			//while(j!=0){
+				oldX = ((int) (x / parent.Tilesize));
+	
+				if (parent.leveldata[((int) (y / parent.Tilesize))][((int) (x / parent.Tilesize) - 1)] == 1) {
+					mDirection = -1;
+				} else if (parent.leveldata[((int) (y / parent.Tilesize))][((int) (x / parent.Tilesize) - 1)] == 4) {
+					mDirection = -1;
+				} else
+				x--;
+			//	j--;
+			//}
+			//moving = false;
 			break;
 		}
 	}
@@ -244,5 +276,10 @@ public class Enemy extends Sprite {
 	public static void getCoor(int x, int y){
 		hx = x;
 		hy = y;
+	}
+
+	@Override
+	public void run() {
+		
 	}
 }

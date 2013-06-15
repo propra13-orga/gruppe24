@@ -159,8 +159,7 @@ public abstract class Sprite extends Rectangle2D.Double implements Drawable, Mov
     	
     	//Überprüfung ob nicht transparente Pixel in beiden Bildern vorhanden sind
     	for(int i=0;i<img_me.getWidth();i++){
-    		for(int n=0;n<img_him.getHeight()-16;n++){
-    			
+    		for(int n=0;n<img_him.getHeight();n++){    			
     			int rgb1 = img_me.getRGB(i, n);
     			int rgb2 = img_him.getRGB(i, n);
     			

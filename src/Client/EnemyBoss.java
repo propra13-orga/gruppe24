@@ -1,6 +1,5 @@
 package Client;
 
-import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
@@ -39,7 +38,7 @@ public class EnemyBoss extends Sprite{
 		if(this.remove != true){
 			t = new Rectangle2D.Double(getX()+getWidth()/2, getY(), getX()/16+1, (getY()/16+8)*16);
 		}
-		if(dis <= 5){
+		if(dis <= 10){
 			if(!locked&&parent.hero.intersects(t)){
 				locked = true;
 				System.out.println("Target locked");

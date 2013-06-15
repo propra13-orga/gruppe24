@@ -52,28 +52,32 @@ public class Player extends Sprite{
 		}
 		if (this.intersects(s)) {
 			if (s instanceof Enemy) {
-				parent.phealth=this.phealth;
-				if(this.calcDmgPlayer()==true){
-					remove = true;
-					parent.life--;
-					if(parent.life < 0){parent.life=0;}
-					System.out.println("Leben: "+parent.life);
-					parent.dead = true;
-				}else
-					this.calcDmgPlayer();				
-				return true;
+				if(this.checkOpaqueColorCollisions(s)==true){
+					parent.phealth=this.phealth;
+					if(this.calcDmgPlayer()==true){
+						remove = true;
+						parent.life--;
+						if(parent.life < 0){parent.life=0;}
+						System.out.println("Leben: "+parent.life);
+						parent.dead = true;
+					}else
+						this.calcDmgPlayer();				
+					return true;
+				}
 			}
 			
 			if (s instanceof MagicBolt) {
-				parent.phealth=this.phealth;
-				s.remove = true;
-				if(this.calcDmgPlayer()==true){
-					remove = true;
-					parent.dead = true;
-				}else
-					this.calcDmgPlayer();	
-				System.out.println("test dmg");
-				return true;
+				if(this.checkOpaqueColorCollisions(s)==true){
+					parent.phealth=this.phealth;
+					s.remove = true;
+					if(this.calcDmgPlayer()==true){
+						remove = true;
+						parent.dead = true;
+					}else
+						this.calcDmgPlayer();	
+					System.out.println("test dmg");
+					return true;
+				}
 			}
 			
 			if( s instanceof Item && s != parent.sword){
