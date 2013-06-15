@@ -81,6 +81,9 @@ public class Enemy extends Sprite {
 		
 		if (mSteps < 10) {
 			moveene(mDirection);
+			if(this == parent.sli){
+				this.setLoop(0, 3);
+			}
 			mSteps++;
 		} else {
 			mDirection = -1;
@@ -92,15 +95,27 @@ public class Enemy extends Sprite {
 		if (!parent.dead) {
 			if (getY() > parent.hero.getY()) {
 			MoveYEh();
+			if(this == parent.sli){
+				this.setLoop(0, 3);
+			}
 			}
 			if (getY() < parent.hero.getY()) {
 			MoveYEd();
+			if(this == parent.sli){
+				this.setLoop(0, 3);
+			}
 			}
 			if (getX() > parent.hero.getX()) {
 			MoveXEl();
+			if(this == parent.sli){
+				this.setLoop(0, 3);
+			}
 			}
 			if (getX() < parent.hero.getX()) {
 			MoveXEr();
+			if(this == parent.sli){
+				this.setLoop(0, 3);
+			}
 			}
 		}
 	}
@@ -117,6 +132,7 @@ public class Enemy extends Sprite {
 				mDirection = -1;
 			} else
 			y--;
+			
 		//	parent.leveldata[(int)y/parent.Tilesize][(int)x/parent.Tilesize]=3;
 			break;
 		case 1:
@@ -195,8 +211,7 @@ public class Enemy extends Sprite {
 		} else if (parent.leveldata[((int)(y/parent.Tilesize))][((int)(x/parent.Tilesize))+1]== 2 || parent.leveldata[((int) (y / parent.Tilesize))][((int) (x / parent.Tilesize)) + 1] == 3 || parent.leveldata[((int) (y / parent.Tilesize))][((int) (x / parent.Tilesize)) + 1] == 4) {
 			x = oldX * parent.Tilesize;
 		} else
-			x++;
-		
+			x++;		
 		oldX = (int)x;
 		//parent.leveldata[(int)y/parent.Tilesize][(int)x/parent.Tilesize]=3;
 
@@ -212,7 +227,6 @@ public class Enemy extends Sprite {
 			x = oldX * parent.Tilesize;
 		} else
 			x--;
-		
 		oldX = (int)x;
 		//parent.leveldata[(int)y/parent.Tilesize][(int)x/parent.Tilesize]=3;
 

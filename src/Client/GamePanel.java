@@ -32,7 +32,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 	long l2 = System.currentTimeMillis();
 
 	Player hero;
-	Enemy ene;
+	Enemy ene, sli;
 	NPC npc, shopowner;
 	EnemyBoss bs;
 	Tile ground;
@@ -104,10 +104,11 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 	BufferedImage[] player = loadPics("pics/player.png", 12);
 	BufferedImage[] enemy = loadPics("pics/Enemy.png", 1);
 	BufferedImage[] np = loadPics("pics/npc.png", 1);
-	BufferedImage[] BS = loadPics("pics/boss.png", 1);
+	BufferedImage[] BS = loadPics("pics/boss2.png", 1);
 	BufferedImage[] Bolt = loadPics("pics/Bolt.png", 3);
 	BufferedImage[] IT = loadPics("pics/item.png", 1);
 	BufferedImage[] cp = loadPics("pics/checkpoint.png", 2);
+	BufferedImage[] sl = loadPics("pics/slime.png", 4);
 
 
 	Thread th;
@@ -346,6 +347,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 			moveX = savex;
 			moveY = savey;
 			SpawnNPC();
+			EnemyCounter = 0;
 		}
 		if (leveldata[moveY][moveX] == 42) {
 			finished = true;
@@ -508,6 +510,13 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 							Tilesize * moveEY, 100, this);
 					actors.add(ene);
 					EnemyCounter++;
+				}else if (leveldata[row][col] == 32) {
+					moveEX = col;
+					moveEY = row;
+					sli = new Enemy(sl, Tilesize * moveEX,
+							Tilesize * moveEY, 1000, this);
+					actors.add(sli);
+					EnemyCounter++;
 				}
 			}
 		}
@@ -665,13 +674,15 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 					socketClient.start();
 				}
 			}
-			doInitializations();
+			if(checkp || life != 0){
+				EnemyCounter = 0;
+			}
+				doInitializations();
 			if(checkp||life != 0){
 				if(check != null)
 					check.setLoop(1, 1);
 				this.phealth = 130;
 				this.mana = 100;
-				EnemyCounter = 0;
 			}
 			System.out.println("Start");
 			System.out.println(EnemyCounter);
@@ -979,6 +990,9 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 			if (isStarted()) {
 				stopGame();
 			}
+		}
+		if(e.getKeyCode() == KeyEvent.VK_F1){
+			hero.addMana(100);
 		}
 		if (e.getKeyCode() == KeyEvent.VK_F) {
 			if (!dead) {
