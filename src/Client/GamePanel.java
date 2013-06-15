@@ -40,6 +40,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 	Tile ex;
 	Tile wlb;
 	Tile check;
+	Item sword;
 	TileBlock wl;
 	TileBlock wt;
 	Vector<Sprite> actors;
@@ -55,6 +56,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 	int lvl = 1;
 	int EnemyCounter = 0;
 	int Coins = 0;
+	int xx = 0, yy = 0;
 
 	SoundLib soundlib;
 
@@ -78,6 +80,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 	boolean boss = false;
 	boolean showtext = false;
 	boolean checkp = false;
+	boolean sup, sdown, sleft, sright;
 
 	int dis, diss;
 	int moveX, moveY;
@@ -109,6 +112,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 	BufferedImage[] IT = loadPics("pics/item.png", 1);
 	BufferedImage[] cp = loadPics("pics/checkpoint.png", 2);
 	BufferedImage[] sl = loadPics("pics/slime.png", 4);
+	BufferedImage[] sw = loadPics("pics/sword.png", 13);
 
 
 	Thread th;
@@ -310,7 +314,8 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 
 		hero.setFrame(moveX * Tilesize, moveY * Tilesize - Tilesize, Tilesize,
 				Tilesize);
-
+		sword.setFrame(hero.getX()+xx, hero.getY()+yy, Tilesize, Tilesize);
+		
 		if(boss && bs.locked){
 			if(bs.getX()+bs.getWidth()/2<hero.getX()&& bs.getX()+bs.getWidth()!= getWidth()-16){
 					bs.MoveXEr();
@@ -532,7 +537,11 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 							(moveY * Tilesize), 100, this);
 					actors.add(hero);
 					hero.setLoop(0, 0);
+					sword = new Item(sw, hero.getX(), hero.getY(), 100, this, false);
+					actors.add(sword);
+					sword.setLoop(0, 0);
 				}
+				
 			}
 		}
 	}
@@ -960,6 +969,29 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 				left = false;
 				up = false;
 			}
+			if(e.getKeyCode()== KeyEvent.VK_SPACE){
+				if(dir==1){
+					yy = -4;
+					xx = 0;
+					sword.setLoop(1,3);
+					sup = true;
+				}else if(dir == 2){
+					xx = -16;
+					yy = +16;
+					sword.setLoop(7,9);
+					sleft = true;
+				}else if(dir == 3){
+					yy = +32;
+					xx = 0;
+					sword.setLoop(4,6);
+					sdown = true;
+				}else if(dir == 4){
+					xx = +16;
+					yy = +16;
+					sword.setLoop(10,12);
+					sright = true;
+				}
+			}
 		}
 	}
 
@@ -1003,6 +1035,21 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 				}
 			}
 		}
+		if(e.getKeyCode()== KeyEvent.VK_SPACE){
+			if(dir==1){
+				sword.setLoop(0,0);
+			}else if(dir == 2){
+				sword.setLoop(0,0);
+			}else if(dir == 3){
+				sword.setLoop(0,0);
+			}else if(dir == 4){
+				sword.setLoop(0,0);
+			}
+			sup = false;
+			sleft = false;
+			sdown = false;
+			sright = false;
+		}
 		if(lvl == 1){
 			if(npc.dis == 1 && lvl==1){
 				if(e.getKeyCode()== KeyEvent.VK_E){
@@ -1033,9 +1080,16 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 		}
 		if(e.getKeyCode() == KeyEvent.VK_2 && this.Coins >=7 && showtext == true){
 			hero.addMana(25);
-			Coins = Coins - 5;
+			Coins = Coins - 7;
 		}
 		if(e.getKeyCode() == KeyEvent.VK_2 && this.Coins <7 && showtext == true){
+			page = 2;
+		}
+		if(e.getKeyCode() == KeyEvent.VK_3 && this.Coins >=30 && showtext == true){
+			System.out.println("Armor Platzhalter");
+			Coins = Coins - 30;
+		}
+		if(e.getKeyCode() == KeyEvent.VK_3 && this.Coins <30 && showtext == true){
 			page = 2;
 		}
 	}

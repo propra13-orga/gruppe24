@@ -21,7 +21,21 @@ public class Item extends Sprite{
     }
 
 	@Override
-	public boolean collidedWith(Sprite s) {		
+	public boolean collidedWith(Sprite s) {
+		if (this.intersects(s) && this == parent.sword) {
+			if (s instanceof Enemy) {
+				if(parent.sup || parent.sdown || parent.sleft || parent.sright){
+					if(s.calcDmg(50, false)==true){
+						s.remove = true;
+						parent.SpawnItem(s.getX(), s.getY(),false);
+						parent.EnemyCounter--;
+						parent.Coins = parent.Coins+2;
+					}else
+						s.calcDmg(50, false);				
+					return true;
+				}
+			}
+		}
 		return false;
 	}
     

@@ -76,7 +76,7 @@ public class Player extends Sprite{
 				return true;
 			}
 			
-			if( s instanceof Item){
+			if( s instanceof Item && s != parent.sword){
 				s.remove = true;
 				if(s.b == true){
 					parent.generateItem(true, 5, true, 20);
