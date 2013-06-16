@@ -58,7 +58,6 @@ public class Player extends Sprite{
 						remove = true;
 						parent.life--;
 						if(parent.life < 0){parent.life=0;}
-						System.out.println("Leben: "+parent.life);
 						parent.dead = true;
 					}else
 						this.calcDmgPlayer();				
@@ -75,18 +74,19 @@ public class Player extends Sprite{
 						parent.dead = true;
 					}else
 						this.calcDmgPlayer();	
-					System.out.println("test dmg");
 					return true;
 				}
 			}
 			
 			if( s instanceof Item && s != parent.sword){
-				s.remove = true;
-				if(s.b == true){
-					parent.generateItem(true, 5, true, 20);
-				}else
-					parent.generateItem(true, 9, true, 9);
-				return true;
+				if(this.checkOpaqueColorCollisions(s)==true){
+					s.remove = true;
+					if(s.b == true){
+						parent.generateItem(true, 5, true, 20);
+					}else
+						parent.generateItem(true, 9, true, 9);
+					return true;
+				}
 			}
 		}
 		return false;

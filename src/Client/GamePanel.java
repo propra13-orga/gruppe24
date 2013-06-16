@@ -40,8 +40,15 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 	Tile ex;
 	Tile wlb;
 	Tile check;
+	Tile plate1;
+	Tile plate2;
+	Tile plate3;
+	Tile plate4;
 	Item sword;
 	Item item;
+	TileBlock krist;
+	TileBlock thun;
+	TileBlock ball;
 	TileBlock wl;
 	TileBlock wt;
 	MagicBolt mbb;
@@ -84,6 +91,10 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 	boolean showtext = false;
 	boolean checkp = false;
 	boolean sup, sdown, sleft, sright;
+	boolean init = true;
+	boolean p1, p2, p3, p4;
+	boolean bRoom;
+	boolean reset = false;
 
 	int dis, diss;
 	int moveX, moveY;
@@ -105,7 +116,6 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 	BufferedImage[] wall = loadPics("pics/wall.gif", 1);
 	BufferedImage[] pstart = loadPics("pics/pstart.png", 1);
 	BufferedImage[] water = loadPics("pics/water.gif", 2);
-	//BufferedImage[] exit = loadPics("pics/exit.png", 1);
 	BufferedImage[] exit = loadPics("pics/door.png", 4);
 	BufferedImage[] player = loadPics("pics/player.png", 12);
 	BufferedImage[] enemy = loadPics("pics/Enemy.png", 1);
@@ -116,6 +126,9 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 	BufferedImage[] cp = loadPics("pics/checkpoint.png", 2);
 	BufferedImage[] sl = loadPics("pics/slime.png", 4);
 	BufferedImage[] sw = loadPics("pics/sword.png", 13);
+	BufferedImage[] kr = loadPics("pics/kristall.png", 6);
+	BufferedImage[] thu = loadPics("pics/blitze.png", 5);
+	BufferedImage[] bl = loadPics("pics/ball.png", 1);
 
 
 	Thread th;
@@ -343,6 +356,8 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 			SpawnEnemy();
 			SpawnNPC();
 			SpawnBoss();
+			SpawnKristallRoom();
+			p1=false;p2=false;p3=false;p4=false;
 		}
 		if (leveldata[moveY][moveX] == 8) {
 			lvl--;
@@ -355,7 +370,9 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 			moveX = savex;
 			moveY = savey;
 			SpawnNPC();
+			SpawnKristallRoom();
 			EnemyCounter = 0;
+			p1=true;p2=true;p3=true;p4=true;
 		}
 		if (leveldata[moveY][moveX] == 42) {
 			finished = true;
@@ -405,7 +422,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 			}
 		}
 		
-		if(EnemyCounter != 0){
+		if(EnemyCounter != 0 || init){
 			ex.setLoop(0,0);
 		}else{
 			ex.setLoop(1, 3);
@@ -415,23 +432,47 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 			check.setLoop(1,1);
 		}
 		
-
-		/*if (started && mreg == 0) {
-			mreg = System.currentTimeMillis();
+		if(lvl == 5){
+			ex.setLoop(0,0);
+			if(!p1){
+				if(hero.getX()==plate1.getX()&& hero.getY()+16==plate1.getY()){
+				p1 = true;				
+				}
+			}else if(p1&& !p2){
+				if(hero.getX()==plate2.getX()&& hero.getY()+16==plate2.getY()){
+					p2 = true;
+				}
+			}
+			if(p1 && p2 && !p3){
+				if(hero.getX()==plate3.getX()&& hero.getY()+16==plate3.getY()){
+					p3 = true;
+				}
+			}else if(p1 && p2 && p3 && !p4){
+				if(hero.getX()==plate4.getX()&& hero.getY()+16==plate4.getY()){
+					p4 = true;
+				}
+			}
+			if(p1&&p2&&p3&&p4){
+				ex.setLoop(1, 3);
+				ex.setLoop(3, 3);				
+			}
+			if(p1){
+				plate1.setLoop(1, 1);
+				thun.setLoop(1,1);
+			}
+			if(p2){
+				plate2.setLoop(1,1);
+				thun.setLoop(2,2);
+			}
+			if(p3){
+				plate3.setLoop(1,1);
+				thun.setLoop(3,3);
+			}
+			if(p4){
+				plate4.setLoop(1,1);
+				thun.setLoop(4,4);
+			}
 		}
-
-		if (mreg > 0) {
-			if (System.currentTimeMillis() - mreg > 5000) {
-				mana = mana + 5;
-				OoM = false;
-			}
-			if (mana > 100) {
-				mana = 100;
-				hero.mana = 100;
-				mreg = 0;
-			}
-		}*/
-
 	}
 	
 	private void Clear(){
@@ -449,11 +490,11 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 				posy = row;
 				posx = col;
 				int rc = leveldata[row][col];
-				if (rc == 0) {
+				if (rc == 0 || rc == 13 || rc == 16) {
 					ground = new Tile(floor, posx * Tilesize, posy * Tilesize,
 							1, this);
 					enviroment.add(ground);
-				} else if (rc == 1) {
+				} else if (rc == 1 || rc == 14) {
 					wl = new TileBlock(wall, posx * Tilesize, posy * Tilesize,
 							0, this);
 					collision.add(wl);
@@ -550,6 +591,13 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 					sword = new Item(sw, hero.getX(), hero.getY(), 100, this, false);
 					actors.add(sword);
 					sword.setLoop(0, 0);
+					if(lvl == 1){
+						hero.phealth = 130;
+						hero.mana= 100;
+					}else{
+						hero.phealth = this.phealth;
+						hero.mana = this.mana;
+					}
 				}
 				
 			}
@@ -584,6 +632,41 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 					bs = new EnemyBoss(BS, Tilesize * moveEX-Tilesize, Tilesize * moveEY-Tilesize, 100, this);
 					actors.add(bs);
 
+				}
+			}
+		}
+	}
+	
+	public void SpawnKristallRoom(){
+		for (int row = 0; row < leveldata.length; row++) {
+			for (int col = 0; col < leveldata[row].length; col++) {
+				int rc = leveldata[row][col];
+				if(rc == 13){
+					krist = new TileBlock(kr, Tilesize*col-Tilesize/2, Tilesize*row-3*Tilesize, 100, this);
+					collision.add(krist);
+				}else if(rc == 14){
+					thun = new TileBlock(thu, Tilesize*col, Tilesize*row-Tilesize, 100, this);
+					collision.add(thun);
+					thun.setLoop(0,0);
+				}else if(rc == 16){
+					ball = new TileBlock(bl, Tilesize*col, Tilesize*row, 1,this);
+					collision.add(ball);
+				}else if(rc == 151){
+					plate1 = new Tile(cp, Tilesize*col, Tilesize*row, 1,this);
+					enviroment.add(plate1);
+					plate1.setLoop(0, 0);
+				}else if(rc == 152){
+					plate2 = new Tile(cp, Tilesize*col, Tilesize*row, 1,this);
+					enviroment.add(plate2);
+					plate2.setLoop(0, 0);
+				}else if(rc == 153){
+					plate3 = new Tile(cp, Tilesize*col, Tilesize*row, 1,this);
+					enviroment.add(plate3);
+					plate3.setLoop(0, 0);
+				}else if(rc == 154){
+					plate4 = new Tile(cp, Tilesize*col, Tilesize*row, 1,this);
+					enviroment.add(plate4);
+					plate4.setLoop(0,0);
 				}
 			}
 		}
@@ -799,23 +882,50 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 		if (!started) {
 			return;
 		}
-		if(npc != null)
-		if(npc.dis==1 && page != 0){
-			switch(page){
-			case 1:
-				npc1.setText("Hey listen! ");
-				break;
-			case 2:
-				npc1.setText("I used to be an adventurer, "+
-						 "just like you, until... ");
-				break;
-			case 3:
-				npc1.setText("It's dangerous outside! Take this.");
-				break;
+		if(init == true){
+			if(npc != null){
+				if(npc.dis==1 && page != 0){
+						switch(page){
+						case 1:
+							npc1.setText("Hey listen! ");
+							break;
+						case 2:
+							npc1.setText("I used to be an adventurer, "+
+									 "just like you, until... ");
+							break;
+						case 3:
+							npc1.setText("It's dangerous outside! Take this.");
+							init = false;
+							break;
+						}
+						npc1.setVisible(true);
+					}else{
+						npc1.setVisible(false);
+					}
 			}
-			npc1.setVisible(true);
-		}else
-			npc1.setVisible(false);
+		}
+		if(init == false){
+			if(npc != null){
+				if(npc.dis==1 && page != 0){
+					switch(page){
+					case 1:
+						npc1.setText("Be careful outside");
+						break;
+					case 2:
+						npc1.setText("Use \"Space\" to attack your enemies, "+
+								"or \"F\" to use Magic.");
+						break;
+					case 3:
+						npc1.setText("Now go.");
+						break;
+					}
+					npc1.setVisible(true);
+				}else{
+					npc1.setVisible(false);
+				}
+			}
+					
+		}
 		if(shopowner != null){
 			if(shopowner.dis==1 && page != 0){
 				switch(page){

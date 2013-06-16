@@ -20,7 +20,7 @@ public abstract class Sprite extends Rectangle2D.Double implements Drawable, Mov
 	protected double dy;
 	protected double health = 100;
 	protected double bosshealth = 250;
-	protected double phealth = 130;
+	protected double phealth;
 	protected int mana = 100;
         
     int loop_from;
