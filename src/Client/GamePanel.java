@@ -73,6 +73,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 	double x;
 	double y;
 	double phealth = 130;
+	double armor = 100;
 	double deltaX, deltaY;
 	double deltaXs, deltaYs;
 
@@ -594,9 +595,11 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 					if(lvl == 1){
 						hero.phealth = 130;
 						hero.mana= 100;
+						hero.armor = 100;
 					}else{
 						hero.phealth = this.phealth;
 						hero.mana = this.mana;
+						hero.armor = this.armor;
 					}
 				}
 				
@@ -755,6 +758,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 					check.setLoop(1, 1);
 				this.phealth = 130;
 				this.mana = 100;
+				this.armor = 100;
 			}
 			System.out.println("Start");
 			System.out.println(EnemyCounter);
@@ -777,6 +781,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 		OoM = false;
 		phealth = 130;
 		mana = 100;
+		armor = 100;
 		Coins = 0;
 		Clear();
 		soundlib.stopLoopingSound();
@@ -868,6 +873,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 			g.drawString("Mana: " + mana, 50, 253);
 			g.setColor(Color.black);
 			g.drawString("Coins: " + Coins, 120, 253);
+			g.drawString("Def: "+ (int)hero.armor, 185, 253);
 		}
 
 		if (dead) {

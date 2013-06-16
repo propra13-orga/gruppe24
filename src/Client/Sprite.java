@@ -21,8 +21,11 @@ public abstract class Sprite extends Rectangle2D.Double implements Drawable, Mov
 	protected double health = 100;
 	protected double bosshealth = 250;
 	protected double phealth;
+	protected double armor = 100;
 	protected int mana = 100;
-        
+    
+	double d;
+	
     int loop_from;
 	int loop_to;
 	
@@ -84,7 +87,7 @@ public abstract class Sprite extends Rectangle2D.Double implements Drawable, Mov
 	
 	public boolean calcDmg(double dmg, boolean b) {
 		if(b == false){
-			this.health = health - dmg;
+				this.health = health - dmg;
 		}
 		if(b == true){
 			this.bosshealth = bosshealth - dmg;
@@ -97,7 +100,15 @@ public abstract class Sprite extends Rectangle2D.Double implements Drawable, Mov
 	
 	
 	public boolean calcDmgPlayer(){
-		this.phealth = phealth - ((130*5)/100);
+		this.d = ((130*5)/100)-armor;
+		if(this.d <= 0){
+			this.d = 1;
+		}
+		this.phealth = phealth -d;
+		this.armor = armor -((100*15)/100);
+		if(this.armor<0){
+			this.armor = 0;
+		}
 		if(this.phealth<0){
 			this.phealth=0;
 		}
