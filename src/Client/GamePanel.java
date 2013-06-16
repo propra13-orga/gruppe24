@@ -794,7 +794,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 			oldY = moveY;
 			oldX = moveX;
 
-			if (leveldata[moveY - 1][moveX] == 1|| leveldata[moveY - 1][moveX] == 11) {
+			if (leveldata[moveY - 1][moveX] == 1|| leveldata[moveY - 1][moveX] == 11|| leveldata[moveY - 1][moveX] == 16) {
 				moveY = oldY;
 			} else if (leveldata[moveY - 1][moveX] == 4 || leveldata[moveY - 1][moveX] == 30|| leveldata[moveY-1][moveX] == 31|| leveldata[moveY-1][moveX] == 99) {
 				moveY = oldY;
@@ -810,7 +810,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 			oldY = moveY;
 			oldX = moveX;
 
-			if (leveldata[moveY + 1][moveX] == 1|| leveldata[moveY + 1][moveX] == 11) {
+			if (leveldata[moveY + 1][moveX] == 1|| leveldata[moveY + 1][moveX] == 11|| leveldata[moveY + 1][moveX] == 16) {
 				moveY = oldY;
 			} else if (leveldata[moveY + 1][moveX] == 4|| leveldata[moveY + 1][moveX] == 30|| leveldata[moveY+1][moveX] == 31|| leveldata[moveY+1][moveX] == 99) {
 				moveY = oldY;
@@ -826,7 +826,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 			oldY = moveY;
 			oldX = moveX;
 
-			if (leveldata[moveY][moveX - 1] == 1|| leveldata[moveY][moveX-1] == 11) {
+			if (leveldata[moveY][moveX - 1] == 1|| leveldata[moveY][moveX-1] == 11|| leveldata[moveY][moveX-1] == 16) {
 				moveX = oldX;
 			} else if (leveldata[moveY][moveX - 1] == 4|| leveldata[moveY][moveX-1] == 30|| leveldata[moveY][moveX-1] == 31|| leveldata[moveY][moveX-1] == 99) {
 				moveX = oldX;
@@ -842,7 +842,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 			oldY = moveY;
 			oldX = moveX;
 
-			if (leveldata[moveY][moveX + 1] == 1|| leveldata[moveY][moveX+1] == 11) {
+			if (leveldata[moveY][moveX + 1] == 1|| leveldata[moveY][moveX+1] == 11|| leveldata[moveY][moveX+1] == 16) {
 				moveX = oldX;
 			} else if (leveldata[moveY][moveX + 1] == 4|| leveldata[moveY][moveX+1] == 30|| leveldata[moveY][moveX+1] == 31|| leveldata[moveY][moveX+1] == 99) {
 				moveX = oldX;

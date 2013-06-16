@@ -143,10 +143,8 @@ public class Enemy extends Sprite implements Runnable {
 
 	@SuppressWarnings("static-access")
 	private void moveene(int i){
-		//j = 4;
 		switch(i){
 		case 0:
-			//while(j!=0){
 				oldY = ((int) (y / parent.Tilesize));	
 				if (parent.leveldata[((int) (y / parent.Tilesize)) - 1][((int) (x / parent.Tilesize))] == 1) {
 					mDirection = -1;
@@ -154,12 +152,8 @@ public class Enemy extends Sprite implements Runnable {
 					mDirection = -1;
 				} else
 				y--;
-				//j--;
-			//}
-			//moving = false;
 			break;
 		case 1:
-			//while(j!=0){
 				oldY = ((int) (y / parent.Tilesize));
 	
 				if (parent.leveldata[((int) (y / parent.Tilesize)) + 1][((int) (x / parent.Tilesize))] == 1) {
@@ -168,12 +162,8 @@ public class Enemy extends Sprite implements Runnable {
 					mDirection = -1;
 				} else
 				y++;
-			//	j--;
-			//}
-			//moving = false;
 			break;
 		case 2:
-			//while(j!=0){
 				oldX = ((int) (x / parent.Tilesize));
 	
 				if (parent.leveldata[((int) (y / parent.Tilesize))][((int) (x / parent.Tilesize) + 1)] == 1) {
@@ -182,12 +172,8 @@ public class Enemy extends Sprite implements Runnable {
 					mDirection = -1;
 				} else
 				x++;
-			//	j--;
-			//}
-			//moving = false;
 			break;
 		case 3:
-			//while(j!=0){
 				oldX = ((int) (x / parent.Tilesize));
 	
 				if (parent.leveldata[((int) (y / parent.Tilesize))][((int) (x / parent.Tilesize) - 1)] == 1) {
@@ -196,9 +182,6 @@ public class Enemy extends Sprite implements Runnable {
 					mDirection = -1;
 				} else
 				x--;
-			//	j--;
-			//}
-			//moving = false;
 			break;
 		}
 	}
