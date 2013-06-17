@@ -16,7 +16,9 @@ public class EnemyBoss extends Sprite{
 	int oldY;
 	double deltaX;
 	double deltaY;
+	double dh;
 	int dis;
+	int xx;
 	static int hx, hy;
 
 	
@@ -44,6 +46,16 @@ public class EnemyBoss extends Sprite{
 				System.out.println("Target locked");
 			}
 		}
+		
+		dh = (100*this.bosshealth)/250;
+		System.out.println("DH: "+(int)dh);
+		if(dh > 75){
+			xx = 15;
+		}else if(dh <= 75 && dh > 40){
+			xx = 25;
+		}else if(dh<=40){
+			xx = 5;
+		}
 	}
 	@Override
 	public void drawObjects(Graphics g){
@@ -63,7 +75,7 @@ public class EnemyBoss extends Sprite{
 		} else if (parent.leveldata[((int) (y / parent.Tilesize))][((int) (x / parent.Tilesize)) + 1] == 4) {
 			x = oldX * parent.Tilesize;
 		} else
-			x= x+15;
+			x= x+xx;
 		
 		oldX = (int)x;
 
@@ -78,7 +90,7 @@ public class EnemyBoss extends Sprite{
 		} else if (parent.leveldata[((int) (y / parent.Tilesize))][((int) (x / parent.Tilesize)) - 1] == 4) {
 			x = oldX * parent.Tilesize;
 		} else
-			x=x-15;
+			x=x-xx;
 		
 		oldX = (int)x;
 

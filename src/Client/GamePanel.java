@@ -437,7 +437,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 			ex.setLoop(0,0);
 			if(!p1){
 				if(hero.getX()==plate1.getX()&& hero.getY()+16==plate1.getY()){
-				p1 = true;				
+				p1 = true;
 				}
 			}else if(p1&& !p2){
 				if(hero.getX()==plate2.getX()&& hero.getY()+16==plate2.getY()){
