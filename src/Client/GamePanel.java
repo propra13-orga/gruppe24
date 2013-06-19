@@ -96,6 +96,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 	boolean p1, p2, p3, p4;
 	boolean bRoom;
 	boolean reset = false;
+	boolean walkthr = true;
 
 	int dis, diss;
 	int moveX, moveY;
@@ -432,31 +433,56 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 		if(checkp){
 			check.setLoop(1,1);
 		}
-		
 		if(lvl == 5){
+			walkthr = false;
 			ex.setLoop(0,0);
-			if(!p1){
-				if(hero.getX()==plate1.getX()&& hero.getY()+16==plate1.getY()){
+			/*if(!p1){
+			if(hero.getX()==plate1.getX()&& hero.getY()+16==plate1.getY()){
+				if(!p1&&!p2&&!p3&&!p4){
 				p1 = true;
+				}else{
+					p1 = false; p2 = false; p3 = false; p4 = false;
+					plate1.setLoop(0,0);plate2.setLoop(0,0);plate3.setLoop(0,0);plate4.setLoop(0,0);
+					thun.setLoop(0,0);
 				}
-			}else if(p1&& !p2){
-				if(hero.getX()==plate2.getX()&& hero.getY()+16==plate2.getY()){
+			}}
+			if(!p2){
+			if(hero.getX()==plate2.getX()&& hero.getY()+16==plate2.getY()){
+				if(p1&& !p2 && !p3 && !p4){
+					System.out.println("Geschaltet");
 					p2 = true;
+				}else{
+					p1 = false; p2 = false; p3 = false; p4 = false;
+					plate1.setLoop(0,0);plate2.setLoop(0,0);plate3.setLoop(0,0);plate4.setLoop(0,0);
+					thun.setLoop(0,0);
 				}
-			}
-			if(p1 && p2 && !p3){
-				if(hero.getX()==plate3.getX()&& hero.getY()+16==plate3.getY()){
+			}}
+			if(!p3){
+			if(hero.getX()==plate3.getX()&& hero.getY()+16==plate3.getY()){
+				if(p1 && p2 && !p3 && !p4){
 					p3 = true;
+				}else{
+					p1 = false; p2 = false; p3 = false; p4 = false;
+					plate1.setLoop(0,0);plate2.setLoop(0,0);plate3.setLoop(0,0);plate4.setLoop(0,0);
+					thun.setLoop(0,0);
 				}
-			}else if(p1 && p2 && p3 && !p4){
-				if(hero.getX()==plate4.getX()&& hero.getY()+16==plate4.getY()){
+			}}
+			if(!p4){
+			if(hero.getX()==plate4.getX()&& hero.getY()+16==plate4.getY()){
+				if(p1 && p2 && p3 && !p4){
 					p4 = true;
+				}else{
+					p1 = false; p2 = false; p3 = false; p4 = false;
+					plate1.setLoop(0,0);plate2.setLoop(0,0);plate3.setLoop(0,0);plate4.setLoop(0,0);
+					thun.setLoop(0,0);
 				}
-			}
+			}}
 			if(p1&&p2&&p3&&p4){
 				ex.setLoop(1, 3);
-				ex.setLoop(3, 3);				
-			}
+				ex.setLoop(3, 3);
+				walkthr = true;
+			}else
+				walkthr = false;
 			if(p1){
 				plate1.setLoop(1, 1);
 				thun.setLoop(1,1);
@@ -472,7 +498,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 			if(p4){
 				plate4.setLoop(1,1);
 				thun.setLoop(4,4);
-			}
+			}*/
 		}
 	}
 	
@@ -760,8 +786,6 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 				this.mana = 100;
 				this.armor = 100;
 			}
-			System.out.println("Start");
-			System.out.println(EnemyCounter);
 			soundlib.loopSound("test");
 			setStarted(true);
 			dead = false;
@@ -779,6 +803,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 		lvl = 1;
 		join = false;
 		OoM = false;
+		checkp = false;
 		phealth = 130;
 		mana = 100;
 		armor = 100;
@@ -798,11 +823,10 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 				moveY = oldY;
 			} else if (leveldata[moveY - 1][moveX] == 4 || leveldata[moveY - 1][moveX] == 30|| leveldata[moveY-1][moveX] == 31|| leveldata[moveY-1][moveX] == 99) {
 				moveY = oldY;
-			} else if(leveldata[moveY -1][moveX]==9 && EnemyCounter != 0){
+			} else if((leveldata[moveY -1][moveX]==9 && EnemyCounter != 0 || !walkthr) || leveldata[moveY -1][moveX]==9 && !walkthr){
 				moveY = oldY;
 			} else
 				moveY--;
-			//leveldata[moveY][moveX]=2;
 		}
 
 		if (down) {
@@ -818,7 +842,6 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 				moveY = oldY;
 			}else
 				moveY++;
-			//leveldata[moveY][moveX]=2;
 		}
 
 		if (left) {
@@ -834,7 +857,6 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 				moveX = oldX;
 			}else
 				moveX--;
-			//leveldata[moveY][moveX]=2;
 		}
 
 		if (right) {
@@ -850,7 +872,6 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 				moveX = oldX;
 			}else
 				moveX++;
-			//leveldata[moveY][moveX]=2;
 		}
 
 	}
