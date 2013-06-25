@@ -32,7 +32,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 	long l2 = System.currentTimeMillis();
 
 	Player hero;
-	Enemy ene, sli;
+	Enemy ghost, sli;
 	NPC npc, shopowner;
 	EnemyBoss bs;
 	Tile ground;
@@ -150,7 +150,8 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 		this.setBackground(Color.BLACK);
 
 		frame = new JFrame("Hero Quest");
-		frame.setLocation(960 - (Width / 2), 600 - (Height));
+		//frame.setLocation(960 - (Width / 2), 600 - (Height));
+		frame.setLocationRelativeTo(this);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 		b0 = new JButton("Start");
@@ -436,7 +437,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 		if(lvl == 5){
 			walkthr = false;
 			ex.setLoop(0,0);
-			/*if(!p1){
+			if(!p1){
 			if(hero.getX()==plate1.getX()&& hero.getY()+16==plate1.getY()){
 				if(!p1&&!p2&&!p3&&!p4){
 				p1 = true;
@@ -498,7 +499,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 			if(p4){
 				plate4.setLoop(1,1);
 				thun.setLoop(4,4);
-			}*/
+			}
 		}
 	}
 	
@@ -588,15 +589,15 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 					int rn = (int)(Math.random()*5);
 					System.out.println("Randomnr: "+rn);
 					if(rn >= 0 && rn <2){
-						ene = new Enemy(enemy, Tilesize * moveEX,
-								Tilesize * moveEY, 100, this);
-						actors.add(ene);
+						ghost = new Enemy(enemy, Tilesize * moveEX,
+								Tilesize * moveEY, 100, this, "melee", "arcane");
+						actors.add(ghost);
 						EnemyCounter++;
 					}else if(rn >=2 && rn<=4){
 						moveEX = col;
 						moveEY = row;
 						sli = new Enemy(sl, Tilesize * moveEX,
-								Tilesize * moveEY, 100, this);
+								Tilesize * moveEY, 100, this, "poison", "melee");
 						actors.add(sli);
 						EnemyCounter++;
 					}
@@ -615,7 +616,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 							(moveY * Tilesize), 100, this);
 					actors.add(hero);
 					hero.setLoop(0, 0);
-					sword = new Item(sw, hero.getX(), hero.getY(), 100, this, false);
+					sword = new Item(sw, hero.getX(), hero.getY(), 100, this, false, "melee");
 					actors.add(sword);
 					sword.setLoop(0, 0);
 					if(lvl == 1){
@@ -705,7 +706,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 		double xi = x;
 		double yi = y;
 		System.out.println("drop");
-		item = new Item(IT, xi, yi+16, 100, this, b);
+		item = new Item(IT, xi, yi+16, 100, this, b, null);
 		actors.add(item);
 	}
 	
@@ -714,7 +715,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 		double y;
 		x=xb;		
 		y=yb+33;
-		mbb = new MagicBolt(Bolt, x, y, 100, this, true);
+		mbb = new MagicBolt(Bolt, x, y, 100, this, true, "arcane");
 		actors.add(mbb);
 	}
 	
@@ -734,7 +735,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 			x = hero.getX() + 8;
 			y = hero.getY() + Tilesize;
 		}
-		mb = new MagicBolt(Bolt, x, y, 100, this, false);
+		mb = new MagicBolt(Bolt, x, y, 100, this, false, "arcane");
 
 		ListIterator<Sprite> it = actors.listIterator();
 		it.add(mb);
@@ -823,7 +824,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 				moveY = oldY;
 			} else if (leveldata[moveY - 1][moveX] == 4 || leveldata[moveY - 1][moveX] == 30|| leveldata[moveY-1][moveX] == 31|| leveldata[moveY-1][moveX] == 99) {
 				moveY = oldY;
-			} else if((leveldata[moveY -1][moveX]==9 && EnemyCounter != 0 || !walkthr) || leveldata[moveY -1][moveX]==9 && !walkthr){
+			} else if((leveldata[moveY -1][moveX]==9 && EnemyCounter != 0)){
 				moveY = oldY;
 			} else
 				moveY--;
@@ -1138,6 +1139,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 		}
 		if(e.getKeyCode() == KeyEvent.VK_F1){
 			hero.addMana(100);
+			up = true;
 		}
 		if (e.getKeyCode() == KeyEvent.VK_F) {
 			if (!dead) {
