@@ -8,12 +8,10 @@ public class Item extends Sprite{
     private static final long serialVersionUID = 1L;
     
     boolean b;
-    String atribut;
     
-    public Item(BufferedImage[] i, double x, double y, long delay, GamePanel p, boolean b, String atr){
+    public Item(BufferedImage[] i, double x, double y, long delay, GamePanel p, boolean b){
         super(i, x, y, delay, p);
         this.b = b;
-        this.atribut = atr;        	
     }
     
     @Override
@@ -27,29 +25,14 @@ public class Item extends Sprite{
 		if (this.intersects(s) && this == parent.sword) {
 			if (s instanceof Enemy) {
 				if(parent.sup || parent.sdown || parent.sleft || parent.sright){
-					if(((Enemy)s).str.equals(this.atribut)){
-						System.out.println("Immun");
-						return false;
+					if(s.calcDmg(50, false)==true){
+						s.remove = true;
+						parent.SpawnItem(s.getX(), s.getY(),false);
+						parent.EnemyCounter--;
+						parent.Coins = parent.Coins+2;
 					}else
-					if(((Enemy) s).wea.equals(this.atribut)){
-						if(s.calcDmg(75, false)==true){
-							s.remove = true;
-							parent.SpawnItem(s.getX(), s.getY(),false);
-							parent.EnemyCounter--;
-							parent.Coins = parent.Coins+2;
-						}else
-							s.calcDmg(75, false);				
-						return true;
-					}else{
-						if(s.calcDmg(45, false)==true){
-							s.remove = true;
-							parent.SpawnItem(s.getX(), s.getY(),false);
-							parent.EnemyCounter--;
-							parent.Coins = parent.Coins+2;
-						}else
-							s.calcDmg(45, false);				
-						return true;
-					}
+						s.calcDmg(50, false);				
+					return true;
 				}
 			}
 		}

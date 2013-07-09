@@ -9,12 +9,12 @@ import javax.imageio.ImageIO;
 public class Player extends Sprite{
 
 	private static final long serialVersionUID = 1L;
-	public String Username;
+	int dir;
 
 	public Player(BufferedImage[] i, double x, double y, long delay, GamePanel p) {//
 		super(i, x, y, delay, p);	
 		
-		
+		this.parent = p;
 	}
 
 	@Override
@@ -24,6 +24,17 @@ public class Player extends Sprite{
 		NPC.getCoor((int)this.x, (int)this.y);
 		Enemy.getCoor((int)this.x, (int)this.y);
 		EnemyBoss.getCoor((int)this.x, (int)this.y);
+		this.dir = parent.dir;
+		if(this.dir==1){
+			this.setLoop(0,2);
+		}else if(this.dir==2){
+			this.setLoop(9,11);
+		}else if(this.dir==3){
+			this.setLoop(6,8);
+		}else if(this.dir==4){
+			this.setLoop(3,5);
+		}
+		
 
 	}
 	
@@ -91,7 +102,4 @@ public class Player extends Sprite{
 		}
 		return false;
 	}
-    public String getUsername() {//
-        return this.Username;//
-    }//
 }

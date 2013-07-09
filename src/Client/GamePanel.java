@@ -1,19 +1,40 @@
 package Client;
 
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
-import java.io.*;
-import java.net.URL;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.InetAddress;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.ListIterator;
 import java.util.StringTokenizer;
 import java.util.Vector;
-import java.util.ListIterator;
+
 import javax.imageio.ImageIO;
-import javax.swing.*;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextArea;
 
-import Server.*;
+import Net.Client;
+import Net.packets.Packet00Login;
+import Net.packets.Packet02Move;
+import Server.GUI;
 
-public class GamePanel extends JPanel implements Runnable, KeyListener, ActionListener {
+public class GamePanel extends JPanel implements Runnable, ActionListener, KeyListener {
 
 	private static final long serialVersionUID = 1L;
 	private JButton b0;
@@ -32,7 +53,9 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 	long l2 = System.currentTimeMillis();
 
 	Player hero;
-	Enemy ghost, sli;
+	public PlayerMP player1;
+	PlayerMP player2;
+	Enemy ene, sli;
 	NPC npc, shopowner;
 	EnemyBoss bs;
 	Tile ground;
@@ -53,12 +76,14 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 	TileBlock wt;
 	MagicBolt mbb;
 	MagicBolt mb;
-	Vector<Sprite> actors;
+	public Vector<Sprite> actors;
 	Vector<Sprite> painter;
 	Vector<Sprite> collision;
 	Vector<Sprite> painter3;
 	Vector<Enviroment> enviroment;
 	Vector<Enviroment> painter2;
+	public List<PlayerMP> connectedPlayers = new ArrayList<PlayerMP>();
+	
 	String gameov = "Game Over!";
 	String finish = "Goal!";
 
@@ -69,6 +94,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 	int xx = 0, yy = 0;
 
 	SoundLib soundlib;
+	public WindowHandler windowHandler;
 
 	double x;
 	double y;
@@ -99,7 +125,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 	boolean walkthr = true;
 
 	int dis, diss;
-	int moveX, moveY;
+	int moveX, moveY, moveX2, moveY2;
 	int moveEX, moveEY;
 	int dir = 0;
 	int oldX, oldY;
@@ -114,23 +140,24 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 
 	public String Username;
 
-	BufferedImage[] floor = loadPics("pics/floor.gif", 1);
-	BufferedImage[] wall = loadPics("pics/wall.gif", 1);
-	BufferedImage[] pstart = loadPics("pics/pstart.png", 1);
-	BufferedImage[] water = loadPics("pics/water.gif", 2);
-	BufferedImage[] exit = loadPics("pics/door.png", 4);
-	BufferedImage[] player = loadPics("pics/player.png", 12);
-	BufferedImage[] enemy = loadPics("pics/Enemy.png", 1);
-	BufferedImage[] np = loadPics("pics/npc.png", 1);
-	BufferedImage[] BS = loadPics("pics/boss2.png", 1);
-	BufferedImage[] Bolt = loadPics("pics/Bolt.png", 3);
-	BufferedImage[] IT = loadPics("pics/item.png", 1);
-	BufferedImage[] cp = loadPics("pics/checkpoint.png", 2);
-	BufferedImage[] sl = loadPics("pics/slime.png", 4);
-	BufferedImage[] sw = loadPics("pics/sword.png", 13);
-	BufferedImage[] kr = loadPics("pics/kristall.png", 6);
-	BufferedImage[] thu = loadPics("pics/blitze.png", 5);
-	BufferedImage[] bl = loadPics("pics/ball.png", 1);
+	BufferedImage[] floor = loadPics("res/pics/floor.gif", 1);
+	BufferedImage[] wall = loadPics("res/pics/wall.gif", 1);
+	BufferedImage[] pstart = loadPics("res/pics/pstart.png", 1);
+	BufferedImage[] water = loadPics("res/pics/water.gif", 2);
+	BufferedImage[] exit = loadPics("res/pics/door.png", 4);
+	BufferedImage[] player = loadPics("res/pics/player.png", 12);
+	BufferedImage[] enemy = loadPics("res/pics/Enemy.png", 1);
+	BufferedImage[] np = loadPics("res/pics/npc.png", 1);
+	BufferedImage[] BS = loadPics("res/pics/boss2.png", 1);
+	BufferedImage[] Bolt = loadPics("res/pics/Bolt.png", 3);
+	BufferedImage[] IT = loadPics("res/pics/item.png", 1);
+	BufferedImage[] cp = loadPics("res/pics/checkpoint.png", 2);
+	BufferedImage[] sl = loadPics("res/pics/slime.png", 4);
+	BufferedImage[] sw = loadPics("res/pics/sword.png", 13);
+	BufferedImage[] kr = loadPics("res/pics/kristall.png", 6);
+	BufferedImage[] thu = loadPics("res/pics/blitze.png", 5);
+	BufferedImage[] bl = loadPics("res/pics/ball.png", 1);
+	public BufferedImage[] pl2 = loadPics("res/pics/player.png", 12);
 
 
 	Thread th;
@@ -139,9 +166,9 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 	
 	
 
-	private GameClient socketClient;
+	Client c;
 
-	public static void main(String[] args) {
+	public static void main(String[] args){
 		new GamePanel(Width, Height + 20);
 	}
 
@@ -150,8 +177,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 		this.setBackground(Color.BLACK);
 
 		frame = new JFrame("Hero Quest");
-		//frame.setLocation(960 - (Width / 2), 600 - (Height));
-		frame.setLocationRelativeTo(this);
+		frame.setLocation(960 - (Width / 2), 600 - (Height));
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 		b0 = new JButton("Start");
@@ -167,7 +193,11 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 				b3.setVisible(false);
 				frame.pack();
 				frame.requestFocus();
-				startGame();
+				try {
+					startGame();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 
 			}
 		});
@@ -180,7 +210,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 		b2.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				new GUI(50, 50);
+				new GUI(50, 50, GamePanel.this);
 			}
 		});
 		b3.addActionListener(new ActionListener() {
@@ -193,7 +223,11 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 				b3.setVisible(false);
 				frame.pack();
 				frame.requestFocus();
-				startGame();
+				try {
+					startGame();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 			}
 		});
 
@@ -202,8 +236,8 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 		frame.add(b2, BorderLayout.NORTH);
 		frame.add(b3, BorderLayout.SOUTH);
 		frame.add(this);
-		frame.addKeyListener(this);
 		frame.pack();
+		frame.addKeyListener(this);
 		frame.setResizable(false);
 		frame.setVisible(true);
 		TextBox();
@@ -237,10 +271,10 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 	}
 
 	private void doInitializations() {
-
+		windowHandler = new WindowHandler(this);
 		last = System.nanoTime();
 		gameover = 0;
-
+		//input = new InputHandler(this);
 		actors = new Vector<Sprite>();
 		collision = new Vector<Sprite>();
 		enviroment = new Vector<Enviroment>();
@@ -249,13 +283,18 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 		painter3 = new Vector<Sprite>();
 
 		soundlib = new SoundLib();
-		soundlib.loadSound("test", "sounds/Test.wav");
-
+		soundlib.loadSound("test", "res/sounds/Test.wav");
+		
 		ground();
 		SpawnPlayer();
 		if (GUI.running || join) {
-			socketClient.sendData("ping".getBytes());
-			hero.Username = JOptionPane.showInputDialog("Please enter your Playername");
+			Packet00Login loginPacket = new Packet00Login(player1.getUsername());
+			c.userName = player1.getUsername();
+			try {
+				c.getOutput().writeObject(loginPacket);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 		SpawnEnemy();
 		SpawnNPC();
@@ -302,13 +341,23 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 
 	}
 
-	private void doLogic() {
-	if(npc != null){	
-		deltaX =Math.abs((npc.getX()/16)-(hero.getX()/16));
-		deltaY =Math.abs(npc.getY()/16-hero.getY()/16);
-	}if(shopowner != null){
-		deltaXs =Math.abs((shopowner.getX()/16)-(hero.getX()/16));
-		deltaYs =Math.abs(shopowner.getY()/16-hero.getY()/16);
+	private synchronized void doLogic() {	
+	if(!join){
+		if(npc != null){	
+			deltaX =Math.abs((npc.getX()/16)-(hero.getX()/16));
+			deltaY =Math.abs(npc.getY()/16-hero.getY()/16);
+		}if(shopowner != null){
+			deltaXs =Math.abs((shopowner.getX()/16)-(hero.getX()/16));
+			deltaYs =Math.abs(shopowner.getY()/16-hero.getY()/16);
+		}
+	}else{
+		if(npc != null){	
+			deltaX =Math.abs((npc.getX()/16)-(player1.getX()/16));
+			deltaY =Math.abs(npc.getY()/16-player1.getY()/16);
+		}if(shopowner != null){
+			deltaXs =Math.abs((shopowner.getX()/16)-(player1.getX()/16));
+			deltaYs =Math.abs(shopowner.getY()/16-player1.getY()/16);
+		}
 	}
 		
 		dis =(int) Math.sqrt((deltaX*deltaX)+(deltaY*deltaY));
@@ -330,11 +379,15 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 			Sprite r = co.next();
 			r.doLogic(delta);
 		}
-
-		hero.setFrame(moveX * Tilesize, moveY * Tilesize - Tilesize, Tilesize,
-				Tilesize);
+		if(!join){
+			hero.setFrame(moveX * Tilesize, moveY * Tilesize - Tilesize, Tilesize,
+					Tilesize);
+		}
+		if(!join){
 		sword.setFrame(hero.getX()+xx, hero.getY()+yy, Tilesize, Tilesize);
-		
+		}else{
+			sword.setFrame(player1.getX()+xx, player1.getY()+yy, Tilesize, Tilesize);
+		}
 		if(boss && bs.locked){
 			if(bs.getX()+bs.getWidth()/2<hero.getX()&& bs.getX()+bs.getWidth()!= getWidth()-16){
 					bs.MoveXEr();
@@ -409,17 +462,27 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 		if(mana > 0){
 			OoM = false;
 		}
-
-		if (hero.remove && gameover == 0) {
-			
-			gameover = System.currentTimeMillis();
+		if(!join){
+			if (hero.remove && gameover == 0) {
+				
+				gameover = System.currentTimeMillis();
+			}
+		}else{
+			if (player1.remove && gameover == 0) {
+					
+				gameover = System.currentTimeMillis();
+			}
 		}
 
 		if (gameover > 0) {
 			if (System.currentTimeMillis() - gameover > 3000) {
 				if(checkp || life !=0){
 					soundlib.stopLoopingSound();
-					startGame();
+					try {
+						startGame();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
 				}else
 					stopGame();
 			}
@@ -479,6 +542,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 				}
 			}}
 			if(p1&&p2&&p3&&p4){
+				EnemyCounter =0;
 				ex.setLoop(1, 3);
 				ex.setLoop(3, 3);
 				walkthr = true;
@@ -589,15 +653,15 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 					int rn = (int)(Math.random()*5);
 					System.out.println("Randomnr: "+rn);
 					if(rn >= 0 && rn <2){
-						ghost = new Enemy(enemy, Tilesize * moveEX,
-								Tilesize * moveEY, 100, this, "melee", "arcane");
-						actors.add(ghost);
+						ene = new Enemy(enemy, Tilesize * moveEX,
+								Tilesize * moveEY, 100, this);
+						actors.add(ene);
 						EnemyCounter++;
 					}else if(rn >=2 && rn<=4){
 						moveEX = col;
 						moveEY = row;
 						sli = new Enemy(sl, Tilesize * moveEX,
-								Tilesize * moveEY, 100, this, "poison", "melee");
+								Tilesize * moveEY, 100, this);
 						actors.add(sli);
 						EnemyCounter++;
 					}
@@ -612,21 +676,39 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 				if (leveldata[row][col] == 2) {
 					moveY = row;
 					moveX = col;
-					hero = new Player(player, Tilesize * moveX,
-							(moveY * Tilesize), 100, this);
-					actors.add(hero);
-					hero.setLoop(0, 0);
-					sword = new Item(sw, hero.getX(), hero.getY(), 100, this, false, "melee");
-					actors.add(sword);
-					sword.setLoop(0, 0);
-					if(lvl == 1){
-						hero.phealth = 130;
-						hero.mana= 100;
-						hero.armor = 100;
+					if(join){
+						player1 = new PlayerMP(player, Tilesize * moveX,
+								(moveY * Tilesize), 100, this);
+						actors.add(player1);
+						this.connectedPlayers.add(player1);
+						player1.setLoop(0, 0);
+					}/*else{
+						hero = new Player(player, Tilesize * moveX,
+								(moveY * Tilesize), 100, this);
+						actors.add(hero);
+						hero.setLoop(0, 0);
+					}	*/		
+					if(!join){
+						sword = new Item(sw, hero.getX(), hero.getY(), 100, this, false);
+						actors.add(sword);
+						sword.setLoop(0, 0);
 					}else{
-						hero.phealth = this.phealth;
-						hero.mana = this.mana;
-						hero.armor = this.armor;
+						sword = new Item(sw, player1.getX(), player1.getY(), 100, this, false);
+						actors.add(sword);
+						sword.setLoop(0, 0);
+					}
+					if(lvl == 1){
+						if(!join){
+							hero.phealth = 130;
+							hero.mana= 100;
+							hero.armor = 100;
+						}
+					}else{
+						if(!join){
+							hero.phealth = this.phealth;
+							hero.mana = this.mana;
+							hero.armor = this.armor;
+						}
 					}
 				}
 				
@@ -674,6 +756,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 				if(rc == 13){
 					krist = new TileBlock(kr, Tilesize*col-Tilesize/2, Tilesize*row-3*Tilesize, 100, this);
 					collision.add(krist);
+					EnemyCounter++;
 				}else if(rc == 14){
 					thun = new TileBlock(thu, Tilesize*col, Tilesize*row-Tilesize, 100, this);
 					collision.add(thun);
@@ -706,7 +789,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 		double xi = x;
 		double yi = y;
 		System.out.println("drop");
-		item = new Item(IT, xi, yi+16, 100, this, b, null);
+		item = new Item(IT, xi, yi+16, 100, this, b);
 		actors.add(item);
 	}
 	
@@ -715,7 +798,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 		double y;
 		x=xb;		
 		y=yb+33;
-		mbb = new MagicBolt(Bolt, x, y, 100, this, true, "arcane");
+		mbb = new MagicBolt(Bolt, x, y, 100, this, true);
 		actors.add(mbb);
 	}
 	
@@ -735,7 +818,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 			x = hero.getX() + 8;
 			y = hero.getY() + Tilesize;
 		}
-		mb = new MagicBolt(Bolt, x, y, 100, this, false, "arcane");
+		mb = new MagicBolt(Bolt, x, y, 100, this, false);
 
 		ListIterator<Sprite> it = actors.listIterator();
 		it.add(mb);
@@ -763,7 +846,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 	}
 	
 	
-	private void startGame() {
+	private void startGame() throws IOException {
 		if(checkp){
 			lvl = 6;
 		}else
@@ -772,8 +855,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 		if (status) {
 			if(!checkp){
 				if (GUI.running || join) {
-					socketClient = new GameClient(this, JOptionPane.showInputDialog("Please enter the IP: "));
-					socketClient.start();
+					c = new Client(InetAddress.getByName(JOptionPane.showInputDialog("Please enter the IP: ")), 1333, this);
 				}
 			}
 			if(checkp || life != 0){
@@ -815,7 +897,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 
 	private void checkKeys() {
 
-		if (up) {
+		/*if (up) {
 
 			oldY = moveY;
 			oldX = moveX;
@@ -824,7 +906,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 				moveY = oldY;
 			} else if (leveldata[moveY - 1][moveX] == 4 || leveldata[moveY - 1][moveX] == 30|| leveldata[moveY-1][moveX] == 31|| leveldata[moveY-1][moveX] == 99) {
 				moveY = oldY;
-			} else if((leveldata[moveY -1][moveX]==9 && EnemyCounter != 0)){
+			} else if(leveldata[moveY -1][moveX]==9 && EnemyCounter != 0){
 				moveY = oldY;
 			} else
 				moveY--;
@@ -873,9 +955,210 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 				moveX = oldX;
 			}else
 				moveX++;
-		}
+		}*/
+		
+		
+		
 
 	}
+	
+	public void keyPressed(KeyEvent e){
+		if (!dead) {
+			if (e.getKeyCode() == KeyEvent.VK_UP) {
+				up = true;
+				this.dir = 1;
+				//hero.setLoop(0, 2);
+				down = false;
+				left = false;
+				right = false;
+				if (join) {
+					Packet02Move movePacket = new Packet02Move(player1.getUsername(), player1.x, player1.y, this.dir);
+					//movePacket.writeData(socketClient);
+					try {
+						c.getOutput().writeObject(movePacket);
+					} catch (IOException e1) {
+						e1.printStackTrace();
+					}
+				}
+			}
+
+			if (e.getKeyCode() == KeyEvent.VK_DOWN) {
+				down = true;
+				dir = 3;
+				//hero.setLoop(6, 8);
+				up = false;
+				left = false;
+				right = false;
+				if (join) {
+					Packet02Move movePacket = new Packet02Move(player1.getUsername(), player1.x, player1.y, this.dir);
+					try {
+						c.getOutput().writeObject(movePacket);
+					} catch (IOException e1) {
+						e1.printStackTrace();
+					}
+					//movePacket.writeData(socketClient);
+				}
+			}
+
+			if (e.getKeyCode() == KeyEvent.VK_LEFT) {
+				left = true;
+				dir = 2;
+				//hero.setLoop(9, 11);
+				down = false;
+				up = false;
+				right = false;
+				if (join) {
+					Packet02Move movePacket = new Packet02Move(player1.getUsername(), player1.x, player1.y, this.dir);
+					try {
+						c.getOutput().writeObject(movePacket);
+					} catch (IOException e1) {
+						e1.printStackTrace();
+					}
+					//movePacket.writeData(socketClient);
+				}
+			}
+
+			if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
+				right = true;
+				dir = 4;
+				//hero.setLoop(3, 5);
+				down = false;
+				left = false;
+				up = false;
+				if (join) {
+					Packet02Move movePacket = new Packet02Move(player1.getUsername(), player1.x, player1.y, this.dir);
+					try {
+						c.getOutput().writeObject(movePacket);
+					} catch (IOException e1) {
+						e1.printStackTrace();
+					}
+					//movePacket.writeData(socketClient);
+				}
+			}
+			if(e.getKeyCode()== KeyEvent.VK_SPACE){
+				if(dir==1){
+					yy = -4;
+					xx = 0;
+					sword.setLoop(1,3);
+					sup = true;
+				}else if(dir == 2){
+					xx = -16;
+					yy = +16;
+					sword.setLoop(7,9);
+					sleft = true;
+				}else if(dir == 3){
+					yy = +32;
+					xx = 0;
+					sword.setLoop(4,6);
+					sdown = true;
+				}else if(dir == 4){
+					xx = +16;
+					yy = +16;
+					sword.setLoop(10,12);
+					sright = true;
+				}
+			}
+		}
+	}
+	
+	public void keyReleased(KeyEvent e){
+		if (e.getKeyCode() == KeyEvent.VK_UP) {
+			up = false;
+		}
+
+		if (e.getKeyCode() == KeyEvent.VK_DOWN) {
+			down = false;			
+		}
+
+		if (e.getKeyCode() == KeyEvent.VK_LEFT) {
+			left = false;			
+		}
+
+		if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
+			right = false;
+		}
+
+		if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+			if (isStarted()) {
+				stopGame();
+			}
+		}
+		if(e.getKeyCode() == KeyEvent.VK_F1){
+			hero.addMana(100);
+		}
+		if (e.getKeyCode() == KeyEvent.VK_F) {
+			if (!dead) {
+				if (!OoM && mana >= 25) {
+					if (dir != 0) {
+						createBolt();
+					}
+				}
+			}
+		}
+		if(e.getKeyCode()== KeyEvent.VK_SPACE){
+			if(dir==1){
+				sword.setLoop(0,0);
+			}else if(dir == 2){
+				sword.setLoop(0,0);
+			}else if(dir == 3){
+				sword.setLoop(0,0);
+			}else if(dir == 4){
+				sword.setLoop(0,0);
+			}
+			sup = false;
+			sleft = false;
+			sdown = false;
+			sright = false;
+		}
+		if(lvl == 1){
+			if(npc.dis == 1 && lvl==1){
+				if(e.getKeyCode()== KeyEvent.VK_E){
+					page++;
+					if(page>3)
+						page=0;
+				}
+			}else
+				page = 0;
+		}
+		if(lvl>1){
+			if(shopowner != null && shopowner.dis == 1){
+				if(e.getKeyCode()==KeyEvent.VK_E){
+					page++;
+					if(page>1)
+						page=0;
+				}
+			}else
+				page = 0;
+		}
+		if(e.getKeyCode() == KeyEvent.VK_1 && Coins >=5 && showtext == true){
+			hero.addHealth(25, phealth);
+			Coins = Coins - 5;
+			page = 1;
+		}
+		if(e.getKeyCode() == KeyEvent.VK_1 && Coins <5 && showtext == true){
+			page = 2;
+		}
+		if(e.getKeyCode() == KeyEvent.VK_2 && Coins >=7 && showtext == true){
+			hero.addMana(25);
+			Coins = Coins - 7;
+		}
+		if(e.getKeyCode() == KeyEvent.VK_2 && Coins <7 && showtext == true){
+			page = 2;
+		}
+		if(e.getKeyCode() == KeyEvent.VK_3 && Coins >=30 && showtext == true){
+			Coins = Coins - 30;
+		}
+		if(e.getKeyCode() == KeyEvent.VK_3 && Coins <30 && showtext == true){
+			page = 2;
+		}
+	}
+	
+	public void keyTyped(KeyEvent e){
+	}
+	
+	
+	
+	
 
 	private void computeDelta() {
 
@@ -895,7 +1178,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 			g.drawString("Mana: " + mana, 50, 253);
 			g.setColor(Color.black);
 			g.drawString("Coins: " + Coins, 120, 253);
-			g.drawString("Def: "+ (int)hero.armor, 185, 253);
+			//g.drawString("Def: "+ (int)hero.armor, 185, 253);
 		}
 
 		if (dead) {
@@ -1003,18 +1286,8 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 														// Einzelbilder
 		BufferedImage source = null; // lädt das ganze Bild
 
-		URL pic_url = getClass().getClassLoader().getResource(path); // Ermittelung
-																		// der
-																		// URL
-																		// des
-																		// Speicherortes,
-																		// wird
-																		// als
-																		// Pfadangabe
-																		// übergeben
-
 		try {
-			source = ImageIO.read(pic_url); // Quellbild wird über ImageIO
+			source = ImageIO.read(new File(path)); // Quellbild wird über ImageIO
 											// geladen
 		} catch (IOException e) {
 		}
@@ -1043,170 +1316,6 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 
 	public void setStarted(boolean started) {
 		this.started = started;
-	}
-
-	@Override
-	public void keyTyped(KeyEvent e) {
-	}
-
-	@Override
-	public void keyPressed(KeyEvent e) {
-		if (!dead) {
-			if (e.getKeyCode() == KeyEvent.VK_UP) {
-				up = true;
-				dir = 1;
-				hero.setLoop(0, 2);
-				down = false;
-				left = false;
-				right = false;
-			}
-
-			if (e.getKeyCode() == KeyEvent.VK_DOWN) {
-				down = true;
-				dir = 3;
-				hero.setLoop(6, 8);
-				up = false;
-				left = false;
-				right = false;
-			}
-
-			if (e.getKeyCode() == KeyEvent.VK_LEFT) {
-				left = true;
-				dir = 2;
-				hero.setLoop(9, 11);
-				down = false;
-				up = false;
-				right = false;
-			}
-
-			if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
-				right = true;
-				dir = 4;
-				hero.setLoop(3, 5);
-				down = false;
-				left = false;
-				up = false;
-			}
-			if(e.getKeyCode()== KeyEvent.VK_SPACE){
-				if(dir==1){
-					yy = -4;
-					xx = 0;
-					sword.setLoop(1,3);
-					sup = true;
-				}else if(dir == 2){
-					xx = -16;
-					yy = +16;
-					sword.setLoop(7,9);
-					sleft = true;
-				}else if(dir == 3){
-					yy = +32;
-					xx = 0;
-					sword.setLoop(4,6);
-					sdown = true;
-				}else if(dir == 4){
-					xx = +16;
-					yy = +16;
-					sword.setLoop(10,12);
-					sright = true;
-				}
-			}
-		}
-	}
-
-	@Override
-	public void keyReleased(KeyEvent e) {
-
-		if (e.getKeyCode() == KeyEvent.VK_UP) {
-			up = false;
-		}
-
-		if (e.getKeyCode() == KeyEvent.VK_DOWN) {
-			down = false;			
-		}
-
-		if (e.getKeyCode() == KeyEvent.VK_LEFT) {
-			left = false;			
-		}
-
-		if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
-			right = false;
-		}
-
-		if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
-			if (isStarted()) {
-				stopGame();
-			}
-		}
-		if(e.getKeyCode() == KeyEvent.VK_F1){
-			hero.addMana(100);
-			up = true;
-		}
-		if (e.getKeyCode() == KeyEvent.VK_F) {
-			if (!dead) {
-				if (!OoM && mana >= 25) {
-					if (dir != 0) {
-						createBolt();
-					}
-				}
-			}
-		}
-		if(e.getKeyCode()== KeyEvent.VK_SPACE){
-			if(dir==1){
-				sword.setLoop(0,0);
-			}else if(dir == 2){
-				sword.setLoop(0,0);
-			}else if(dir == 3){
-				sword.setLoop(0,0);
-			}else if(dir == 4){
-				sword.setLoop(0,0);
-			}
-			sup = false;
-			sleft = false;
-			sdown = false;
-			sright = false;
-		}
-		if(lvl == 1){
-			if(npc.dis == 1 && lvl==1){
-				if(e.getKeyCode()== KeyEvent.VK_E){
-					page++;
-					if(page>3)
-						page=0;
-				}
-			}else
-				page = 0;
-		}
-		if(lvl>1){
-			if(shopowner != null && shopowner.dis == 1){
-				if(e.getKeyCode()==KeyEvent.VK_E){
-					page++;
-					if(page>1)
-						page=0;
-				}
-			}else
-				page = 0;
-		}
-		if(e.getKeyCode() == KeyEvent.VK_1 && this.Coins >=5 && showtext == true){
-			hero.addHealth(25, this.phealth);
-			Coins = Coins - 5;
-			page = 1;
-		}
-		if(e.getKeyCode() == KeyEvent.VK_1 && this.Coins <5 && showtext == true){
-			page = 2;
-		}
-		if(e.getKeyCode() == KeyEvent.VK_2 && this.Coins >=7 && showtext == true){
-			hero.addMana(25);
-			Coins = Coins - 7;
-		}
-		if(e.getKeyCode() == KeyEvent.VK_2 && this.Coins <7 && showtext == true){
-			page = 2;
-		}
-		if(e.getKeyCode() == KeyEvent.VK_3 && this.Coins >=30 && showtext == true){
-			System.out.println("Armor Platzhalter");
-			Coins = Coins - 30;
-		}
-		if(e.getKeyCode() == KeyEvent.VK_3 && this.Coins <30 && showtext == true){
-			page = 2;
-		}
 	}
 
 	@SuppressWarnings("resource")
@@ -1291,10 +1400,57 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, ActionLi
 
 		}
 	}
+		
+    public synchronized void movePlayer(String username, double x, double y, int movingDir) {
+       System.out.println(x + ","+ y);
+    	if(username.equals(player1.Username)){
+	    	player1.x = x;
+	        player1.y = y;
+	        player1.setMovingDir(movingDir);
+       }else{
+    	   	player2.x = x;
+	        player2.y = y;
+	        player2.setMovingDir(movingDir);
+       }
+    }
+	
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
 
+	}
+	
+	public synchronized void addPlayerMP(PlayerMP p) {
+		player2 = p;
+		actors.add(player2);
+        connectedPlayers.add(player2);
+    }
+	
+	
+	public synchronized void removePlayerMP(String username) {
+        int index = 0;
+        for (PlayerMP p : this.connectedPlayers) {
+            if (p.getUsername().equals(username)) {
+                break;
+            }
+            index++;
+        }
+        this.connectedPlayers.remove(index);
+        actors.remove(player2);
+    }
+	
+	public void setStart(String username, double x, double y){
+		
+    	if(username.equals(player1.Username)){
+	    	player1.x = x;
+	        player1.y = y;
+	        
+       }else{
+    	   	player2.x = x;
+	        player2.y = y;
+       }
+		
+		
 	}
 
 }

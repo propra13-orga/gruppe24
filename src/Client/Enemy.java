@@ -20,13 +20,9 @@ public class Enemy extends Sprite implements Runnable {
 	boolean moving;
 	
 	long start;
-	
-	String str, wea;
 
-	public Enemy(BufferedImage[] i, double x, double y, long delay, GamePanel p, String strength, String weakness) {
+	public Enemy(BufferedImage[] i, double x, double y, long delay, GamePanel p) {
 		super(i, x, y, delay, p);
-		this.str = strength;
-		this.wea = weakness;
 
 	}
 

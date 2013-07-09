@@ -5,10 +5,14 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
+
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import Client.*;
+import Net.GameServer;
+import Net.Server;
 
 
 
@@ -22,13 +26,14 @@ public class GUI extends JPanel implements Runnable {
 	private GamePanel parent;
 	
 	JFrame console;
-	
+	Server s;
 	
 	public static boolean running = false;
 	
-	public GUI(int w, int h) {
+	public GUI(int w, int h, GamePanel parent) {
 		this.setPreferredSize(new Dimension(w, h));
 		this.setBackground(Color.BLACK);
+		this.parent = parent;
 
 		console = new JFrame("Output");
 		console.setLocation(100,100);
@@ -44,7 +49,11 @@ public class GUI extends JPanel implements Runnable {
 				b0.setEnabled(false);
 				console.pack();
 				console.requestFocus();
-				startServer();
+				try {
+					startServer();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 
 			}
 		});
@@ -64,18 +73,19 @@ public class GUI extends JPanel implements Runnable {
 		console.setVisible(true);
 	}
 
-	private synchronized void startServer() {
+	private synchronized void startServer() throws IOException {
 		//Thread th = new Thread(this);
 		//th.start();
 		new Thread(this).start();
-		socketServer = new GameServer(parent);
-		socketServer.start();
+		//socketServer = new GameServer(parent);
+		//socketServer.start();
+		s = new Server();
 		running = true;
 		
 	}
 	
 	private synchronized void stopServer(){
-		socketServer.interrupt();
+		//socketServer.interrupt();
 		running = false;	
 		console.dispose();
 		parent.stopGame();

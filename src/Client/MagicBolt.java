@@ -16,15 +16,13 @@ public class MagicBolt extends Sprite {
 	EnemyBoss bs;
 	GamePanel gp;
 	boolean b;
-	String atribut;
 
 	public MagicBolt(BufferedImage[] i, double x, double y, long delay,
-			GamePanel p, boolean b, String atr) {
+			GamePanel p, boolean b) {
 		super(i, x, y, delay, p);
 		this.x = x;
 		this.y = y;
 		this.b = b;
-		this.atribut = atr;
 		if(!b){
 			if (parent.dir == 1) {
 				bUp = true;
@@ -91,30 +89,15 @@ public class MagicBolt extends Sprite {
 				// parent.createExplosion((int)getX(),(int)getY());
 				// parent.createExplosion((int)s.getX(),(int)s.getY());
 				remove = true;
-				if(((Enemy)s).str.equals(this.atribut)){
-					return false;
-				}
-				if(((Enemy)s).wea.equals(this.atribut)){
-					if(s.calcDmg(75, false)==true){
-						s.remove = true;
-						parent.SpawnItem(s.getX(), s.getY(),false);
-						parent.EnemyCounter--;
-						parent.Coins = parent.Coins+2;
-					}else
-						s.calcDmg(75, false);
-					
-					return true;
-				}else{
-					if(s.calcDmg(45, false)==true){
-						s.remove = true;
-						parent.SpawnItem(s.getX(), s.getY(),false);
-						parent.EnemyCounter--;
-						parent.Coins = parent.Coins+2;
-					}else
-						s.calcDmg(45, false);
-					
-					return true;
-				}
+				if(s.calcDmg(50, false)==true){
+					s.remove = true;
+					parent.SpawnItem(s.getX(), s.getY(),false);
+					parent.EnemyCounter--;
+					parent.Coins = parent.Coins+2;
+				}else
+					s.calcDmg(50, false);
+				
+				return true;
 			}
 			if (s instanceof EnemyBoss) {
 				// parent.createExplosion((int)getX(),(int)getY());
