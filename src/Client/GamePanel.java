@@ -1423,7 +1423,7 @@ public class GamePanel extends JPanel implements Runnable, ActionListener, KeyLi
 	public synchronized void addPlayerMP(PlayerMP p) {
 		player2 = p;
 		actors.add(player2);
-        connectedPlayers.add(player2);
+        this.connectedPlayers.add(player2);
     }
 	
 	

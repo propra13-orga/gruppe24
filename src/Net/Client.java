@@ -34,13 +34,13 @@ public class Client implements Runnable {
 	static int[][] leveldata;
 	public String userName;
 
-	public List<Client> copyClients() {
+	private List<Client> copyClients() {
 		synchronized (clients) {
 			return new ArrayList<>(clients);
 		}
 	}
 
-	public void send(Object msg) {
+	private void send(Object msg) {
 		try {
 			getOutput().writeObject(msg);
 			getOutput().flush();
@@ -52,7 +52,7 @@ public class Client implements Runnable {
 		}
 	}
 
-	public void broadcast(Object msg, boolean self) {
+	private void broadcast(Object msg, boolean self) {
 		for (Client client : copyClients()) {
 			if (client != this || self)
 				try {
@@ -67,7 +67,7 @@ public class Client implements Runnable {
 		}
 	}
 
-	public void onRecv(Object message) throws Exception {
+	protected void onRecv(Object message) throws Exception {
 		if (isServer) {
 			onServerRecv(copyClients(), message);
 		} else {
@@ -88,7 +88,7 @@ public class Client implements Runnable {
 
 		Server.player.getAndDecrement();
 
-		connectedPlayers.remove(getPlayerMPIndex(o.getUsername()));
+		Server.connectedPlayers.remove(getPlayerMPIndex(o.getUsername()));
 		broadcast(o, false);
 	}
 
@@ -118,11 +118,12 @@ public class Client implements Runnable {
 	protected void onClientRecv(Object o) throws Exception {
 
 		if (o instanceof Packet00Login) {
-			handleinit((Packet00Login) o);
+			
 			if (!((Packet00Login) o).getUsername().equals(userName)) {
 				handleLogin((Packet00Login) o, socket.getInetAddress(),
 						socket.getPort());
 			}
+			handleinit((Packet00Login) o);
 			System.out.println("LOGIN erhalten");
 		} else if (o instanceof Packet01Disconnect) {
 			System.out.println("CLIENT < [" + socket.getInetAddress() + ":"
@@ -191,7 +192,7 @@ public class Client implements Runnable {
 
 	// SERVER TEIL
 
-	public void getCoor(Object o) {
+	private void getCoor(Object o) {
 		for (int row = 0; row < leveldata.length; row++) {
 			for (int col = 0; col < leveldata[row].length; col++) {
 				if (Server.player.get() == 1) {
@@ -209,9 +210,9 @@ public class Client implements Runnable {
 		}
 	}
 
-	public void addConnection(PlayerMP player, Object o) {
+	private void addConnection(PlayerMP player, Object o) {
 		boolean alreadyConnected = false;
-		for (PlayerMP p : connectedPlayers) {
+		for (PlayerMP p : Server.connectedPlayers) {
 			if (player.getUsername().equalsIgnoreCase(p.getUsername())) {
 				if (p.ipAddress == null) {
 					p.ipAddress = player.ipAddress;
@@ -227,8 +228,8 @@ public class Client implements Runnable {
 				// relay to the current connected player that there is a new
 				// player
 				System.out.println("Server sendet neuen Player");
+				//broadcast(o, true);
 				broadcast(o, true);
-
 				// relay to the new player that the currently connect player
 				// exists
 				o = new Packet00Login(p.getUsername(), p.x, p.y);
@@ -237,12 +238,14 @@ public class Client implements Runnable {
 			}
 		}
 		if (!alreadyConnected) {
-			this.connectedPlayers.add(player);
+			Server.connectedPlayers.add(player);
+			broadcast(o, true);
+			System.out.println("Liste: " +Server.connectedPlayers);
 		}
 	}
 
-	public PlayerMP getPlayerMP(String username) {
-		for (PlayerMP player : this.connectedPlayers) {
+	private PlayerMP getPlayerMP(String username) {
+		for (PlayerMP player : Server.connectedPlayers) {
 			if (player.getUsername().equals(username)) {
 				return player;
 			}
@@ -250,7 +253,7 @@ public class Client implements Runnable {
 		return null;
 	}
 
-	public int getPlayerMPIndex(String username) {
+	private int getPlayerMPIndex(String username) {
 		int index = 0;
 		for (PlayerMP player : this.connectedPlayers) {
 			if (player.getUsername().equals(username)) {
@@ -265,7 +268,7 @@ public class Client implements Runnable {
 		if (server) {
 			if (getPlayerMP(packet.getUsername()) != null) {
 				int index = getPlayerMPIndex(packet.getUsername());
-				PlayerMP player = this.connectedPlayers.get(index);
+				PlayerMP player = Server.connectedPlayers.get(index);
 				player.setMovingDir(packet.getMovingDir());
 				int movingDir = packet.getMovingDir();
 				int moveY = (int) packet.y / 16;

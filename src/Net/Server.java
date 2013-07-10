@@ -3,11 +3,14 @@ package Net;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import Client.PlayerMP;
 
 public class Server implements Runnable {
 
@@ -15,6 +18,7 @@ public class Server implements Runnable {
 	private final List<Client> clients = new LinkedList<>();
 	private ExecutorService executors = Executors.newCachedThreadPool();
 	public static AtomicInteger player = new AtomicInteger(0);
+	public static List<PlayerMP> connectedPlayers = new ArrayList<PlayerMP>();
 	public Server() throws IOException {
 		serverSocker = new ServerSocket(1333);
 		executors.execute(this);
