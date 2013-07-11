@@ -22,6 +22,7 @@ import Client.PlayerMP;
 import Net.packets.Packet00Login;
 import Net.packets.Packet01Disconnect;
 import Net.packets.Packet02Move;
+import Net.packets.Packet03Map;
 
 public class Client implements Runnable {
 	List<Client> clients;
@@ -30,7 +31,7 @@ public class Client implements Runnable {
 	private ObjectInputStream input;
 	private boolean isServer;
 	static GamePanel game;
-	private List<PlayerMP> connectedPlayers = new ArrayList<PlayerMP>();
+	//private List<PlayerMP> connectedPlayers = new ArrayList<PlayerMP>();
 	static int[][] leveldata;
 	public String userName;
 
@@ -111,6 +112,8 @@ public class Client implements Runnable {
 
 		} else if (o instanceof Packet02Move) {
 			this.handleMove(((Packet02Move) o), true);
+		} else if (o instanceof Packet03Map){
+			sendLevel();
 		}
 
 	}
@@ -133,6 +136,8 @@ public class Client implements Runnable {
 			game.removePlayerMP(((Packet01Disconnect) o).getUsername());
 		} else if (o instanceof Packet02Move) {
 			handleMove((Packet02Move) o, false);
+		} else if( o instanceof Packet03Map){
+			game.leveldata = ((Packet03Map)o).getLevel();
 		}
 
 	}
@@ -212,6 +217,7 @@ public class Client implements Runnable {
 
 	private void addConnection(PlayerMP player, Object o) {
 		boolean alreadyConnected = false;
+		send(o);
 		for (PlayerMP p : Server.connectedPlayers) {
 			if (player.getUsername().equalsIgnoreCase(p.getUsername())) {
 				if (p.ipAddress == null) {
@@ -227,20 +233,15 @@ public class Client implements Runnable {
 
 				// relay to the current connected player that there is a new
 				// player
-				System.out.println("Server sendet neuen Player");
-				//broadcast(o, true);
-				broadcast(o, true);
+				broadcast(o, false);
 				// relay to the new player that the currently connect player
 				// exists
 				o = new Packet00Login(p.getUsername(), p.x, p.y);
-				System.out.println("Server sendet existenten Player");
 				send(o);
 			}
 		}
 		if (!alreadyConnected) {
 			Server.connectedPlayers.add(player);
-			broadcast(o, true);
-			System.out.println("Liste: " +Server.connectedPlayers);
 		}
 	}
 
@@ -255,7 +256,7 @@ public class Client implements Runnable {
 
 	private int getPlayerMPIndex(String username) {
 		int index = 0;
-		for (PlayerMP player : this.connectedPlayers) {
+		for (PlayerMP player : Server.connectedPlayers) {
 			if (player.getUsername().equals(username)) {
 				break;
 			}
@@ -264,21 +265,21 @@ public class Client implements Runnable {
 		return index;
 	}
 
-	private void handleMove(Packet02Move packet, boolean server) {
-		if (server) {
+	private void handleMove(Packet02Move packet, boolean isServer) {
+		if (isServer) {
 			if (getPlayerMP(packet.getUsername()) != null) {
 				int index = getPlayerMPIndex(packet.getUsername());
 				PlayerMP player = Server.connectedPlayers.get(index);
 				player.setMovingDir(packet.getMovingDir());
 				int movingDir = packet.getMovingDir();
-				int moveY = (int) packet.y / 16;
-				int moveX = (int) packet.x / 16;
+				int moveY = (int) (packet.y);
+				int moveX = (int) (packet.x)/16;
+				moveY = (moveY+16)/16;
 
 				if (movingDir == 1) {
-
 					int oldY = moveY;
 
-					if (leveldata[moveY - 1][moveX] == 1
+					if (leveldata[moveY-1][moveX] == 1
 							|| leveldata[moveY - 1][moveX] == 11
 							|| leveldata[moveY - 1][moveX] == 16) {
 						moveY = oldY;
@@ -296,7 +297,6 @@ public class Client implements Runnable {
 					} else
 						moveY--;
 				} else if (movingDir == 3) {
-
 					int oldY = moveY;
 
 					if (leveldata[moveY + 1][moveX] == 1
@@ -361,7 +361,7 @@ public class Client implements Runnable {
 				}
 
 				player.x = packet.x = moveX * 16;
-				player.y = packet.y = moveY * 16;
+				player.y = packet.y = (moveY * 16)-16;
 
 				broadcast(packet, true);
 			}
@@ -369,6 +369,11 @@ public class Client implements Runnable {
 			game.movePlayer(packet.getUsername(), packet.getX(), packet.getY(),
 					packet.getMovingDir());
 		}
+	}
+	
+	private void sendLevel(){
+		Packet03Map p = new Packet03Map(leveldata);
+		send(p);
 	}
 
 	@SuppressWarnings("resource")
@@ -378,7 +383,7 @@ public class Client implements Runnable {
 			int i, j;
 			leveldata = new int[15][15];
 			BufferedReader oReader = new BufferedReader(new InputStreamReader(
-					new FileInputStream(new File("res/lvl/test.level")))); // Zeile
+					new FileInputStream(new File("res/lvl/MP/test.level")))); // Zeile
 																			// für
 			// Zeile
 			// einlesen
@@ -421,14 +426,14 @@ public class Client implements Runnable {
 				+ packet.getUsername() + " has joined the game...");
 		PlayerMP player2 = new PlayerMP(game.pl2,
 				((Packet00Login) packet).getX(),
-				((Packet00Login) packet).getY(), packet.getUsername(), address,
+				((Packet00Login) packet).getY()-16, packet.getUsername(), address,
 				port, 100, game);
 		game.addPlayerMP(player2);
 	}
 
 	private void handleinit(Object o) {
 		game.setStart(((Packet00Login) o).getUsername(),
-				((Packet00Login) o).getX(), ((Packet00Login) o).getY());
+				((Packet00Login) o).getX(), ((Packet00Login) o).getY()-16);
 	}
 
 }
