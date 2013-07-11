@@ -6,10 +6,12 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Vector;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import Client.Enemy;
 import Client.PlayerMP;
 
 public class Server implements Runnable {
@@ -19,11 +21,16 @@ public class Server implements Runnable {
 	private ExecutorService executors = Executors.newCachedThreadPool();
 	public static AtomicInteger player = new AtomicInteger(0);
 	public static List<PlayerMP> connectedPlayers = new ArrayList<PlayerMP>();
+	public static Vector<Enemy> spawnedEnemys;
+	
+	
 	public Server() throws IOException {
 		serverSocker = new ServerSocket(1333);
 		executors.execute(this);
+		spawnedEnemys = new Vector<Enemy>();
 		System.out.println("Server startet");
 		Client.read();
+		Client.SpawnEnemy();
 	}
 
 	@Override

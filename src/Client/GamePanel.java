@@ -33,6 +33,7 @@ import Net.Client;
 import Net.packets.Packet00Login;
 import Net.packets.Packet02Move;
 import Net.packets.Packet03Map;
+import Net.packets.Packet04Enemy;
 import Server.GUI;
 
 public class GamePanel extends JPanel implements Runnable, ActionListener, KeyListener {
@@ -84,6 +85,7 @@ public class GamePanel extends JPanel implements Runnable, ActionListener, KeyLi
 	Vector<Enviroment> enviroment;
 	Vector<Enviroment> painter2;
 	public List<PlayerMP> connectedPlayers = new ArrayList<PlayerMP>();
+	public List<Enemy> spawnedEnemys = new ArrayList<Enemy>();
 	
 	String gameov = "Game Over!";
 	String finish = "Goal!";
@@ -147,13 +149,13 @@ public class GamePanel extends JPanel implements Runnable, ActionListener, KeyLi
 	BufferedImage[] water = loadPics("res/pics/water.gif", 2);
 	BufferedImage[] exit = loadPics("res/pics/door.png", 4);
 	BufferedImage[] player = loadPics("res/pics/player.png", 12);
-	BufferedImage[] enemy = loadPics("res/pics/Enemy.png", 1);
+	public static BufferedImage[] enemy = loadPics("res/pics/Enemy.png", 1);
 	BufferedImage[] np = loadPics("res/pics/npc.png", 1);
 	BufferedImage[] BS = loadPics("res/pics/boss2.png", 1);
 	BufferedImage[] Bolt = loadPics("res/pics/Bolt.png", 3);
 	BufferedImage[] IT = loadPics("res/pics/item.png", 1);
 	BufferedImage[] cp = loadPics("res/pics/checkpoint.png", 2);
-	BufferedImage[] sl = loadPics("res/pics/slime.png", 4);
+	public static BufferedImage[] sl = loadPics("res/pics/slime.png", 4);
 	BufferedImage[] sw = loadPics("res/pics/sword.png", 13);
 	BufferedImage[] kr = loadPics("res/pics/kristall.png", 6);
 	BufferedImage[] thu = loadPics("res/pics/blitze.png", 5);
@@ -311,7 +313,7 @@ public class GamePanel extends JPanel implements Runnable, ActionListener, KeyLi
 				e.printStackTrace();
 			}
 		}
-		SpawnEnemy();
+		//SpawnEnemy();
 		SpawnNPC();
 		started = true;
 
@@ -424,7 +426,7 @@ public class GamePanel extends JPanel implements Runnable, ActionListener, KeyLi
 			Clear();
 			ground();
 			SpawnPlayer();
-			SpawnEnemy();
+			//SpawnEnemy();
 			SpawnNPC();
 			SpawnBoss();
 			SpawnKristallRoom();
@@ -659,14 +661,13 @@ public class GamePanel extends JPanel implements Runnable, ActionListener, KeyLi
 
 	}
 
-	public void SpawnEnemy() {
+	/*public void SpawnEnemy() {
 		for (int row = 0; row < leveldata.length; row++) {
 			for (int col = 0; col < leveldata[row].length; col++) {
 				if (leveldata[row][col] == 3) {
 					moveEX = col;
 					moveEY = row;
 					int rn = (int)(Math.random()*5);
-					System.out.println("Randomnr: "+rn);
 					if(rn >= 0 && rn <2){
 						ene = new Enemy(enemy, Tilesize * moveEX,
 								Tilesize * moveEY, 100, this);
@@ -683,7 +684,7 @@ public class GamePanel extends JPanel implements Runnable, ActionListener, KeyLi
 				}
 			}
 		}
-	}
+	}*/
 
 	public void SpawnPlayer() {
 		for (int row = 0; row < leveldata.length; row++) {
@@ -1287,7 +1288,7 @@ public class GamePanel extends JPanel implements Runnable, ActionListener, KeyLi
 
 	}
 
-	public BufferedImage[] loadPics(String path, int pics) { // Methode bekommt
+	public static BufferedImage[] loadPics(String path, int pics) { // Methode bekommt
 																// Speicherort
 																// und Anzahl
 																// der
@@ -1439,6 +1440,22 @@ public class GamePanel extends JPanel implements Runnable, ActionListener, KeyLi
         this.connectedPlayers.add(player2);
     }
 	
+	public synchronized void addEnemy(Object o){
+		if(((Packet04Enemy)o).getID()== 1){
+			ene = new Enemy(enemy, ((Packet04Enemy)o).getX(), ((Packet04Enemy)o).getY(), 100, this,true);
+			actors.add(ene);
+			this.spawnedEnemys.add(ene);
+		}else if(((Packet04Enemy)o).getID()== 2){
+			sli = new Enemy(sl, ((Packet04Enemy)o).getX(), ((Packet04Enemy)o).getY(), 100, this, true);
+			actors.add(sli);
+			this.spawnedEnemys.add(sli);
+		}
+		
+	}
+	
+	public synchronized void removeEnemy(int id){
+		
+	}
 	
 	public synchronized void removePlayerMP(String username) {
         int index = 0;

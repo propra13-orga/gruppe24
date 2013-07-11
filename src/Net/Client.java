@@ -17,12 +17,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 
+import Client.Enemy;
 import Client.GamePanel;
 import Client.PlayerMP;
 import Net.packets.Packet00Login;
 import Net.packets.Packet01Disconnect;
 import Net.packets.Packet02Move;
 import Net.packets.Packet03Map;
+import Net.packets.Packet04Enemy;
 
 public class Client implements Runnable {
 	List<Client> clients;
@@ -138,6 +140,8 @@ public class Client implements Runnable {
 			handleMove((Packet02Move) o, false);
 		} else if (o instanceof Packet03Map) {
 			game.leveldata = ((Packet03Map) o).getLevel();
+		} else if (o instanceof Packet04Enemy){
+			game.addEnemy(o);
 		}
 
 	}
@@ -218,6 +222,13 @@ public class Client implements Runnable {
 	private void addConnection(PlayerMP player, Object o) {
 		boolean alreadyConnected = false;
 		send(o);
+		
+		for(int index = 0;index < Server.spawnedEnemys.size(); index++){
+			Enemy e = Server.spawnedEnemys.get(index);
+			o = new Packet04Enemy(e.getX(), e.getY(), e.getID());
+			send(o);
+		}
+		
 		for (PlayerMP p : Server.connectedPlayers) {
 			if (player.getUsername().equalsIgnoreCase(p.getUsername())) {
 				if (p.ipAddress == null) {
@@ -419,6 +430,32 @@ public class Client implements Runnable {
 
 		}
 	}
+	
+	public static void SpawnEnemy() {
+		for (int row = 0; row < leveldata.length; row++) {
+			for (int col = 0; col < leveldata[row].length; col++) {
+				if (leveldata[row][col] == 3) {
+					int rn = (int)(Math.random()*5);
+					if(rn >= 0 && rn <2){
+						Enemy ene = new Enemy(GamePanel.enemy, 16 * col,	16 * row, 100, game, 1);
+						Server.spawnedEnemys.add(ene);
+						System.out.println(Server.spawnedEnemys);
+					}else if(rn >=2 && rn<=4){
+						Enemy sli = new Enemy(game.sl, 16 * col, 16 * row, 100, game, 2);
+						Server.spawnedEnemys.add(sli);
+						System.out.println(Server.spawnedEnemys);
+					}
+					
+				}
+
+			}
+		}
+		if( Server.spawnedEnemys.size() == 0){
+			System.out.println("Keine Gegner gespawnt");
+		}
+	}
+	
+	
 
 	// CLIENTEN TEIL
 	private void handleLogin(Packet00Login packet, InetAddress address, int port) {

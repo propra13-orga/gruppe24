@@ -10,6 +10,7 @@ public class Enemy extends Sprite implements Runnable {
 	int oldY;
 	int j;
 	int dis;
+	int id;
 	static int hx;
 	static int hy;
 	
@@ -18,12 +19,19 @@ public class Enemy extends Sprite implements Runnable {
 	
 	boolean resting;
 	boolean moving;
+	boolean MP = false;
 	
 	long start;
 
-	public Enemy(BufferedImage[] i, double x, double y, long delay, GamePanel p) {
+	public Enemy(BufferedImage[] i, double x, double y, long delay, GamePanel p, int id) {
 		super(i, x, y, delay, p);
+		this.id = id;
 
+	}
+	
+	public Enemy(BufferedImage[] i, double x, double y, long delay, GamePanel p, boolean isClient) {
+		super(i, x, y, delay, p);
+		this.MP = isClient;
 	}
 
 	@Override
@@ -44,53 +52,8 @@ public class Enemy extends Sprite implements Runnable {
 				resting = true;					
 			}
 		}
-		//if(!moving){
-		//if(start == 0){
-		//	start = System.currentTimeMillis();
-		//}
-		//if(System.currentTimeMillis()-start > 2500){
-			resting = false;
-		//	start = 0;
-		//}
-		//}
-		
-		
+			resting = false;		
 	}
-		
-//		else if((flag ==0) && (count <=2)){
-//			moveene(flag);
-//			count =+ 1;
-//		}else if((flag ==1) && (count <=2)){
-//			moveene(flag);
-//			count =+ 1;
-//		}else if((flag ==2) && (count <=2)){
-//			moveene(flag);
-//			count =+ 1;
-//		}else if((flag ==3) && (count <=2)){
-//			moveene(flag);
-//			count =+ 1;
-//		}
-		
-//		else if(rn == 0){
-//			moveene(rn);
-//			flag = rn;
-//			
-//		}else if(rn == 1){
-//			moveene(rn);
-//			flag = rn;
-//			
-//		}else if(rn == 2){
-//			moveene(rn);
-//			flag = rn;
-//		
-//		}else if(rn == 3){
-//			moveene(rn);
-//			flag = rn;
-//			
-//		}
-//		if(count == 3)
-//			count = 0;
-//}
 	
 	private int mDirection = -1;
 	private int mSteps = 0;
@@ -113,7 +76,7 @@ public class Enemy extends Sprite implements Runnable {
 	}
 
 	private void chasePlayer() {
-		if (!parent.dead) {
+		/*if (!parent.dead) {
 			if (getY() > parent.hero.getY()) {
 			MoveYEh();
 			if(this == parent.sli){
@@ -138,7 +101,7 @@ public class Enemy extends Sprite implements Runnable {
 				this.setLoop(0, 3);
 			}
 			}
-		}
+		}*/
 	}
 
 	@SuppressWarnings("static-access")
@@ -264,5 +227,9 @@ public class Enemy extends Sprite implements Runnable {
 	@Override
 	public void run() {
 		
+	}
+
+	public int getID() {
+		return id;
 	}
 }

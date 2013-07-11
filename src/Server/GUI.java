@@ -11,7 +11,6 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import Client.*;
-import Net.GameServer;
 import Net.Server;
 
 
@@ -22,7 +21,6 @@ public class GUI extends JPanel implements Runnable {
 	private JButton b0;
 	private JButton b1;
 	
-	private GameServer socketServer;
 	private GamePanel parent;
 	
 	JFrame console;
