@@ -38,7 +38,6 @@ public class PlayerMP extends Player {
 	public void doLogic(long delta) {
 		super.doLogic(delta);
 		
-		this.dir = parent.dir;
 		if(this.dir==1){
 			this.setLoop(0,2);
 		}else if(this.dir==2){
@@ -57,5 +56,6 @@ public class PlayerMP extends Player {
     
 	public void setMovingDir(int movingDir) {
 		parent.dir = movingDir;
+		this.dir = movingDir;
 	}
 }

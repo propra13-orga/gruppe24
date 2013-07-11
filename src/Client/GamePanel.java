@@ -32,6 +32,7 @@ import javax.swing.JTextArea;
 import Net.Client;
 import Net.packets.Packet00Login;
 import Net.packets.Packet02Move;
+import Net.packets.Packet03Map;
 import Server.GUI;
 
 public class GamePanel extends JPanel implements Runnable, ActionListener, KeyListener {
@@ -87,7 +88,7 @@ public class GamePanel extends JPanel implements Runnable, ActionListener, KeyLi
 	String gameov = "Game Over!";
 	String finish = "Goal!";
 
-	int[][] leveldata;
+	public int[][] leveldata;
 	int lvl = 1;
 	int EnemyCounter = 0;
 	int Coins = 0;
@@ -284,7 +285,21 @@ public class GamePanel extends JPanel implements Runnable, ActionListener, KeyLi
 
 		soundlib = new SoundLib();
 		soundlib.loadSound("test", "res/sounds/Test.wav");
-		
+		if (GUI.running || join) {
+			Packet03Map mapPacket = new Packet03Map();
+			try {
+				c.getOutput().writeObject(mapPacket);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		while(leveldata == null){
+			try {
+				Thread.sleep(10);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
 		ground();
 		SpawnPlayer();
 		if (GUI.running || join) {
@@ -599,7 +614,7 @@ public class GamePanel extends JPanel implements Runnable, ActionListener, KeyLi
 							0, this);
 					enviroment.add(check);
 					check.setLoop(0, 0);
-				} else if (rc == 2) {
+				} else if (rc == 2 || rc == 22) {
 					ps = new Tile(pstart, posx * Tilesize, posy * Tilesize, 0,
 							this);
 					enviroment.add(ps);
@@ -851,7 +866,10 @@ public class GamePanel extends JPanel implements Runnable, ActionListener, KeyLi
 			lvl = 6;
 		}else
 			lvl = 1;
-		read();
+		if(!join){
+			read();
+		}
+		status = true;
 		if (status) {
 			if(!checkp){
 				if (GUI.running || join) {
@@ -896,67 +914,67 @@ public class GamePanel extends JPanel implements Runnable, ActionListener, KeyLi
 	}
 
 	private void checkKeys() {
-
-		/*if (up) {
-
-			oldY = moveY;
-			oldX = moveX;
-
-			if (leveldata[moveY - 1][moveX] == 1|| leveldata[moveY - 1][moveX] == 11|| leveldata[moveY - 1][moveX] == 16) {
-				moveY = oldY;
-			} else if (leveldata[moveY - 1][moveX] == 4 || leveldata[moveY - 1][moveX] == 30|| leveldata[moveY-1][moveX] == 31|| leveldata[moveY-1][moveX] == 99) {
-				moveY = oldY;
-			} else if(leveldata[moveY -1][moveX]==9 && EnemyCounter != 0){
-				moveY = oldY;
-			} else
-				moveY--;
+		if(!join){
+			if (up) {
+	
+				oldY = moveY;
+				oldX = moveX;
+	
+				if (leveldata[moveY - 1][moveX] == 1|| leveldata[moveY - 1][moveX] == 11|| leveldata[moveY - 1][moveX] == 16) {
+					moveY = oldY;
+				} else if (leveldata[moveY - 1][moveX] == 4 || leveldata[moveY - 1][moveX] == 30|| leveldata[moveY-1][moveX] == 31|| leveldata[moveY-1][moveX] == 99) {
+					moveY = oldY;
+				} else if(leveldata[moveY -1][moveX]==9 && EnemyCounter != 0){
+					moveY = oldY;
+				} else
+					moveY--;
+			}
+	
+			if (down) {
+	
+				oldY = moveY;
+				oldX = moveX;
+	
+				if (leveldata[moveY + 1][moveX] == 1|| leveldata[moveY + 1][moveX] == 11|| leveldata[moveY + 1][moveX] == 16) {
+					moveY = oldY;
+				} else if (leveldata[moveY + 1][moveX] == 4|| leveldata[moveY + 1][moveX] == 30|| leveldata[moveY+1][moveX] == 31|| leveldata[moveY+1][moveX] == 99) {
+					moveY = oldY;
+				} else if(leveldata[moveY +1][moveX]==9 && EnemyCounter != 0){
+					moveY = oldY;
+				}else
+					moveY++;
+			}
+	
+			if (left) {
+	
+				oldY = moveY;
+				oldX = moveX;
+	
+				if (leveldata[moveY][moveX - 1] == 1|| leveldata[moveY][moveX-1] == 11|| leveldata[moveY][moveX-1] == 16) {
+					moveX = oldX;
+				} else if (leveldata[moveY][moveX - 1] == 4|| leveldata[moveY][moveX-1] == 30|| leveldata[moveY][moveX-1] == 31|| leveldata[moveY][moveX-1] == 99) {
+					moveX = oldX;
+				} else if(leveldata[moveY][moveX-1]==9 && EnemyCounter != 0){
+					moveX = oldX;
+				}else
+					moveX--;
+			}
+	
+			if (right) {
+	
+				oldY = moveY;
+				oldX = moveX;
+	
+				if (leveldata[moveY][moveX + 1] == 1|| leveldata[moveY][moveX+1] == 11|| leveldata[moveY][moveX+1] == 16) {
+					moveX = oldX;
+				} else if (leveldata[moveY][moveX + 1] == 4|| leveldata[moveY][moveX+1] == 30|| leveldata[moveY][moveX+1] == 31|| leveldata[moveY][moveX+1] == 99) {
+					moveX = oldX;
+				} else if(leveldata[moveY][moveX+1]==9 && EnemyCounter != 0){
+					moveX = oldX;
+				}else
+					moveX++;
+			}
 		}
-
-		if (down) {
-
-			oldY = moveY;
-			oldX = moveX;
-
-			if (leveldata[moveY + 1][moveX] == 1|| leveldata[moveY + 1][moveX] == 11|| leveldata[moveY + 1][moveX] == 16) {
-				moveY = oldY;
-			} else if (leveldata[moveY + 1][moveX] == 4|| leveldata[moveY + 1][moveX] == 30|| leveldata[moveY+1][moveX] == 31|| leveldata[moveY+1][moveX] == 99) {
-				moveY = oldY;
-			} else if(leveldata[moveY +1][moveX]==9 && EnemyCounter != 0){
-				moveY = oldY;
-			}else
-				moveY++;
-		}
-
-		if (left) {
-
-			oldY = moveY;
-			oldX = moveX;
-
-			if (leveldata[moveY][moveX - 1] == 1|| leveldata[moveY][moveX-1] == 11|| leveldata[moveY][moveX-1] == 16) {
-				moveX = oldX;
-			} else if (leveldata[moveY][moveX - 1] == 4|| leveldata[moveY][moveX-1] == 30|| leveldata[moveY][moveX-1] == 31|| leveldata[moveY][moveX-1] == 99) {
-				moveX = oldX;
-			} else if(leveldata[moveY][moveX-1]==9 && EnemyCounter != 0){
-				moveX = oldX;
-			}else
-				moveX--;
-		}
-
-		if (right) {
-
-			oldY = moveY;
-			oldX = moveX;
-
-			if (leveldata[moveY][moveX + 1] == 1|| leveldata[moveY][moveX+1] == 11|| leveldata[moveY][moveX+1] == 16) {
-				moveX = oldX;
-			} else if (leveldata[moveY][moveX + 1] == 4|| leveldata[moveY][moveX+1] == 30|| leveldata[moveY][moveX+1] == 31|| leveldata[moveY][moveX+1] == 99) {
-				moveX = oldX;
-			} else if(leveldata[moveY][moveX+1]==9 && EnemyCounter != 0){
-				moveX = oldX;
-			}else
-				moveX++;
-		}*/
-		
 		
 		
 
@@ -973,7 +991,6 @@ public class GamePanel extends JPanel implements Runnable, ActionListener, KeyLi
 				right = false;
 				if (join) {
 					Packet02Move movePacket = new Packet02Move(player1.getUsername(), player1.x, player1.y, this.dir);
-					//movePacket.writeData(socketClient);
 					try {
 						c.getOutput().writeObject(movePacket);
 					} catch (IOException e1) {
@@ -996,7 +1013,6 @@ public class GamePanel extends JPanel implements Runnable, ActionListener, KeyLi
 					} catch (IOException e1) {
 						e1.printStackTrace();
 					}
-					//movePacket.writeData(socketClient);
 				}
 			}
 
@@ -1014,7 +1030,6 @@ public class GamePanel extends JPanel implements Runnable, ActionListener, KeyLi
 					} catch (IOException e1) {
 						e1.printStackTrace();
 					}
-					//movePacket.writeData(socketClient);
 				}
 			}
 
@@ -1032,7 +1047,6 @@ public class GamePanel extends JPanel implements Runnable, ActionListener, KeyLi
 					} catch (IOException e1) {
 						e1.printStackTrace();
 					}
-					//movePacket.writeData(socketClient);
 				}
 			}
 			if(e.getKeyCode()== KeyEvent.VK_SPACE){
@@ -1363,7 +1377,7 @@ public class GamePanel extends JPanel implements Runnable, ActionListener, KeyLi
 				break;
 			}
 			BufferedReader oReader = new BufferedReader(new InputStreamReader(
-					new FileInputStream(new File("res/lvl/" + rest)))); // Zeile
+					new FileInputStream(new File("res/lvl/SP/" + rest)))); // Zeile
 																		// für
 			// Zeile
 			// einlesen
@@ -1402,7 +1416,6 @@ public class GamePanel extends JPanel implements Runnable, ActionListener, KeyLi
 	}
 		
     public synchronized void movePlayer(String username, double x, double y, int movingDir) {
-       System.out.println(x + ","+ y);
     	if(username.equals(player1.Username)){
 	    	player1.x = x;
 	        player1.y = y;
