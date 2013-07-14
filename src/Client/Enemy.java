@@ -2,18 +2,24 @@ package Client;
 
 import java.awt.image.BufferedImage;
 
-public class Enemy extends Sprite implements Runnable {
+/***********************************
+ * Die Enemy Class dient als Basis *
+ * sämtlicher GegnerTypen mit      *
+ * der passenden Logik dahinter	   *
+ ***********************************/
+
+
+public class Enemy extends Sprite {
 
 	private static final long serialVersionUID = 1L;
 	
-	int oldX;
-	int oldY;
-	int j;
-	int dis;
-	int id;
-	int type;
-	static int hx;
-	static int hy;
+	private int oldX;
+	private int oldY;
+	private int dis;
+	private int id;
+	private int type;
+	private static int hx;
+	private static int hy;
 	
 	double deltaX;
 	double deltaY;
@@ -54,6 +60,9 @@ public class Enemy extends Sprite implements Runnable {
 
 	@Override
 	public void doLogic(long delta) {
+		/*******************************************
+		 * Logik Funktion für die jeweilige Klasse *
+		 *******************************************/
 		super.doLogic(delta);
 		if(!MP){
 			deltaX =Math.abs((this.getX()/16)-(hx/16));
@@ -126,7 +135,6 @@ public class Enemy extends Sprite implements Runnable {
 		}
 	}
 
-	@SuppressWarnings("static-access")
 	private void moveene(int i){
 		if(!MP){
 			switch(i){
@@ -173,7 +181,6 @@ public class Enemy extends Sprite implements Runnable {
 		}
 	}
 	
-	@SuppressWarnings("static-access")
 	private void MoveYEh() {
 
 		oldY = ((int) (y / 16));
@@ -187,7 +194,7 @@ public class Enemy extends Sprite implements Runnable {
 		oldY = (int) y;
 
 	}
-	@SuppressWarnings("static-access")
+	
 	private void MoveYEd() {
 
 		oldY = ((int) (y / 16));
@@ -201,7 +208,7 @@ public class Enemy extends Sprite implements Runnable {
 		oldY = (int) y;
 
 	}
-	@SuppressWarnings("static-access")
+	
 	private void MoveXEr() {
 
 		oldX = ((int) (x / 16));
@@ -215,7 +222,6 @@ public class Enemy extends Sprite implements Runnable {
 		oldX = (int)x;
 
 	}
-	@SuppressWarnings("static-access")
 	private void MoveXEl() {
 
 		oldX = ((int) (x / 16));
@@ -240,20 +246,24 @@ public class Enemy extends Sprite implements Runnable {
 	}
 	
 	public static void getCoor(int x, int y){
+		/****************************************************************************
+		 * getCoor dient dazu der Enemy.class die Position des Spielers mitzuteilen *
+		 ****************************************************************************/
 		hx = x;
 		hy = y;
 	}
 
-	@Override
-	public void run() {
-
-	}
-
 	public int getID() {
+		/**********************************
+		 * gibt die ID des Gegners wieder *
+		 **********************************/
 		return id;
 	}
 	
 	public int getType(){
+		/*****************************
+		 * gibt die Gegnerart wieder *
+		 *****************************/
 		return type;
 	}
 	

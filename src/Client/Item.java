@@ -2,6 +2,10 @@ package Client;
 
 import java.awt.image.BufferedImage;
 
+/*******************************
+ * Basis Klasse für alle Items *
+ *******************************/
+
 public class Item extends Sprite {
 
 	private static final long serialVersionUID = 1L;
@@ -19,11 +23,14 @@ public class Item extends Sprite {
 	@Override
 	public void doLogic(long delta) {
 		super.doLogic(delta);
-
 	}
 
 	@Override
 	public boolean collidedWith(Sprite s) {
+		/********************************************
+		 * Kollisionsabfrage von Schwert und Gegner *
+		 ********************************************/
+		
 		if (this.intersects(s) && this == parent.sword) {
 			if (s instanceof Enemy) {
 				if (parent.sup || parent.sdown || parent.sleft || parent.sright) {

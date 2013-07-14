@@ -35,6 +35,10 @@ import Net.packets.Packet02Move;
 import Net.packets.Packet03Map;
 import Server.GUI;
 
+/********************************************
+ * Das GamePanel ist main Klasse des Spiels *
+ ********************************************/
+
 public class GamePanel extends JPanel implements Runnable, ActionListener, KeyListener {
 
 	private static final long serialVersionUID = 1L;
@@ -44,7 +48,7 @@ public class GamePanel extends JPanel implements Runnable, ActionListener, KeyLi
 	private JButton b3;
 
 	JFrame frame;
-	KeyEvent e;
+	private KeyEvent e;
 
 	long delta = 0;
 	long last = 0;
@@ -53,9 +57,14 @@ public class GamePanel extends JPanel implements Runnable, ActionListener, KeyLi
 	long l1 = System.currentTimeMillis() ;
 	long l2 = System.currentTimeMillis();
 
+	
+	Thread th;
+	JTextArea npc1 = new JTextArea(5,20);
+	JTextArea shop = new JTextArea(5,20);
+	Client c;
 	Player hero;
 	public PlayerMP player1;
-	PlayerMP player2;
+	private PlayerMP player2;
 	Enemy ene, sli;
 	NPC npc, shopowner;
 	EnemyBoss bs;
@@ -86,8 +95,8 @@ public class GamePanel extends JPanel implements Runnable, ActionListener, KeyLi
 	public List<PlayerMP> connectedPlayers = new ArrayList<PlayerMP>();
 	public List<Enemy> spawnedEnemys = new ArrayList<Enemy>();
 	
-	String gameov = "Game Over!";
-	String finish = "Goal!";
+	private static final String gameov = "Game Over!";
+	private static final String finish = "Goal!";
 
 	public int[][] leveldata;
 	int lvl = 1;
@@ -162,19 +171,11 @@ public class GamePanel extends JPanel implements Runnable, ActionListener, KeyLi
 	public BufferedImage[] pl2 = loadPics("res/pics/player2.png", 12);
 
 
-	Thread th;
-	JTextArea npc1 = new JTextArea(5,20);
-	JTextArea shop = new JTextArea(5,20);
-	
-	
-
-	Client c;
-
 	public static void main(String[] args){
 		new GamePanel(Width, Height + 20);
 	}
 
-	public GamePanel(int w, int h) {
+	private GamePanel(int w, int h) {
 		this.setPreferredSize(new Dimension(w, h));
 		this.setBackground(Color.BLACK);
 
@@ -249,7 +250,8 @@ public class GamePanel extends JPanel implements Runnable, ActionListener, KeyLi
 
 	}
 
-	public void TextBox(){
+	private void TextBox(){
+				
 		npc1.setLineWrap(true);
 		npc1.setWrapStyleWord(true);
 		npc1.setBackground(Color.black);
@@ -319,7 +321,9 @@ public class GamePanel extends JPanel implements Runnable, ActionListener, KeyLi
 
 	@Override
 	public void run() {
-
+		/**************************************************
+		 * Game-Loop die alle wichtige Funktionen aufruft *
+		 **************************************************/
 		while (frame.isVisible()) {
 
 			computeDelta();
@@ -590,7 +594,7 @@ public class GamePanel extends JPanel implements Runnable, ActionListener, KeyLi
 		painter3.clear();
 	}
 
-	public void ground() {
+	private void ground() {
 		for (int row = 0; row < leveldata.length; row++) {
 			for (int col = 0; col < leveldata[row].length; col++) {
 				posy = row;
@@ -658,7 +662,7 @@ public class GamePanel extends JPanel implements Runnable, ActionListener, KeyLi
 
 	}
 
-	public void SpawnEnemy() {
+	private void SpawnEnemy() {
 		for (int row = 0; row < leveldata.length; row++) {
 			for (int col = 0; col < leveldata[row].length; col++) {
 				if (leveldata[row][col] == 3) {
@@ -683,7 +687,7 @@ public class GamePanel extends JPanel implements Runnable, ActionListener, KeyLi
 		}
 	}
 
-	public void SpawnPlayer() {
+	private void SpawnPlayer() {
 		for (int row = 0; row < leveldata.length; row++) {
 			for (int col = 0; col < leveldata[row].length; col++) {
 				if (leveldata[row][col] == 2) {
@@ -729,7 +733,7 @@ public class GamePanel extends JPanel implements Runnable, ActionListener, KeyLi
 		}
 	}
 	
-	public void SpawnNPC() {
+	private void SpawnNPC() {
 		for (int row = 0; row < leveldata.length; row++) {
 			for (int col = 0; col < leveldata[row].length; col++) {
 				if (leveldata[row][col] == 30) {
@@ -748,7 +752,7 @@ public class GamePanel extends JPanel implements Runnable, ActionListener, KeyLi
 		}
 	}
 	
-	public void SpawnBoss() {
+	private void SpawnBoss() {
 		for (int row = 0; row < leveldata.length; row++) {
 			for (int col = 0; col < leveldata[row].length; col++) {
 				if (leveldata[row][col] == 33) {
@@ -762,7 +766,7 @@ public class GamePanel extends JPanel implements Runnable, ActionListener, KeyLi
 		}
 	}
 	
-	public void SpawnKristallRoom(){
+	private void SpawnKristallRoom(){
 		for (int row = 0; row < leveldata.length; row++) {
 			for (int col = 0; col < leveldata[row].length; col++) {
 				int rc = leveldata[row][col];
@@ -799,14 +803,20 @@ public class GamePanel extends JPanel implements Runnable, ActionListener, KeyLi
 	}
 	
 	public void SpawnItem(double x, double y, boolean b) {
+		/*********************************************************************************************************************
+		 * Funktion wird aufgerufen wenn ein Gegner stirbt, das boolsche b gibt an ob es ein Boss drop ist oder normaler Mop *
+		 *********************************************************************************************************************/
 		double xi = x;
 		double yi = y;
-		System.out.println("drop");
 		item = new Item(IT, xi, yi+16, 100, this, b, null);
 		actors.add(item);
 	}
 	
 	public void createBoltBoss(double xb, double yb){	
+		/*********************************************
+		 * Boss Zauber mit dem Arcane Atribut mit 	 *
+		 * übergeben wird die x/y-Postion des Bosses *
+		 *********************************************/
 		double x;
 		double y;
 		x=xb;		
@@ -817,17 +827,21 @@ public class GamePanel extends JPanel implements Runnable, ActionListener, KeyLi
 	
 
 	public void createBolt() {
+		/****************************************
+		 * Player Zauber mit dem Arcane Atribut *
+		 ****************************************/
 		
-		if (dir == 1) { // hoch
+		
+		if (dir == 1) { // hoch schießen
 			x = hero.getX();
 			y = hero.getY() - 8;
-		} else if (dir == 2) { // links
+		} else if (dir == 2) { // nach links schießen
 			x = hero.getX() - 8;
 			y = hero.getY() + Tilesize;
-		} else if (dir == 3) { // runter
+		} else if (dir == 3) { // runter schießen
 			x = hero.getX();
 			y = hero.getY() + 24;
-		} else if (dir == 4) { // rechts
+		} else if (dir == 4) { // nach rechts schießen
 			x = hero.getX() + 8;
 			y = hero.getY() + Tilesize;
 		}
@@ -839,12 +853,17 @@ public class GamePanel extends JPanel implements Runnable, ActionListener, KeyLi
 	}
 
 	public void generateItem(boolean h, int hp, boolean m, int mp){
+		/*********************************************************************
+		 * Diese Funktion wird aufgerufen wenn man ein Item aufgehoben hat.  *
+		 * boolean h gibt an ob das Item eine Health-Potion sein darf wärend *
+		 * int hp die Wahrscheinlich keit angibt. Das selbe gilt auch für    *
+		 * boolean m und int mp, wobei es hier um Mana-Potion geht			 *
+		 *********************************************************************/
 		
 		if(h == true){
 			int rn =(int) (Math.random()*hp);
 			System.out.println(rn);
 			if(rn%2 == 0 && rn >= 3){
-				System.out.println("Health Porion");
 				hero.addHealth(10, this.phealth);
 			}
 		}
@@ -852,7 +871,6 @@ public class GamePanel extends JPanel implements Runnable, ActionListener, KeyLi
 			int rn =(int) (Math.random()*mp);
 			System.out.println(rn);
 			if(rn%2 == 1 && rn >=3){
-				System.out.println("Mana Potion");
 				hero.addMana(10);
 			}
 		}
@@ -894,6 +912,10 @@ public class GamePanel extends JPanel implements Runnable, ActionListener, KeyLi
 	}
 
 	public void stopGame() {
+		/****************************************
+		 * Funktion um ins Menü zurück zukehren *
+		 ****************************************/
+		
 		b0.setVisible(true);
 		b1.setVisible(true);
 		b2.setVisible(true);
@@ -979,11 +1001,15 @@ public class GamePanel extends JPanel implements Runnable, ActionListener, KeyLi
 	}
 	
 	public void keyPressed(KeyEvent e){
+		/*********************************************
+		 * Verabreitung des Inputs der Tastatur      *
+		 * Im fall des MP erstellung der DatenPacket *
+		 *********************************************/
+		
 		if (!dead) {
 			if (e.getKeyCode() == KeyEvent.VK_UP) {
 				up = true;
-				this.dir = 1;
-				//hero.setLoop(0, 2);
+				dir = 1;
 				down = false;
 				left = false;
 				right = false;
@@ -1000,7 +1026,6 @@ public class GamePanel extends JPanel implements Runnable, ActionListener, KeyLi
 			if (e.getKeyCode() == KeyEvent.VK_DOWN) {
 				down = true;
 				dir = 3;
-				//hero.setLoop(6, 8);
 				up = false;
 				left = false;
 				right = false;
@@ -1017,7 +1042,6 @@ public class GamePanel extends JPanel implements Runnable, ActionListener, KeyLi
 			if (e.getKeyCode() == KeyEvent.VK_LEFT) {
 				left = true;
 				dir = 2;
-				//hero.setLoop(9, 11);
 				down = false;
 				up = false;
 				right = false;
@@ -1034,7 +1058,6 @@ public class GamePanel extends JPanel implements Runnable, ActionListener, KeyLi
 			if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
 				right = true;
 				dir = 4;
-				//hero.setLoop(3, 5);
 				down = false;
 				left = false;
 				up = false;
@@ -1074,6 +1097,10 @@ public class GamePanel extends JPanel implements Runnable, ActionListener, KeyLi
 	}
 	
 	public void keyReleased(KeyEvent e){
+		/*******************************************************************************
+		 * In dieser Funtkion wird der Tastatur Input beim loslassen der Taste erfasst *
+		 *******************************************************************************/
+		
 		if (e.getKeyCode() == KeyEvent.VK_UP) {
 			up = false;
 		}
@@ -1117,31 +1144,26 @@ public class GamePanel extends JPanel implements Runnable, ActionListener, KeyLi
 			}else if(dir == 4){
 				sword.setLoop(0,0);
 			}
-			sup = false;
-			sleft = false;
-			sdown = false;
-			sright = false;
+			sup = sleft = sright = sdown = false;
 		}
-		if(lvl == 1){
-			if(npc.dis == 1 && lvl==1){
-				if(e.getKeyCode()== KeyEvent.VK_E){
-					page++;
-					if(page>3)
-						page=0;
-				}
-			}else
-				page = 0;
-		}
-		if(lvl>1){
-			if(shopowner != null && shopowner.dis == 1){
-				if(e.getKeyCode()==KeyEvent.VK_E){
-					page++;
-					if(page>1)
-						page=0;
-				}
-			}else
-				page = 0;
-		}
+		if(npc != null && npc.dis == 1 && lvl==1){
+			if(e.getKeyCode()== KeyEvent.VK_E){
+				page++;
+				if(page>3)
+					page=0;
+			}
+		}else
+			page = 0;
+			
+		if(shopowner != null && shopowner.dis == 1 && lvl>1){
+			if(e.getKeyCode()==KeyEvent.VK_E){
+				page++;
+				if(page>1)
+					page=0;
+			}
+		}else
+			page = 0;
+
 		if(e.getKeyCode() == KeyEvent.VK_1 && Coins >=5 && showtext == true){
 			hero.addHealth(25, phealth);
 			Coins = Coins - 5;
@@ -1166,11 +1188,7 @@ public class GamePanel extends JPanel implements Runnable, ActionListener, KeyLi
 	}
 	
 	public void keyTyped(KeyEvent e){
-	}
-	
-	
-	
-	
+	}	
 
 	private void computeDelta() {
 
@@ -1285,7 +1303,7 @@ public class GamePanel extends JPanel implements Runnable, ActionListener, KeyLi
 
 	}
 
-	public static BufferedImage[] loadPics(String path, int pics) { // Methode bekommt
+	private static BufferedImage[] loadPics(String path, int pics) { // Methode bekommt
 																// Speicherort
 																// und Anzahl
 																// der
@@ -1322,16 +1340,16 @@ public class GamePanel extends JPanel implements Runnable, ActionListener, KeyLi
 		return anim;
 	}
 
-	public boolean isStarted() {
+	private boolean isStarted() {
 		return started;
 	}
 
-	public void setStarted(boolean started) {
+	private void setStarted(boolean started) {
 		this.started = started;
 	}
 
 	@SuppressWarnings("resource")
-	public void read() {
+	private void read() {
 		try {
 			String sTemp;
 			String rest = null;
@@ -1414,6 +1432,10 @@ public class GamePanel extends JPanel implements Runnable, ActionListener, KeyLi
 	}
 		
     public synchronized void movePlayer(String username, double x, double y, int movingDir) {
+    	/*********************************************************************
+    	 * Hier werden die eingehenden Bewegungsdaten vom Server verabreitet *
+    	 *********************************************************************/
+    	
     	if(username.equals(player1.Username)){
 	    	player1.x = x;
 	        player1.y = y;
@@ -1424,26 +1446,38 @@ public class GamePanel extends JPanel implements Runnable, ActionListener, KeyLi
 	        player2.setMovingDir(movingDir);
        }
     }
-	
+
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-
+		
 	}
 	
 	public synchronized void addPlayerMP(PlayerMP p) {
+		/*********************************************
+		 * 2. Spieler hinzufügen und zeichnen lassen *
+		 *********************************************/
+		
 		player2 = p;
 		actors.add(player2);
         this.connectedPlayers.add(player2);
     }
 	
 	public synchronized void addEnemy(Enemy e){
+		/********************************************
+		 * Das selbe wie addPlayerMP nur für Gegner *
+		 ********************************************/
+		
 		ene = e;
 		actors.add(ene);
 		this.spawnedEnemys.add(ene);		
 	}
 	
 	public synchronized void removeEnemy(int id){
+		/**********************************************
+		 * Enfernt anhand der ID den passenden Gegner *
+		 **********************************************/
+		
 		int index = 0;
 		for(Enemy e : this.spawnedEnemys){
 			if(e.getID() == id){
@@ -1456,6 +1490,11 @@ public class GamePanel extends JPanel implements Runnable, ActionListener, KeyLi
 	}
 	
 	public synchronized void syncMove(int id, double x, double y){
+		/*********************************************************
+		 * Verarbeitet die eingegangen Bewegungsdaten vom Server *
+		 * und passt die Lokalen Coordinaten der Gegner an.      *
+		 *********************************************************/
+		
 		int index = 0;
 		for(Enemy e : this.spawnedEnemys){
 			if(e.getID() == id){
@@ -1468,6 +1507,11 @@ public class GamePanel extends JPanel implements Runnable, ActionListener, KeyLi
 	}
 	
 	public synchronized void removePlayerMP(String username) {
+		/*************************************************************
+		 * Wenn ein Spieler Disconnected wird er über diese Funtkion *
+		 * bei den anderen Spieler aus dem Spiel gelöscht            *
+		 *************************************************************/
+		
         int index = 0;
         for (PlayerMP p : this.connectedPlayers) {
             if (p.getUsername().equals(username)) {
@@ -1480,6 +1524,10 @@ public class GamePanel extends JPanel implements Runnable, ActionListener, KeyLi
     }
 	
 	public void setStart(String username, double x, double y){
+		/*******************************************************
+		 * Funktion zur initalisierung der Startposition im MP *
+		 *******************************************************/
+		
 		
     	if(username.equals(player1.Username)){
 	    	player1.x = x;

@@ -302,6 +302,7 @@ public class Client implements Runnable {
 		return index;
 	}
 
+	@SuppressWarnings("static-access")
 	private void handleMove(Packet02Move packet, boolean isServer) {
 		if (isServer) {
 			if (getPlayerMP(packet.getUsername()) != null) {

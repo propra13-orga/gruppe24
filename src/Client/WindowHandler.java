@@ -5,7 +5,6 @@ import java.awt.event.WindowListener;
 import java.io.IOException;
 
 import Net.Client;
-import Net.packets.Packet00Login;
 import Net.packets.Packet01Disconnect;
 
 public class WindowHandler implements WindowListener {
@@ -33,7 +32,6 @@ public class WindowHandler implements WindowListener {
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}
-        //packet.writeData(this.game.socketClient);
     }
 
     @Override

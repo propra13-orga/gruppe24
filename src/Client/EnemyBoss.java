@@ -1,14 +1,19 @@
 package Client;
 
-import java.awt.Graphics;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+
+/*******************************************
+ * Die EnemyBoss.class ist ähnlich wie die *
+ * Enemy.class, nur dient sie als Basis    *
+ * für alle zukünftigen Bosse des Spiels   *
+ *******************************************/
+
 
 @SuppressWarnings("serial")
 public class EnemyBoss extends Sprite{
 	
 	Rectangle2D.Double t;
-	Rectangle2D.Double t2;
 	boolean locked = false;
 	GamePanel gp;
 	
@@ -57,16 +62,13 @@ public class EnemyBoss extends Sprite{
 			xx = 5;
 		}
 	}
-	@Override
-	public void drawObjects(Graphics g){
-		super.drawObjects(g);
-		//g.setColor(Color.orange);
-		//g.drawRect((int)t.x, (int)t.y, (int)t.width, (int)t.height);
-	}
-	
 	
 	@SuppressWarnings("static-access")
 	public void MoveXEr() {
+		
+		/************************************************************************
+		 * Kollisons abfrage für Wände und dem Boss auf der X-Achse nach rechts *
+		 ************************************************************************/
 
 		oldX = ((int) (x / parent.Tilesize));
 
@@ -82,6 +84,10 @@ public class EnemyBoss extends Sprite{
 	}
 	@SuppressWarnings("static-access")
 	public void MoveXEl() {
+		
+		/***********************************************************************
+		 * Kollisons abfrage für Wände und dem Boss auf der X-Achse nach links *
+		 ***********************************************************************/
 
 		oldX = ((int) (x / parent.Tilesize));
 
@@ -103,6 +109,10 @@ public class EnemyBoss extends Sprite{
 	}
 
 	public static void getCoor(int x, int y) {
+		/***************************************************************
+		 * getCoor gibt der EnemyBoss.class die Spielerposition wieder *
+		 ***************************************************************/
+		
 		hx = x;
 		hy = y;
 	}

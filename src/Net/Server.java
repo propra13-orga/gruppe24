@@ -6,16 +6,12 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Vector;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
-
 import Client.Enemy;
-import Client.Enviroment;
 import Client.PlayerMP;
-import Client.Sprite;
 
 public class Server implements Runnable {
 
@@ -156,11 +152,9 @@ class ServerLogic implements Runnable{
 			}
 	}
 	
-	@SuppressWarnings("static-access")
 	private void moveene(int i, double x, double y, Enemy e){
 			switch(i){
 			case 0:
-					int oldY = ((int) (y / 16));	
 					if (Client.leveldata[((int) (y / 16)) - 1][((int) (x / 16))] == 1) {
 						mDirection = -1;
 					} else if (Client.leveldata[((int) (y / 16)) - 1][((int) (x / 16))] == 4) {
@@ -169,9 +163,7 @@ class ServerLogic implements Runnable{
 					y--;
 					e.setY(y);
 				break;
-			case 1:
-					oldY = ((int) (y / 16));
-		
+			case 1:		
 					if (Client.leveldata[((int) (y / 16)) + 1][((int) (x / 16))] == 1) {
 						mDirection = -1;
 					} else if (Client.leveldata[((int) (y / 16)) + 1][((int) (x / 16))] == 4) {
@@ -180,9 +172,7 @@ class ServerLogic implements Runnable{
 					y++;
 					e.setY(y);
 				break;
-			case 2:
-					int oldX = ((int) (x / 16));
-		
+			case 2:		
 					if (Client.leveldata[((int) (y / 16))][((int) (x / 16) + 1)] == 1) {
 						mDirection = -1;
 					} else if (Client.leveldata[((int) (y / 16))][((int) (x / 16) + 1)] == 4) {
@@ -191,9 +181,7 @@ class ServerLogic implements Runnable{
 					x++;
 					e.setX(x);
 				break;
-			case 3:
-					oldX = ((int) (x / 16));
-		
+			case 3:		
 					if (Client.leveldata[((int) (y / 16))][((int) (x / 16) - 1)] == 1) {
 						mDirection = -1;
 					} else if (Client.leveldata[((int) (y / 16))][((int) (x / 16) - 1)] == 4) {
@@ -223,7 +211,6 @@ class ServerLogic implements Runnable{
 				
 	}
 	
-	@SuppressWarnings("static-access")
 	private void MoveYEh(double x, double y, Enemy e) {
 
 		int oldY = ((int) (y / 16));
@@ -240,7 +227,6 @@ class ServerLogic implements Runnable{
 		oldY = (int) y;
 
 	}
-	@SuppressWarnings("static-access")
 	private void MoveYEd(double x, double y, Enemy e) {
 
 		int oldY = ((int) (y / 16));
@@ -257,7 +243,6 @@ class ServerLogic implements Runnable{
 		oldY = (int) y;
 
 	}
-	@SuppressWarnings("static-access")
 	private void MoveXEr(double x, double y, Enemy e) {
 
 		int oldX = ((int) (x / 16));
@@ -274,7 +259,6 @@ class ServerLogic implements Runnable{
 		oldX = (int)x;
 
 	}
-	@SuppressWarnings("static-access")
 	private void MoveXEl(double x, double y, Enemy e) {
 
 		int oldX = ((int) (x / 16));
