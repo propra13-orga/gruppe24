@@ -6,7 +6,7 @@ import java.io.Serializable;
 public abstract class Packet implements Serializable  {
 
     public static enum PacketTypes {
-        INVALID(-1), LOGIN(00), DISCONNECT(01), MOVE(02), MAP(03), ENEMY(04);
+        INVALID(-1), LOGIN(00), DISCONNECT(01), MOVE(02), MAP(03), ENEMY(04), EnemyMove(05);
 
         private int packetId;
 

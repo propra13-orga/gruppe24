@@ -16,14 +16,16 @@ public class MagicBolt extends Sprite {
 	EnemyBoss bs;
 	GamePanel gp;
 	boolean b;
+	String atribut;
 
 	public MagicBolt(BufferedImage[] i, double x, double y, long delay,
-			GamePanel p, boolean b) {
+			GamePanel p, boolean b, String atr) {
 		super(i, x, y, delay, p);
 		this.x = x;
 		this.y = y;
 		this.b = b;
-		if(!b){
+		this.atribut = atr;
+		if (!b) {
 			if (parent.dir == 1) {
 				bUp = true;
 			}
@@ -36,7 +38,7 @@ public class MagicBolt extends Sprite {
 			if (parent.dir == 4) {
 				bRight = true;
 			}
-		}else{
+		} else {
 			bDown = true;
 		}
 	}
@@ -70,13 +72,13 @@ public class MagicBolt extends Sprite {
 		if (getY() / parent.Tilesize == 15) {
 			this.remove = true;
 		}
-		if(b == true && this == parent.mbb){
-			if(this.getY()/parent.Tilesize == 5){
-				int rn = (int) (Math.random()* System.currentTimeMillis());
-					if(rn%2==0){
-						parent.SpawnItem(getX(), getY(), true);
-					}
-				this.remove =true;
+		if (b == true && this == parent.mbb) {
+			if (this.getY() / parent.Tilesize == 5) {
+				int rn = (int) (Math.random() * System.currentTimeMillis());
+				if (rn % 2 == 0) {
+					parent.SpawnItem(getX(), getY(), true);
+				}
+				this.remove = true;
 			}
 		}
 	}
@@ -86,30 +88,41 @@ public class MagicBolt extends Sprite {
 
 		if (this.intersects(s)) {
 			if (s instanceof Enemy) {
-				// parent.createExplosion((int)getX(),(int)getY());
-				// parent.createExplosion((int)s.getX(),(int)s.getY());
 				remove = true;
-				if(s.calcDmg(50, false)==true){
-					s.remove = true;
-					parent.SpawnItem(s.getX(), s.getY(),false);
-					parent.EnemyCounter--;
-					parent.Coins = parent.Coins+2;
-				}else
-					s.calcDmg(50, false);
-				
-				return true;
+				if (((Enemy) s).str.equals(this.atribut)) {
+					return false;
+				}
+				if (((Enemy) s).wea.equals(this.atribut)) {
+					if (s.calcDmg(75, false) == true) {
+						s.remove = true;
+						parent.SpawnItem(s.getX(), s.getY(), false);
+						parent.EnemyCounter--;
+						parent.Coins = parent.Coins + 2;
+					} else
+						s.calcDmg(75, false);
+
+					return true;
+				} else {
+					if (s.calcDmg(45, false) == true) {
+						s.remove = true;
+						parent.SpawnItem(s.getX(), s.getY(), false);
+						parent.EnemyCounter--;
+						parent.Coins = parent.Coins + 2;
+					} else
+						s.calcDmg(45, false);
+
+					return true;
+				}
 			}
 			if (s instanceof EnemyBoss) {
-				// parent.createExplosion((int)getX(),(int)getY());
-				// parent.createExplosion((int)s.getX(),(int)s.getY());
 				remove = true;
-				if(s.calcDmg(25, true)==true){
+				if (s.calcDmg(25, true) == true) {
 					s.remove = true;
 					parent.finished = true;
 					parent.stopGame();
-				}else
+				} else
 					s.calcDmg(25, true);
-				
+
 				return true;
 			}
 		}

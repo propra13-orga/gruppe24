@@ -25,6 +25,7 @@ import Net.packets.Packet01Disconnect;
 import Net.packets.Packet02Move;
 import Net.packets.Packet03Map;
 import Net.packets.Packet04Enemy;
+import Net.packets.Packet05EnemyMove;
 
 public class Client implements Runnable {
 	List<Client> clients;
@@ -33,10 +34,12 @@ public class Client implements Runnable {
 	private ObjectInputStream input;
 	private boolean isServer;
 	static GamePanel game;
-	// private List<PlayerMP> connectedPlayers = new ArrayList<PlayerMP>();
 	static int[][] leveldata;
 	public String userName;
-
+	public static boolean tick = false;
+	
+	
+	
 	private List<Client> copyClients() {
 		synchronized (clients) {
 			return new ArrayList<>(clients);
@@ -111,13 +114,18 @@ public class Client implements Runnable {
 					socket.getPort(), 100, game);
 
 			addConnection(player2, o);
+			addEnemys();
 
 		} else if (o instanceof Packet02Move) {
 			this.handleMove(((Packet02Move) o), true);
+			for(Enemy e : Server.spawnedEnemys){
+				Packet05EnemyMove p = new Packet05EnemyMove(e.getX(), e.getY(),e.getID());
+				broadcast(p, true);
+			}
 		} else if (o instanceof Packet03Map) {
 			sendLevel();
 		}
-
+		
 	}
 
 	protected void onClientRecv(Object o) throws Exception {
@@ -141,7 +149,9 @@ public class Client implements Runnable {
 		} else if (o instanceof Packet03Map) {
 			game.leveldata = ((Packet03Map) o).getLevel();
 		} else if (o instanceof Packet04Enemy){
-			game.addEnemy(o);
+			handleEnemy((Packet04Enemy)o);
+		} else if(o instanceof Packet05EnemyMove){
+			game.syncMove(((Packet05EnemyMove)o).getID(),((Packet05EnemyMove)o).getX(), ((Packet05EnemyMove)o).getY());
 		}
 
 	}
@@ -150,10 +160,8 @@ public class Client implements Runnable {
 	public void run() {
 		try {
 			while (true) {
-
 				Object object = input.readObject();
 				onRecv(object);
-
 			}
 		} catch (SocketException | EOFException e) {
 		} catch (Exception e) {
@@ -194,6 +202,9 @@ public class Client implements Runnable {
 	Client(Socket socket, boolean isServer) throws IOException {
 		this.socket = socket;
 		this.isServer = isServer;
+		if(isServer){
+			syncEnemy();
+		}
 		socket.setTcpNoDelay(true);
 		output = new ObjectOutputStream(socket.getOutputStream());
 		input = new ObjectInputStream(socket.getInputStream());
@@ -219,16 +230,31 @@ public class Client implements Runnable {
 		}
 	}
 
+	private void addEnemys(){		
+		for(int index = 0;index < Server.spawnedEnemys.size(); index++){
+			Enemy e = Server.spawnedEnemys.get(index);
+			Packet04Enemy o = new Packet04Enemy(e.getX(), e.getY(), e.getType(), e.getID(), e.getStrength(), e.getWeakness());
+			send(o);
+		}
+	}
+
+	public synchronized void syncEnemy(){
+		if(Server.connectedPlayers.size() !=0){
+			for(Enemy e : Server.spawnedEnemys){
+				Packet05EnemyMove em = new Packet05EnemyMove(e.getX(), e.getY(), e.getID());
+				if (tick){
+					broadcast(em, true);
+					System.out.println("ID: "+em.getID()+" X: "+ em.getX()+" Y: "+em.getY());
+				}
+			}
+		}
+	}
+	
+	
 	private void addConnection(PlayerMP player, Object o) {
 		boolean alreadyConnected = false;
 		send(o);
-		
-		for(int index = 0;index < Server.spawnedEnemys.size(); index++){
-			Enemy e = Server.spawnedEnemys.get(index);
-			o = new Packet04Enemy(e.getX(), e.getY(), e.getID());
-			send(o);
-		}
-		
+	
 		for (PlayerMP p : Server.connectedPlayers) {
 			if (player.getUsername().equalsIgnoreCase(p.getUsername())) {
 				if (p.ipAddress == null) {
@@ -299,11 +325,7 @@ public class Client implements Runnable {
 							|| leveldata[moveY - 1][moveX] == 31
 							|| leveldata[moveY - 1][moveX] == 99) {
 						moveY = oldY;
-					} else if (leveldata[moveY - 1][moveX] == 9 /*
-																 * &&
-																 * EnemyCounter
-																 * != 0
-																 */) {
+					} else if (leveldata[moveY - 1][moveX] == 9 && Server.spawnedEnemys.size() != 0 || (leveldata[moveY - 1][moveX] == 92 && Server.spawnedEnemys.size() != 0)) {
 						moveY = oldY;
 					} else
 						moveY--;
@@ -319,11 +341,7 @@ public class Client implements Runnable {
 							|| leveldata[moveY + 1][moveX] == 31
 							|| leveldata[moveY + 1][moveX] == 99) {
 						moveY = oldY;
-					} else if (leveldata[moveY + 1][moveX] == 9 /*
-																 * &&
-																 * EnemyCounter
-																 * != 0
-																 */) {
+					} else if (leveldata[moveY + 1][moveX] == 9 && Server.spawnedEnemys.size() != 0 || (leveldata[moveY + 1][moveX] == 92 && Server.spawnedEnemys.size() != 0)) {
 						moveY = oldY;
 					} else
 						moveY++;
@@ -340,11 +358,7 @@ public class Client implements Runnable {
 							|| leveldata[moveY][moveX - 1] == 31
 							|| leveldata[moveY][moveX - 1] == 99) {
 						moveX = oldX;
-					} else if (leveldata[moveY][moveX - 1] == 9 /*
-																 * &&
-																 * EnemyCounter
-																 * != 0
-																 */) {
+					} else if (leveldata[moveY][moveX - 1] == 9 && Server.spawnedEnemys.size() != 0 ||(leveldata[moveY][moveX - 1] == 9 && Server.spawnedEnemys.size() != 0)) {
 						moveX = oldX;
 					} else
 						moveX--;
@@ -361,11 +375,7 @@ public class Client implements Runnable {
 							|| leveldata[moveY][moveX + 1] == 31
 							|| leveldata[moveY][moveX + 1] == 99) {
 						moveX = oldX;
-					} else if (leveldata[moveY][moveX + 1] == 9 /*
-																 * &&
-																 * EnemyCounter
-																 * != 0
-																 */) {
+					} else if (leveldata[moveY][moveX + 1] == 9 && Server.spawnedEnemys.size() != 0 || (leveldata[moveY][moveX - 1] == 92 && Server.spawnedEnemys.size() != 0)) {
 						moveX = oldX;
 					} else
 						moveX++;
@@ -373,7 +383,9 @@ public class Client implements Runnable {
 
 				player.x = packet.x = moveX * 16;
 				player.y = packet.y = (moveY * 16) - 16;
-
+				for(Enemy e : Server.spawnedEnemys){
+					e.getCoor(moveX*16, moveY*16);
+				}
 				broadcast(packet, true);
 			}
 		} else {
@@ -389,12 +401,44 @@ public class Client implements Runnable {
 
 	@SuppressWarnings("resource")
 	public static void read() {
+		
 		try {
 			String sTemp;
+			String rest = null;
 			int i, j;
 			leveldata = new int[15][15];
+			switch (ServerLogic.lvl) {
+			case 1:
+				rest = "lvl1.level";
+				break;
+			case 2:
+				rest = "lvl2.level";
+				break;
+			case 3:
+				rest = "lvl3.level";
+				break;
+			case 4:
+				rest = "lvl4.level";
+				break;
+			case 5:
+				rest = "lvl5.level";
+				break;
+			case 6:
+				rest = "lvl6.level";
+				break;
+			case 7:
+				rest = "lvl7.level";
+				break;
+			case 8:
+				rest = "lvl8.level";
+				break;
+			case 9:
+				rest = "lvl9.level";
+				break;
+			}
+			leveldata = new int[15][15];
 			BufferedReader oReader = new BufferedReader(new InputStreamReader(
-					new FileInputStream(new File("res/lvl/MP/test.level")))); // Zeile
+					new FileInputStream(new File("res/lvl/MP/"+rest)))); // Zeile
 																				// für
 			// Zeile
 			// einlesen
@@ -431,19 +475,23 @@ public class Client implements Runnable {
 		}
 	}
 	
+	
 	public static void SpawnEnemy() {
+	/***********************************************
+	 * Server ruft beim Starten die Funktion auf um*
+	 * Gegner zu erstellen						   *
+	 ***********************************************/	
 		for (int row = 0; row < leveldata.length; row++) {
 			for (int col = 0; col < leveldata[row].length; col++) {
 				if (leveldata[row][col] == 3) {
 					int rn = (int)(Math.random()*5);
+					int rn2 = (int)(Math.random()*999);
 					if(rn >= 0 && rn <2){
-						Enemy ene = new Enemy(GamePanel.enemy, 16 * col,	16 * row, 100, game, 1);
+						Enemy ene = new Enemy(GamePanel.enemy, 16 * col,	16 * row, 100, game, 1, rn2, "melee", "arcane");
 						Server.spawnedEnemys.add(ene);
-						System.out.println(Server.spawnedEnemys);
 					}else if(rn >=2 && rn<=4){
-						Enemy sli = new Enemy(game.sl, 16 * col, 16 * row, 100, game, 2);
+						Enemy sli = new Enemy(GamePanel.sl, 16 * col, 16 * row, 100, game, 2, rn2, "poison", "melee");
 						Server.spawnedEnemys.add(sli);
-						System.out.println(Server.spawnedEnemys);
 					}
 					
 				}
@@ -471,6 +519,17 @@ public class Client implements Runnable {
 	private void handleinit(Object o) {
 		game.setStart(((Packet00Login) o).getUsername(),
 				((Packet00Login) o).getX(), ((Packet00Login) o).getY() - 16);
+	}
+	
+	@SuppressWarnings("static-access")
+	private void handleEnemy(Packet04Enemy o){
+		if(o.getType()==1){
+			Enemy ghost = new Enemy(game.enemy, o.getX(), o.getY(),100, game, true, o.getID(), o.getStrength(), o.getWeakness());
+			game.addEnemy(ghost);
+		}else if(o.getType()==2){
+			Enemy slime = new Enemy(game.sl, o.getX(), o.getY(),100, game, true, o.getID(), o.getStrength(), o.getWeakness());
+			game.addEnemy(slime);
+		}
 	}
 
 }

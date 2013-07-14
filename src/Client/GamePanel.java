@@ -33,7 +33,6 @@ import Net.Client;
 import Net.packets.Packet00Login;
 import Net.packets.Packet02Move;
 import Net.packets.Packet03Map;
-import Net.packets.Packet04Enemy;
 import Server.GUI;
 
 public class GamePanel extends JPanel implements Runnable, ActionListener, KeyListener {
@@ -160,7 +159,7 @@ public class GamePanel extends JPanel implements Runnable, ActionListener, KeyLi
 	BufferedImage[] kr = loadPics("res/pics/kristall.png", 6);
 	BufferedImage[] thu = loadPics("res/pics/blitze.png", 5);
 	BufferedImage[] bl = loadPics("res/pics/ball.png", 1);
-	public BufferedImage[] pl2 = loadPics("res/pics/player.png", 12);
+	public BufferedImage[] pl2 = loadPics("res/pics/player2.png", 12);
 
 
 	Thread th;
@@ -277,7 +276,6 @@ public class GamePanel extends JPanel implements Runnable, ActionListener, KeyLi
 		windowHandler = new WindowHandler(this);
 		last = System.nanoTime();
 		gameover = 0;
-		//input = new InputHandler(this);
 		actors = new Vector<Sprite>();
 		collision = new Vector<Sprite>();
 		enviroment = new Vector<Enviroment>();
@@ -313,7 +311,7 @@ public class GamePanel extends JPanel implements Runnable, ActionListener, KeyLi
 				e.printStackTrace();
 			}
 		}
-		//SpawnEnemy();
+		SpawnEnemy();
 		SpawnNPC();
 		started = true;
 
@@ -426,7 +424,7 @@ public class GamePanel extends JPanel implements Runnable, ActionListener, KeyLi
 			Clear();
 			ground();
 			SpawnPlayer();
-			//SpawnEnemy();
+			SpawnEnemy();
 			SpawnNPC();
 			SpawnBoss();
 			SpawnKristallRoom();
@@ -530,7 +528,6 @@ public class GamePanel extends JPanel implements Runnable, ActionListener, KeyLi
 			if(!p2){
 			if(hero.getX()==plate2.getX()&& hero.getY()+16==plate2.getY()){
 				if(p1&& !p2 && !p3 && !p4){
-					System.out.println("Geschaltet");
 					p2 = true;
 				}else{
 					p1 = false; p2 = false; p3 = false; p4 = false;
@@ -638,7 +635,7 @@ public class GamePanel extends JPanel implements Runnable, ActionListener, KeyLi
 					ps = new Tile(pstart, posx * Tilesize, posy * Tilesize, 0,
 							this);
 					enviroment.add(ps);
-				} else if (rc == 9) {
+				} else if (rc == 9 || rc == 92) {
 					ex = new Tile(exit, posx * Tilesize, posy * Tilesize, 0,
 							this);
 					enviroment.add(ex);
@@ -661,7 +658,7 @@ public class GamePanel extends JPanel implements Runnable, ActionListener, KeyLi
 
 	}
 
-	/*public void SpawnEnemy() {
+	public void SpawnEnemy() {
 		for (int row = 0; row < leveldata.length; row++) {
 			for (int col = 0; col < leveldata[row].length; col++) {
 				if (leveldata[row][col] == 3) {
@@ -670,21 +667,21 @@ public class GamePanel extends JPanel implements Runnable, ActionListener, KeyLi
 					int rn = (int)(Math.random()*5);
 					if(rn >= 0 && rn <2){
 						ene = new Enemy(enemy, Tilesize * moveEX,
-								Tilesize * moveEY, 100, this);
+								Tilesize * moveEY, 100, this, "melee", "arcane");
 						actors.add(ene);
 						EnemyCounter++;
 					}else if(rn >=2 && rn<=4){
 						moveEX = col;
 						moveEY = row;
 						sli = new Enemy(sl, Tilesize * moveEX,
-								Tilesize * moveEY, 100, this);
+								Tilesize * moveEY, 100, this, "poison", "melee");
 						actors.add(sli);
 						EnemyCounter++;
 					}
 				}
 			}
 		}
-	}*/
+	}
 
 	public void SpawnPlayer() {
 		for (int row = 0; row < leveldata.length; row++) {
@@ -698,18 +695,18 @@ public class GamePanel extends JPanel implements Runnable, ActionListener, KeyLi
 						actors.add(player1);
 						this.connectedPlayers.add(player1);
 						player1.setLoop(0, 0);
-					}/*else{
+					}else{
 						hero = new Player(player, Tilesize * moveX,
 								(moveY * Tilesize), 100, this);
 						actors.add(hero);
 						hero.setLoop(0, 0);
-					}	*/		
+					}		
 					if(!join){
-						sword = new Item(sw, hero.getX(), hero.getY(), 100, this, false);
+						sword = new Item(sw, hero.getX(), hero.getY(), 100, this, false, "melee");
 						actors.add(sword);
 						sword.setLoop(0, 0);
 					}else{
-						sword = new Item(sw, player1.getX(), player1.getY(), 100, this, false);
+						sword = new Item(sw, player1.getX(), player1.getY(), 100, this, false, "melee");
 						actors.add(sword);
 						sword.setLoop(0, 0);
 					}
@@ -805,7 +802,7 @@ public class GamePanel extends JPanel implements Runnable, ActionListener, KeyLi
 		double xi = x;
 		double yi = y;
 		System.out.println("drop");
-		item = new Item(IT, xi, yi+16, 100, this, b);
+		item = new Item(IT, xi, yi+16, 100, this, b, null);
 		actors.add(item);
 	}
 	
@@ -814,7 +811,7 @@ public class GamePanel extends JPanel implements Runnable, ActionListener, KeyLi
 		double y;
 		x=xb;		
 		y=yb+33;
-		mbb = new MagicBolt(Bolt, x, y, 100, this, true);
+		mbb = new MagicBolt(Bolt, x, y, 100, this, true, "arcane");
 		actors.add(mbb);
 	}
 	
@@ -834,7 +831,7 @@ public class GamePanel extends JPanel implements Runnable, ActionListener, KeyLi
 			x = hero.getX() + 8;
 			y = hero.getY() + Tilesize;
 		}
-		mb = new MagicBolt(Bolt, x, y, 100, this, false);
+		mb = new MagicBolt(Bolt, x, y, 100, this, false, "arcane");
 
 		ListIterator<Sprite> it = actors.listIterator();
 		it.add(mb);
@@ -1440,21 +1437,34 @@ public class GamePanel extends JPanel implements Runnable, ActionListener, KeyLi
         this.connectedPlayers.add(player2);
     }
 	
-	public synchronized void addEnemy(Object o){
-		if(((Packet04Enemy)o).getID()== 1){
-			ene = new Enemy(enemy, ((Packet04Enemy)o).getX(), ((Packet04Enemy)o).getY(), 100, this,true);
-			actors.add(ene);
-			this.spawnedEnemys.add(ene);
-		}else if(((Packet04Enemy)o).getID()== 2){
-			sli = new Enemy(sl, ((Packet04Enemy)o).getX(), ((Packet04Enemy)o).getY(), 100, this, true);
-			actors.add(sli);
-			this.spawnedEnemys.add(sli);
-		}
-		
+	public synchronized void addEnemy(Enemy e){
+		ene = e;
+		actors.add(ene);
+		this.spawnedEnemys.add(ene);		
 	}
 	
 	public synchronized void removeEnemy(int id){
-		
+		int index = 0;
+		for(Enemy e : this.spawnedEnemys){
+			if(e.getID() == id){
+				break;
+			}
+			index++;
+		}
+		this.spawnedEnemys.remove(index);
+		actors.remove(e);
+	}
+	
+	public synchronized void syncMove(int id, double x, double y){
+		int index = 0;
+		for(Enemy e : this.spawnedEnemys){
+			if(e.getID() == id){
+				break;
+			}
+			index++;
+		}
+		this.spawnedEnemys.get(index).x = x;
+		this.spawnedEnemys.get(index).y = y;
 	}
 	
 	public synchronized void removePlayerMP(String username) {

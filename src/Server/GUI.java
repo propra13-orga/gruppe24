@@ -21,6 +21,7 @@ public class GUI extends JPanel implements Runnable {
 	private JButton b0;
 	private JButton b1;
 	
+	@SuppressWarnings("unused")
 	private GamePanel parent;
 	
 	JFrame console;
@@ -72,22 +73,15 @@ public class GUI extends JPanel implements Runnable {
 	}
 
 	private synchronized void startServer() throws IOException {
-		//Thread th = new Thread(this);
-		//th.start();
 		new Thread(this).start();
-		//socketServer = new GameServer(parent);
-		//socketServer.start();
 		s = new Server();
 		running = true;
 		
 	}
 	
 	private synchronized void stopServer(){
-		//socketServer.interrupt();
 		running = false;	
 		console.dispose();
-		parent.stopGame();
-
 	}
 
 	@Override
