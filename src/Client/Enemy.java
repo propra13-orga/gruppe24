@@ -7,8 +7,6 @@ import java.awt.image.BufferedImage;
  * sämtlicher GegnerTypen mit      *
  * der passenden Logik dahinter	   *
  ***********************************/
-
-
 public class Enemy extends Sprite {
 
 	private static final long serialVersionUID = 1L;

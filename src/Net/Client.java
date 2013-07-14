@@ -27,8 +27,11 @@ import Net.packets.Packet03Map;
 import Net.packets.Packet04Enemy;
 import Net.packets.Packet05EnemyMove;
 
+/***************************************
+ * Clienten Klasse für den Multiplayer *
+ ***************************************/
 public class Client implements Runnable {
-	List<Client> clients;
+	public List<Client> clients;
 	private Socket socket;
 	private ObjectOutputStream output;
 	private ObjectInputStream input;
@@ -238,7 +241,7 @@ public class Client implements Runnable {
 		}
 	}
 
-	public synchronized void syncEnemy(){
+	private void syncEnemy(){
 		if(Server.connectedPlayers.size() !=0){
 			for(Enemy e : Server.spawnedEnemys){
 				Packet05EnemyMove em = new Packet05EnemyMove(e.getX(), e.getY(), e.getID());
@@ -400,6 +403,10 @@ public class Client implements Runnable {
 		send(p);
 	}
 
+	
+	/******************************************
+	 * Funktion zum auslesen der Leveldateien *
+	 ******************************************/
 	@SuppressWarnings("resource")
 	public static void read() {
 		
@@ -476,12 +483,11 @@ public class Client implements Runnable {
 		}
 	}
 	
-	
-	public static void SpawnEnemy() {
 	/***********************************************
 	 * Server ruft beim Starten die Funktion auf um*
 	 * Gegner zu erstellen						   *
-	 ***********************************************/	
+	 ***********************************************/
+	public static void SpawnEnemy() {	
 		for (int row = 0; row < leveldata.length; row++) {
 			for (int col = 0; col < leveldata[row].length; col++) {
 				if (leveldata[row][col] == 3) {

@@ -14,7 +14,9 @@ import Client.*;
 import Net.Server;
 
 
-
+/**************
+ * Server GUI *
+ **************/
 public class GUI extends JPanel implements Runnable {
 	
 	private static final long serialVersionUID = 1L;

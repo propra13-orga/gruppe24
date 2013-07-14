@@ -2,7 +2,9 @@ package Client;
 
 import java.awt.image.BufferedImage;
 
-
+/*************************************
+ * Basis Klasse für Umgebungsobjekte *
+ *************************************/
 public class Tile extends Enviroment{
     
     private static final long serialVersionUID = 1L;

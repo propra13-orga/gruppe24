@@ -7,6 +7,9 @@ import java.io.IOException;
 import Net.Client;
 import Net.packets.Packet01Disconnect;
 
+/***********************************************************************************************
+ *WindowHandler.class wird gebraucht um ein sauberes schlieﬂen im Multiplayer zu gew‰hrleisten * 
+ ***********************************************************************************************/
 public class WindowHandler implements WindowListener {
 
     private final GamePanel game;
@@ -24,6 +27,9 @@ public class WindowHandler implements WindowListener {
     public void windowClosed(WindowEvent event) {
     }
 
+    /*******************************************************************
+     * Sendet ein Disconnect Packet an den Server mit dem Spielernamen *
+     *******************************************************************/
     @Override
     public void windowClosing(WindowEvent event) {
         Packet01Disconnect packet = new Packet01Disconnect(game.player1.getUsername());

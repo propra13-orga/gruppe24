@@ -1,6 +1,8 @@
 package Net.packets;
 
-
+/****************************************************************
+ * Packet zur übermitellung der aktuellen Gegner auf dem Server *
+ ****************************************************************/
 @SuppressWarnings("serial")
 public class Packet04Enemy extends Packet {
 

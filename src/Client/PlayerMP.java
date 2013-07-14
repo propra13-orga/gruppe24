@@ -5,7 +5,9 @@ import java.net.InetAddress;
 
 import javax.swing.JOptionPane;
 
-
+/**************************************************************************
+ * Die selbe Klasse wie die Player.class nur erweitert für den Multiplayer*
+ **************************************************************************/
 public class PlayerMP extends Player {
 	
 	private static final long serialVersionUID = 1L;
@@ -49,11 +51,14 @@ public class PlayerMP extends Player {
 		}
 		
 	}
-	
+
     public String getUsername() {
         return this.Username;
     }
     
+    /********************************************
+     * Setzt die "Blickrichtung" der Spielfigur *
+     ********************************************/
 	public void setMovingDir(int movingDir) {
 		parent.dir = movingDir;
 		this.dir = movingDir;

@@ -1,5 +1,9 @@
 package Net.packets;
 
+
+/**************************************************************************************
+ * Packet zur übermittelung der Coordinaten der Gegner auf dem Server an die Clienten *
+ **************************************************************************************/
 @SuppressWarnings("serial")
 public class Packet05EnemyMove extends Packet {
 

@@ -8,8 +8,6 @@ import java.awt.image.BufferedImage;
  * Enemy.class, nur dient sie als Basis    *
  * für alle zukünftigen Bosse des Spiels   *
  *******************************************/
-
-
 @SuppressWarnings("serial")
 public class EnemyBoss extends Sprite{
 	

@@ -5,7 +5,6 @@ import java.awt.image.BufferedImage;
 /*******************************
  * Basis Klasse für alle Items *
  *******************************/
-
 public class Item extends Sprite {
 
 	private static final long serialVersionUID = 1L;
@@ -25,12 +24,11 @@ public class Item extends Sprite {
 		super.doLogic(delta);
 	}
 
+	/********************************************
+	 * Kollisionsabfrage von Schwert und Gegner *
+	 ********************************************/
 	@Override
-	public boolean collidedWith(Sprite s) {
-		/********************************************
-		 * Kollisionsabfrage von Schwert und Gegner *
-		 ********************************************/
-		
+	public boolean collidedWith(Sprite s) {		
 		if (this.intersects(s) && this == parent.sword) {
 			if (s instanceof Enemy) {
 				if (parent.sup || parent.sdown || parent.sleft || parent.sright) {

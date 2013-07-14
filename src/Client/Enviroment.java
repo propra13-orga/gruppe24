@@ -4,6 +4,12 @@ import java.awt.Graphics;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 
+/**
+ * Grundsätzlich die selbe Klasse wie die Sprite.class   
+ * nur können sich diese Objekte nicht bewegen.		     
+ * Die Enviroment.class ist nur für Hintergrunde Elemente
+ * wie den Boden zuständig								
+ */
 public abstract class Enviroment extends Rectangle2D.Double implements Drawable{
 
 	private static final long serialVersionUID = 1L;
@@ -32,6 +38,9 @@ public abstract class Enviroment extends Rectangle2D.Double implements Drawable{
 		loop_to2 = pics2.length - 1;
 	}
 
+	/****************************************************************************************************************
+	 * Zeichnung des Aktuellen Bildes mit übergabe der X-y-Paramter in ganzen Zahlen (gibt ja keine halben Pixel) *
+	 ****************************************************************************************************************/
 	public void drawObjects(Graphics g) {
 		g.drawImage(pics2[currentpic2], (int) x, (int) y, null);
 	}
@@ -45,12 +54,7 @@ public abstract class Enviroment extends Rectangle2D.Double implements Drawable{
 
 	}
 
-	private void computeAnimation() {
-		
-		/******************************************
-		 * Funktion zur darstellung der Animation *
-		 ******************************************/
-		
+	private void computeAnimation() {		
 		currentpic2++;
 		if (currentpic2 > loop_to2) {
 			currentpic2 = loop_from2;
@@ -58,14 +62,12 @@ public abstract class Enviroment extends Rectangle2D.Double implements Drawable{
 
 	}
 
-	public void setLoop(int from2, int to2) {
-		
-		/************************************************
-		 * Mit setLoop kann man bestimmen welcher		*
-		 * Animations abschnitt gezeichent werden soll. *
-		 * (Von Bild-x bis Bild-y)						*
-		 ************************************************/
-		
+	/************************************************
+	 * Mit setLoop kann man bestimmen welcher		*
+	 * Animations abschnitt gezeichent werden soll. *
+	 * (Von Bild-x bis Bild-y)						*
+	 ************************************************/
+	public void setLoop(int from2, int to2) {	
 		loop_from2 = from2;
 		loop_to2 = to2;
 		currentpic2 = from2;

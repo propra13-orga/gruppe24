@@ -4,7 +4,9 @@ import java.awt.Graphics;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 
-
+/**************************************************************************
+ * Basis Klasse für alle gezeichneten Objekte mit Ausnahme der Enviroment *
+ **************************************************************************/
 public abstract class Sprite extends Rectangle2D.Double implements Drawable, Movable{
 
 	private static final long serialVersionUID = 1L;
@@ -45,8 +47,11 @@ public abstract class Sprite extends Rectangle2D.Double implements Drawable, Mov
         loop_to = pics.length-1;
 	}
 	
+	/****************************************************************************************************************
+	 * Zeichnung des Aktuellen Bildes mit übergabe der X-y-Paramter in ganzen Zahlen (gibt ja keine halben Pixel) *
+	 ****************************************************************************************************************/
 	public void drawObjects(Graphics g){	
-		g.drawImage(pics[currentpic], (int)x, (int)y, null); //Zeichnung des Aktuellen Bildes mit übergabe der X-y-Paramter in ganzen Zahlen (gibt ja keine halben Pixel)
+		g.drawImage(pics[currentpic], (int)x, (int)y, null); 
 	}
 	
 	public void doLogic(long delta){
@@ -60,20 +65,28 @@ public abstract class Sprite extends Rectangle2D.Double implements Drawable, Mov
 	
 	private void computeAnimation() { //Funtion zum durchlaufen des ImageArray => animation
 
-		currentpic++;
-		
+		currentpic++;		
 		if(currentpic>loop_to){
 			currentpic=loop_from;
 		}
 		
 	}
-        
+     
+	/************************************************
+	 * Mit setLoop kann man bestimmen welcher		*
+	 * Animations abschnitt gezeichent werden soll. *
+	 * (Von Bild-x bis Bild-y)						*
+	 ************************************************/
 	public void setLoop(int from, int to){
 		loop_from = from;
 		loop_to   = to;
 		currentpic = from;
 	}
-        
+     
+	/******************************************************************
+	 * Veränderung der Postions des Objektes in abhängigkeit der Zeit *
+	 * um eine Gleichförmige Bewegung des Objektes zu gewährleisten   *
+	 ******************************************************************/
 	public void move(long delta){
 		
 		if(dx!=0){
@@ -85,6 +98,9 @@ public abstract class Sprite extends Rectangle2D.Double implements Drawable, Mov
 		}
 	}
 	
+	/**
+	 * Berechnung des Schadens. Boolean b gibt an ob normale Gegner oder Boss Schaden berechnet werden soll
+	 */
 	public boolean calcDmg(double dmg, boolean b) {
 		if(b == false){
 				this.health = health - dmg;
@@ -98,7 +114,9 @@ public abstract class Sprite extends Rectangle2D.Double implements Drawable, Mov
 			return false;
 	}
 	
-	
+	/**
+	 * Berechnung des Schadens den der Player erleidet
+	 */
 	public boolean calcDmgPlayer(){
 		this.d = ((130*5)/100)-armor;
 		if(this.d <= 0){
@@ -118,6 +136,9 @@ public abstract class Sprite extends Rectangle2D.Double implements Drawable, Mov
 			return false;
 	}
 	
+	/*************************************************************************************
+	 * Funtkion zur reduzierung des Manavorrates von Objekten (Spieler oder auch Gegner) *
+	 *************************************************************************************/
 	public void redMana(int red){
 		this.mana = mana - red;
 
@@ -130,6 +151,9 @@ public abstract class Sprite extends Rectangle2D.Double implements Drawable, Mov
 		parent.mana = this.mana;
 	}
 	
+	/******************************************
+	 * Funktion zur erhöhung des Manavorrates *
+	 ******************************************/
 	public void addMana(int ad){
 		this.mana = mana + ad;
 		if(this.mana>100){
@@ -141,6 +165,9 @@ public abstract class Sprite extends Rectangle2D.Double implements Drawable, Mov
 		}
 	}
 	
+	/***********************************************
+	 * Funktion zur erhöhung der Spielergesundheit *
+	 ***********************************************/
 	public void addHealth(int ad, double h){
 		this.phealth = h + ad;
 		if(this.phealth>130){
@@ -151,6 +178,12 @@ public abstract class Sprite extends Rectangle2D.Double implements Drawable, Mov
 	
     public abstract boolean collidedWith(Sprite s);
     
+    
+    /**************************************************************************
+     * Diese Methode dient zur Pixelgenauen Kollisionsanalyse				  *
+     * Es wird geguckt ob in der Schnittfläche der 2 sich schneidenen Objekte *
+     * Pixel befinden die nicht transparent sind  							  *
+     **************************************************************************/
     public boolean checkOpaqueColorCollisions(Sprite s){
     	
     	//Rechteck zur erstellung der Schnittmenge

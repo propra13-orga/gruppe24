@@ -1,5 +1,8 @@
 package Net.packets;
 
+/******************************************************
+ * Packet zur übertragung der Coordinaten des Players *
+ ******************************************************/
 @SuppressWarnings("serial")
 public class Packet02Move extends Packet {
 

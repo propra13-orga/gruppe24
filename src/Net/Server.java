@@ -13,6 +13,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 import Client.Enemy;
 import Client.PlayerMP;
 
+/******************************
+ * Server für den Multiplayer *
+ ******************************/
 public class Server implements Runnable {
 
 	public ServerSocket serverSocket;
@@ -63,7 +66,9 @@ public class Server implements Runnable {
 }
 
 
-
+/******************************************
+ * Klasse zur bearbeitung der ServerLogik *
+ ******************************************/
 class ServerLogic implements Runnable{
 	static int lvl = 1;
 	int dis;
@@ -87,8 +92,7 @@ class ServerLogic implements Runnable{
 				if(Server.spawnedEnemys.size() != 0){
 					EnemyMove();					
 				}			
-				doLogic();		
-				
+				doLogic();					
 				Thread.sleep(50);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
@@ -293,11 +297,7 @@ class ServerLogic implements Runnable{
 			if (Client.leveldata[(int)x[0]/16][(int)y[0]/16] == 9 && Client.leveldata[(int)x[1]/16][(int)y[1]/16] == 92) {
 				lvl++;
 				Client.read();
-				//Clear();
 				Client.SpawnEnemy();
-				//SpawnBoss();
-				//SpawnKristallRoom();
-				//p1=false;p2=false;p3=false;p4=false;
 			}
 			if (Client.leveldata[(int)x[0]/16][(int)y[0]/16] == 8 && Client.leveldata[(int)x[1]/16][(int)y[1]/16] == 82) {
 				lvl--;
@@ -307,12 +307,6 @@ class ServerLogic implements Runnable{
 				System.out.println("Finished");
 
 			}
-			/*if(check != null){
-				if(check.getX()== hero.getX()&& check.getY()== hero.getY()+16){
-					check.setLoop(1,1);
-					checkp = true;
-				}
-			}*/
 		}
 	}
 	

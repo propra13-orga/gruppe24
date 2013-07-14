@@ -1,19 +1,17 @@
 package Client;
 
 import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.net.URL;
 
-import javax.imageio.ImageIO;
-
+/**************************************************************************************
+ * Die Player.class ist die Basis für alle Logik-Operationen die vom Player ausgehen  *
+ **************************************************************************************/
 public class Player extends Sprite{
 
 	private static final long serialVersionUID = 1L;
 	int dir;
 
-	public Player(BufferedImage[] i, double x, double y, long delay, GamePanel p) {//
-		super(i, x, y, delay, p);	
-		
+	public Player(BufferedImage[] i, double x, double y, long delay, GamePanel p) {
+		super(i, x, y, delay, p);			
 		this.parent = p;
 	}
 
@@ -34,28 +32,15 @@ public class Player extends Sprite{
 		}else if(this.dir==4){
 			this.setLoop(3,5);
 		}
-		
-
 	}
 	
-	BufferedImage[] loadPics(String path, int pics) { // Methode bekommt Speicherort und Anzahl der Einzelbilder übergeben
-
-		BufferedImage[] anim = new BufferedImage[pics]; // Erzeugung des Image-Arrays mit der größe der Einzelbilder
-		BufferedImage source = null; // lädt das ganze Bild
-
-		URL pic_url = getClass().getClassLoader().getResource(path); // Ermittelung der URL des Speicherortes, wird als Pfadangabe übergeben
-
-		try {
-			source = ImageIO.read(pic_url); // Quellbild wird über ImageIO geladen
-		} catch (IOException e) {}
-
-		for (int x = 0; x < pics; x++) {
-			anim[x] = source.getSubimage(x * source.getWidth() / pics, 0,
-					source.getWidth() / pics, source.getHeight()); // die Methode getSubimage zerlegt das Quellbild in die Anzahl der angegebenen Einzelbilder.
-		}
-
-		return anim;
-	}
+	
+	/**
+	 * Pixelgenaue Kollisionsanalyse mit dem Player und seiner Umgebung
+	 * 1. Player mit Gegner
+	 * 2. Player mit gegnerischem MagicBolt
+	 * 3. Player mit Items
+	 */
 	@Override
 	public boolean collidedWith(Sprite s) {
 		if(remove){

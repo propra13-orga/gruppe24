@@ -2,6 +2,9 @@ package Net.packets;
 
 import java.io.Serializable;
 
+/***************************************************
+ * Die Klasse sortiert die Packet anhand deren IDs *
+ ***************************************************/
 @SuppressWarnings("serial")
 public abstract class Packet implements Serializable  {
 
@@ -24,8 +27,8 @@ public abstract class Packet implements Serializable  {
     public Packet(int packetId) {
         this.packetId = (byte) packetId;
     }
-    
-    public static PacketTypes lookupPacket(String packetId) {
+
+    private static PacketTypes lookupPacket(String packetId) {
         try {
             return lookupPacket(Integer.parseInt(packetId));
         } catch (NumberFormatException e) {
@@ -33,7 +36,7 @@ public abstract class Packet implements Serializable  {
         }
     }
 
-    public static PacketTypes lookupPacket(int id) {
+    private static PacketTypes lookupPacket(int id) {
         for (PacketTypes p : PacketTypes.values()) {
             if (p.getId() == id) {
                 return p;

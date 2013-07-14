@@ -3,6 +3,9 @@ package Client;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 
+/****************************************
+ * Basis Logik-Klasse für den MagicBolt *
+ ****************************************/
 public class MagicBolt extends Sprite {
 
 	private static final long serialVersionUID = 1L;
@@ -83,6 +86,10 @@ public class MagicBolt extends Sprite {
 		}
 	}
 
+	
+	/*********************************************************************************************************
+	 * Kollisionsanalyse zwischen Gegnern und dem MagicBolt und Berechnung des Schadens, anhand der Atribute *
+	 *********************************************************************************************************/
 	@Override
 	public boolean collidedWith(Sprite s) {
 

@@ -38,7 +38,6 @@ import Server.GUI;
 /********************************************
  * Das GamePanel ist main Klasse des Spiels *
  ********************************************/
-
 public class GamePanel extends JPanel implements Runnable, ActionListener, KeyListener {
 
 	private static final long serialVersionUID = 1L;
@@ -275,7 +274,9 @@ public class GamePanel extends JPanel implements Runnable, ActionListener, KeyLi
 	}
 
 	private void doInitializations() {
+		if(join){
 		windowHandler = new WindowHandler(this);
+		}
 		last = System.nanoTime();
 		gameover = 0;
 		actors = new Vector<Sprite>();
@@ -319,11 +320,12 @@ public class GamePanel extends JPanel implements Runnable, ActionListener, KeyLi
 
 	}
 
+	/**************************************************
+	 * Game-Loop die alle wichtige Funktionen aufruft *
+	 **************************************************/
 	@Override
 	public void run() {
-		/**************************************************
-		 * Game-Loop die alle wichtige Funktionen aufruft *
-		 **************************************************/
+		
 		while (frame.isVisible()) {
 
 			computeDelta();
@@ -802,21 +804,24 @@ public class GamePanel extends JPanel implements Runnable, ActionListener, KeyLi
 		}
 	}
 	
+	/*********************************************************************************************************************
+	 * Funktion wird aufgerufen wenn ein Gegner stirbt, das boolsche b gibt an ob es ein Boss drop ist oder normaler Mop *
+	 *********************************************************************************************************************/
 	public void SpawnItem(double x, double y, boolean b) {
-		/*********************************************************************************************************************
-		 * Funktion wird aufgerufen wenn ein Gegner stirbt, das boolsche b gibt an ob es ein Boss drop ist oder normaler Mop *
-		 *********************************************************************************************************************/
+		
 		double xi = x;
 		double yi = y;
 		item = new Item(IT, xi, yi+16, 100, this, b, null);
 		actors.add(item);
 	}
 	
+	
+	/*********************************************
+	 * Boss Zauber mit dem Arcane Atribut mit 	 *
+	 * übergeben wird die x/y-Postion des Bosses *
+	 *********************************************/
 	public void createBoltBoss(double xb, double yb){	
-		/*********************************************
-		 * Boss Zauber mit dem Arcane Atribut mit 	 *
-		 * übergeben wird die x/y-Postion des Bosses *
-		 *********************************************/
+		
 		double x;
 		double y;
 		x=xb;		
@@ -825,11 +830,11 @@ public class GamePanel extends JPanel implements Runnable, ActionListener, KeyLi
 		actors.add(mbb);
 	}
 	
-
+	/****************************************
+	 * Player Zauber mit dem Arcane Atribut *
+	 ****************************************/
 	public void createBolt() {
-		/****************************************
-		 * Player Zauber mit dem Arcane Atribut *
-		 ****************************************/
+		
 		
 		
 		if (dir == 1) { // hoch schießen
@@ -851,14 +856,16 @@ public class GamePanel extends JPanel implements Runnable, ActionListener, KeyLi
 		it.add(mb);
 		hero.redMana(25);
 	}
-
+	
+	
+	/*********************************************************************
+	 * Diese Funktion wird aufgerufen wenn man ein Item aufgehoben hat.  *
+	 * boolean h gibt an ob das Item eine Health-Potion sein darf wärend *
+	 * int hp die Wahrscheinlich keit angibt. Das selbe gilt auch für    *
+	 * boolean m und int mp, wobei es hier um Mana-Potion geht			 *
+	 *********************************************************************/
 	public void generateItem(boolean h, int hp, boolean m, int mp){
-		/*********************************************************************
-		 * Diese Funktion wird aufgerufen wenn man ein Item aufgehoben hat.  *
-		 * boolean h gibt an ob das Item eine Health-Potion sein darf wärend *
-		 * int hp die Wahrscheinlich keit angibt. Das selbe gilt auch für    *
-		 * boolean m und int mp, wobei es hier um Mana-Potion geht			 *
-		 *********************************************************************/
+		
 		
 		if(h == true){
 			int rn =(int) (Math.random()*hp);
@@ -911,10 +918,12 @@ public class GamePanel extends JPanel implements Runnable, ActionListener, KeyLi
 		}
 	}
 
+	
+	/****************************************
+	 * Funktion um ins Menü zurück zukehren *
+	 ****************************************/
 	public void stopGame() {
-		/****************************************
-		 * Funktion um ins Menü zurück zukehren *
-		 ****************************************/
+
 		
 		b0.setVisible(true);
 		b1.setVisible(true);
@@ -1000,11 +1009,12 @@ public class GamePanel extends JPanel implements Runnable, ActionListener, KeyLi
 
 	}
 	
+	/*********************************************
+	 * Verabreitung des Inputs der Tastatur      *
+	 * Im fall des MP erstellung der DatenPacket *
+	 *********************************************/
 	public void keyPressed(KeyEvent e){
-		/*********************************************
-		 * Verabreitung des Inputs der Tastatur      *
-		 * Im fall des MP erstellung der DatenPacket *
-		 *********************************************/
+
 		
 		if (!dead) {
 			if (e.getKeyCode() == KeyEvent.VK_UP) {
@@ -1095,11 +1105,12 @@ public class GamePanel extends JPanel implements Runnable, ActionListener, KeyLi
 			}
 		}
 	}
-	
+
+	/*******************************************************************************
+	 * In dieser Funtkion wird der Tastatur Input beim loslassen der Taste erfasst *
+	 *******************************************************************************/
 	public void keyReleased(KeyEvent e){
-		/*******************************************************************************
-		 * In dieser Funtkion wird der Tastatur Input beim loslassen der Taste erfasst *
-		 *******************************************************************************/
+
 		
 		if (e.getKeyCode() == KeyEvent.VK_UP) {
 			up = false;
@@ -1196,7 +1207,9 @@ public class GamePanel extends JPanel implements Runnable, ActionListener, KeyLi
 		last = System.nanoTime();
 	}
 
-	@Override
+	/**
+	*@Override
+	**/
 	protected void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		if (started) {
@@ -1348,6 +1361,7 @@ public class GamePanel extends JPanel implements Runnable, ActionListener, KeyLi
 		this.started = started;
 	}
 
+	
 	@SuppressWarnings("resource")
 	private void read() {
 		try {
@@ -1430,11 +1444,13 @@ public class GamePanel extends JPanel implements Runnable, ActionListener, KeyLi
 
 		}
 	}
-		
+	
+	
+	/*********************************************************************
+	 * Hier werden die eingehenden Bewegungsdaten vom Server verabreitet *
+	 *********************************************************************/
     public synchronized void movePlayer(String username, double x, double y, int movingDir) {
-    	/*********************************************************************
-    	 * Hier werden die eingehenden Bewegungsdaten vom Server verabreitet *
-    	 *********************************************************************/
+    
     	
     	if(username.equals(player1.Username)){
 	    	player1.x = x;
@@ -1453,31 +1469,28 @@ public class GamePanel extends JPanel implements Runnable, ActionListener, KeyLi
 		
 	}
 	
-	public synchronized void addPlayerMP(PlayerMP p) {
-		/*********************************************
-		 * 2. Spieler hinzufügen und zeichnen lassen *
-		 *********************************************/
-		
+	/*********************************************
+	 * 2. Spieler hinzufügen und zeichnen lassen *
+	 *********************************************/
+	public synchronized void addPlayerMP(PlayerMP p) {		
 		player2 = p;
 		actors.add(player2);
         this.connectedPlayers.add(player2);
     }
 	
-	public synchronized void addEnemy(Enemy e){
-		/********************************************
-		 * Das selbe wie addPlayerMP nur für Gegner *
-		 ********************************************/
-		
+	/********************************************
+	 * Das selbe wie addPlayerMP nur für Gegner *
+	 ********************************************/
+	public synchronized void addEnemy(Enemy e){		
 		ene = e;
 		actors.add(ene);
 		this.spawnedEnemys.add(ene);		
 	}
 	
-	public synchronized void removeEnemy(int id){
-		/**********************************************
-		 * Enfernt anhand der ID den passenden Gegner *
-		 **********************************************/
-		
+	/**********************************************
+	 * Entfernt anhand der ID den passenden Gegner *
+	 **********************************************/
+	public synchronized void removeEnemy(int id){	
 		int index = 0;
 		for(Enemy e : this.spawnedEnemys){
 			if(e.getID() == id){
@@ -1489,12 +1502,11 @@ public class GamePanel extends JPanel implements Runnable, ActionListener, KeyLi
 		actors.remove(e);
 	}
 	
-	public synchronized void syncMove(int id, double x, double y){
-		/*********************************************************
-		 * Verarbeitet die eingegangen Bewegungsdaten vom Server *
-		 * und passt die Lokalen Coordinaten der Gegner an.      *
-		 *********************************************************/
-		
+	/*********************************************************
+	 * Verarbeitet die eingegangen Bewegungsdaten vom Server *
+	 * und passt die Lokalen Coordinaten der Gegner an.      *
+	 *********************************************************/
+	public synchronized void syncMove(int id, double x, double y){		
 		int index = 0;
 		for(Enemy e : this.spawnedEnemys){
 			if(e.getID() == id){
@@ -1506,12 +1518,11 @@ public class GamePanel extends JPanel implements Runnable, ActionListener, KeyLi
 		this.spawnedEnemys.get(index).y = y;
 	}
 	
+	/*************************************************************
+	 * Wenn ein Spieler Disconnected wird er über diese Funtkion *
+	 * bei den anderen Spieler aus dem Spiel gelöscht            *
+	 *************************************************************/
 	public synchronized void removePlayerMP(String username) {
-		/*************************************************************
-		 * Wenn ein Spieler Disconnected wird er über diese Funtkion *
-		 * bei den anderen Spieler aus dem Spiel gelöscht            *
-		 *************************************************************/
-		
         int index = 0;
         for (PlayerMP p : this.connectedPlayers) {
             if (p.getUsername().equals(username)) {
@@ -1523,12 +1534,10 @@ public class GamePanel extends JPanel implements Runnable, ActionListener, KeyLi
         actors.remove(player2);
     }
 	
-	public void setStart(String username, double x, double y){
-		/*******************************************************
-		 * Funktion zur initalisierung der Startposition im MP *
-		 *******************************************************/
-		
-		
+	/*******************************************************
+	 * Funktion zur initalisierung der Startposition im MP *
+	 *******************************************************/
+	public void setStart(String username, double x, double y){		
     	if(username.equals(player1.Username)){
 	    	player1.x = x;
 	        player1.y = y;

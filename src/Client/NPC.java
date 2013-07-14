@@ -3,6 +3,9 @@ package Client;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 
+/*********************************************************************************************************************************
+ * NPC.class dient als Basis für alle NPC im Spiel die keine Gegner sind, sondern Objekte mit denen der Player interagieren kann *
+ *********************************************************************************************************************************/
 @SuppressWarnings("serial")
 public class NPC extends Sprite {
 	
@@ -36,6 +39,9 @@ public class NPC extends Sprite {
 		return false;
 	}
 	
+	/*******************************************************
+	 * getCoor teilt dem NPC die Position des Spielers mit *
+	 *******************************************************/
 	public static void getCoor(int x, int y){
 		hx = x;
 		hy = y;

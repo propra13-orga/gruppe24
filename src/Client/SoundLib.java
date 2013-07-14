@@ -7,6 +7,9 @@ import java.net.MalformedURLException;
 import java.util.Hashtable;
 import java.util.Vector;
 
+/*****************************************************
+ * Klasse zum Laden und Abspielen von Sound im Spiel *
+ *****************************************************/
 public class SoundLib {
 
 	Hashtable<String, AudioClip> sounds;
@@ -31,17 +34,26 @@ public class SoundLib {
 		}
 	}
 
+	/************************************************
+	 * Funktion zum einmaligem Abspielen des Sounds *
+	 ************************************************/	
 	public void playSound(String name) {
 		AudioClip audio = sounds.get(name);
 		audio.play();
 	}
 
+	/*********************************************************
+	 * Funktion die den Sound in einer Schleife laufen lässt *
+	 *********************************************************/
 	public void loopSound(String name) {
 		AudioClip audio = sounds.get(name);
 		loopingClips.add(audio);
 		audio.loop();
 	}
 
+	/*******************************
+	 * Gegenfunktion zur LoopSound *
+	 *******************************/	
 	public void stopLoopingSound() {
 		for (AudioClip c : loopingClips) {
 			c.stop();

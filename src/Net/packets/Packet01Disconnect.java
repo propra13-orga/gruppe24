@@ -1,5 +1,8 @@
 package Net.packets;
 
+/************************************************
+ * Packet mit für den Disconnect im Multiplayer *
+ ************************************************/
 @SuppressWarnings("serial")
 public class Packet01Disconnect extends Packet {
 

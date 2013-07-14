@@ -1,5 +1,8 @@
 package Net.packets;
 
+/**********************************************************************
+ * Packet Klasse zuständig für den Login eines Players im Multiplayer *
+ **********************************************************************/
 @SuppressWarnings("serial")
 public class Packet00Login extends Packet {
 
@@ -25,13 +28,13 @@ public class Packet00Login extends Packet {
     public double getX() {
         return x;
     }
-    
-    public void setX(double wert){
-    	x = wert;
-    }
 
     public double getY() {
         return y;
+    }
+    
+    public void setX(double wert){
+    	x = wert;
     }
     
     public void setY(double wert){

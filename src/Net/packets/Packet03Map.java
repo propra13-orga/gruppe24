@@ -1,6 +1,9 @@
 package Net.packets;
 
 
+/*******************************************************************
+ * Packet zum übermitteln der Level daten vom Server an die Player *
+ *******************************************************************/
 @SuppressWarnings("serial")
 public class Packet03Map extends Packet {
 		int levelid;
