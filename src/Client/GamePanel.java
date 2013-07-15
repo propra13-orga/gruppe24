@@ -1157,16 +1157,14 @@ public class GamePanel extends JPanel implements Runnable, ActionListener, KeyLi
 			}
 			sup = sleft = sright = sdown = false;
 		}
-		if(npc != null && npc.dis == 1 && lvl==1){
-			if(e.getKeyCode()== KeyEvent.VK_E){
+			if(e.getKeyCode()== KeyEvent.VK_E && (npc != null && npc.dis == 1 && lvl==1)){
 				page++;
 				if(page>3)
 					page=0;
-			}
-		}else
-			page = 0;
-			
-		if(shopowner != null && shopowner.dis == 1 && lvl>1){
+			}else
+				page = 0;	
+	if(lvl>1){
+		if(shopowner != null && shopowner.dis == 1){
 			if(e.getKeyCode()==KeyEvent.VK_E){
 				page++;
 				if(page>1)
@@ -1174,6 +1172,7 @@ public class GamePanel extends JPanel implements Runnable, ActionListener, KeyLi
 			}
 		}else
 			page = 0;
+		}
 
 		if(e.getKeyCode() == KeyEvent.VK_1 && Coins >=5 && showtext == true){
 			hero.addHealth(25, phealth);
@@ -1207,9 +1206,7 @@ public class GamePanel extends JPanel implements Runnable, ActionListener, KeyLi
 		last = System.nanoTime();
 	}
 
-	/**
-	*@Override
-	**/
+	@Override
 	protected void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		if (started) {
