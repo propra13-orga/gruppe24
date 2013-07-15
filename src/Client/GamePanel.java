@@ -1218,7 +1218,9 @@ public class GamePanel extends JPanel implements Runnable, ActionListener, KeyLi
 			g.drawString("Mana: " + mana, 50, 253);
 			g.setColor(Color.black);
 			g.drawString("Coins: " + Coins, 120, 253);
-			//g.drawString("Def: "+ (int)hero.armor, 185, 253);
+			if(!join){
+				g.drawString("Def: "+ (int)hero.armor, 185, 253);
+			}
 		}
 
 		if (dead) {
