@@ -29,6 +29,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 
+import Editor.MainPanel;
 import Net.Client;
 import Net.packets.Packet00Login;
 import Net.packets.Packet02Move;
@@ -45,6 +46,7 @@ public class GamePanel extends JPanel implements Runnable, ActionListener, KeyLi
 	private JButton b1;
 	private JButton b2;
 	private JButton b3;
+	private JButton b4;
 
 	JFrame frame;
 	private KeyEvent e;
@@ -186,6 +188,7 @@ public class GamePanel extends JPanel implements Runnable, ActionListener, KeyLi
 		b1 = new JButton("Close");
 		b2 = new JButton("Server");
 		b3 = new JButton("Join");
+		b4 = new JButton("Editor");
 		b0.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
@@ -232,11 +235,21 @@ public class GamePanel extends JPanel implements Runnable, ActionListener, KeyLi
 				}
 			}
 		});
-
+		
+		b4.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				MainPanel.main(null);
+			}
+		});
+		
 		frame.add(b0, BorderLayout.EAST);
 		frame.add(b1, BorderLayout.WEST);
 		frame.add(b2, BorderLayout.NORTH);
 		frame.add(b3, BorderLayout.SOUTH);
+		add(BorderLayout.CENTER, b4);
 		frame.add(this);
 		frame.pack();
 		frame.addKeyListener(this);
