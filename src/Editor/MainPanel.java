@@ -86,12 +86,12 @@ public class MainPanel extends JFrame {
 		});	
 	}
 	
+	
 	/***********************************************************
 	 * "Hauptmethode" ruft die Lade und Speicher - Methode auf.*
 	 * Generiert das Level über Buttons, mit denen man die     *
 	 * einzelnen Elemente ändern kann.                         *
-	 ***********************************************************/
-	
+	 ***********************************************************/	
 	public void EditorErstellen(String pfad){
 		reset = pfad;
 		JPanel	Editor = new JPanel();
@@ -191,12 +191,11 @@ public class MainPanel extends JFrame {
 					 }
 					 button[i][j].addActionListener(new ActionListener() {
 						
+						 
 						 /********************************************************
 						  * Auf Knopfdruck wird durch das Bilderarray geschaltet *
 						  * und der werd in Leveldata geändert                   *
-						  ********************************************************/
-						 
-						 
+						  ********************************************************/			 
 						@Override
 						public void actionPerformed(ActionEvent e) {
 							System.out.print(i_final + " ");
@@ -267,11 +266,11 @@ public class MainPanel extends JFrame {
 		});
 	}
 	
+	
 	/**********************************************************
 	 * Gibt einen String zurück der die Levelstruktur enthält.*
 	 * Der Pfad wird vom Filechooser übergeben                *
 	 **********************************************************/
-	
 	public void loadLevel(String path){
 		try {
 			BufferedReader input = new BufferedReader(new InputStreamReader(new FileInputStream(new File(path))));
@@ -310,11 +309,11 @@ public class MainPanel extends JFrame {
 		return ladenWahl.getSelectedFile().getName();
 		}
 	
+	
 	/***************************************************
 	 * Erstellt eine neue Datei und schreibt Leveldata *
 	 * in diese Datei hinein.                          *
 	 ***************************************************/
-	
 	@SuppressWarnings("resource")
 	public void speichern(){
 		JFileChooser speicherWahl = new JFileChooser("res/lvl/");
@@ -350,7 +349,6 @@ public class MainPanel extends JFrame {
 			}
 			inputStream.flush();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
