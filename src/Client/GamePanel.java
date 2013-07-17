@@ -196,6 +196,7 @@ public class GamePanel extends JPanel implements Runnable, ActionListener, KeyLi
 				b1.setVisible(false);
 				b2.setVisible(false);
 				b3.setVisible(false);
+				b4.setVisible(false);
 				frame.pack();
 				frame.requestFocus();
 				try {
@@ -226,6 +227,7 @@ public class GamePanel extends JPanel implements Runnable, ActionListener, KeyLi
 				b1.setVisible(false);
 				b2.setVisible(false);
 				b3.setVisible(false);
+				b4.setVisible(false);
 				frame.pack();
 				frame.requestFocus();
 				try {
