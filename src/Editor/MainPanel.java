@@ -1,4 +1,5 @@
 package Editor;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -28,7 +29,7 @@ public class MainPanel extends JFrame {
 	private static final long serialVersionUID = 1L;
 
 	JButton LvlErstellen, LvlLaden, DungeonBauen;
-	JButton Objekte, LvlSpeichern, Reset;
+	JButton LvlSpeichern;
 	
 	File imageFileboden = new File("res/pics/floor.gif");
 	File imageFilewand = new File("res/pics/wall.gif");
@@ -42,8 +43,14 @@ public class MainPanel extends JFrame {
 	File imageFileback = new File("res/pics/back.gif");
 	
 	String neu = "res/lvl/leer.level";
-		
+	String reset;
 	int[][] Leveldata;
+	
+	
+	/*********************
+	 * Hauptframe mit    *
+	 * den 3 Menübuttons *
+	 *********************/
 	
 	public MainPanel(){
 		setSize(400, 300);
@@ -79,8 +86,14 @@ public class MainPanel extends JFrame {
 		});	
 	}
 	
+	/***********************************************************
+	 * "Hauptmethode" ruft die Lade und Speicher - Methode auf.*
+	 * Generiert das Level über Buttons, mit denen man die     *
+	 * einzelnen Elemente ändern kann.                         *
+	 ***********************************************************/
 	
 	public void EditorErstellen(String pfad){
+		reset = pfad;
 		JPanel	Editor = new JPanel();
 		Editor.setLayout(new BorderLayout());
 		Editor.setBackground(Color.black);
@@ -92,10 +105,6 @@ public class MainPanel extends JFrame {
 		EdiP.setLayout(new GridLayout(1,2));
 		LvlSpeichern = new JButton("Level speichern");
 		LvlLaden = new JButton("Level laden");
-		Reset = new JButton("Neu");
-		Objekte = new JButton("Level Strukturen");
-		Oben.add(Objekte);
-		Oben.add(Reset);
 		EdiP.add(LvlLaden);
 		EdiP.add(LvlSpeichern);
 		add(BorderLayout.SOUTH,EdiP);
@@ -137,8 +146,7 @@ public class MainPanel extends JFrame {
 					 final int j_final = j;
 					 objekt = Leveldata[i][j];
 					 button[i][j] = new JButton();
-					 
-					 System.out.println(objekt);
+					
 					 switch(objekt){
 					 case 1:						  
 				            button[i][j].setIcon(icon[0]); 
@@ -183,6 +191,12 @@ public class MainPanel extends JFrame {
 					 }
 					 button[i][j].addActionListener(new ActionListener() {
 						
+						 /********************************************************
+						  * Auf Knopfdruck wird durch das Bilderarray geschaltet *
+						  * und der werd in Leveldata geändert                   *
+						  ********************************************************/
+						 
+						 
 						@Override
 						public void actionPerformed(ActionEvent e) {
 							System.out.print(i_final + " ");
@@ -253,6 +267,11 @@ public class MainPanel extends JFrame {
 		});
 	}
 	
+	/**********************************************************
+	 * Gibt einen String zurück der die Levelstruktur enthält.*
+	 * Der Pfad wird vom Filechooser übergeben                *
+	 **********************************************************/
+	
 	public void loadLevel(String path){
 		try {
 			BufferedReader input = new BufferedReader(new InputStreamReader(new FileInputStream(new File(path))));
@@ -283,7 +302,7 @@ public class MainPanel extends JFrame {
 			e.printStackTrace();
 		}
 	}
-	
+		
 	public String laden(){
 		JFileChooser ladenWahl = new JFileChooser("res/lvl/");
 		ladenWahl.showOpenDialog(null);
@@ -291,11 +310,16 @@ public class MainPanel extends JFrame {
 		return ladenWahl.getSelectedFile().getName();
 		}
 	
+	/***************************************************
+	 * Erstellt eine neue Datei und schreibt Leveldata *
+	 * in diese Datei hinein.                          *
+	 ***************************************************/
+	
 	@SuppressWarnings("resource")
 	public void speichern(){
 		JFileChooser speicherWahl = new JFileChooser("res/lvl/");
 		speicherWahl.showSaveDialog(null);
-		File file = new File("C:/Users/markus/workspace/GameEditor/res/lvl/" + speicherWahl.getSelectedFile().getName() );
+		File file = new File("res/lvl/" + speicherWahl.getSelectedFile().getName() );
 		try {
 			file.createNewFile();
 			FileWriter inputStream = new FileWriter(file);
