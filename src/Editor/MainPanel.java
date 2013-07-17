@@ -50,13 +50,13 @@ public class MainPanel extends JFrame {
 	/*********************
 	 * Hauptframe mit    *
 	 * den 3 Menübuttons *
-	 *********************/
-	
+	 *********************/	
 	public MainPanel(){
 		setSize(400, 300);
 		setLocation(200, 200);
 		setVisible(true);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
+		setResizable(false);
 		final JPanel Hauptpanel = new JPanel();
 		Hauptpanel.setLayout(new GridLayout(3,1));
 		LvlErstellen = new JButton("Level erstellen");

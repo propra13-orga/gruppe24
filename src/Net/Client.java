@@ -26,6 +26,7 @@ import Net.packets.Packet02Move;
 import Net.packets.Packet03Map;
 import Net.packets.Packet04Enemy;
 import Net.packets.Packet05EnemyMove;
+import Net.packets.Packet06Dummy;
 
 /***************************************
  * Clienten Klasse für den Multiplayer *
@@ -118,6 +119,8 @@ public class Client implements Runnable {
 
 			addConnection(player2, o);
 			addEnemys();
+			Packet06Dummy p = new Packet06Dummy();
+			send(p);
 
 		} else if (o instanceof Packet02Move) {
 			this.handleMove(((Packet02Move) o), true);
@@ -127,6 +130,9 @@ public class Client implements Runnable {
 			}
 		} else if (o instanceof Packet03Map) {
 			sendLevel();
+		}else if(o instanceof Packet06Dummy){
+			syncEnemy();
+			send(o);
 		}
 		
 	}
@@ -155,6 +161,8 @@ public class Client implements Runnable {
 			handleEnemy((Packet04Enemy)o);
 		} else if(o instanceof Packet05EnemyMove){
 			game.syncMove(((Packet05EnemyMove)o).getID(),((Packet05EnemyMove)o).getX(), ((Packet05EnemyMove)o).getY());
+		}else if(o instanceof Packet06Dummy){
+			//send(o);
 		}
 
 	}
@@ -398,7 +406,7 @@ public class Client implements Runnable {
 		}
 	}
 
-	private void sendLevel() {
+	public void sendLevel() {
 		Packet03Map p = new Packet03Map(leveldata);
 		send(p);
 	}
@@ -415,7 +423,7 @@ public class Client implements Runnable {
 			String rest = null;
 			int i, j;
 			leveldata = new int[15][15];
-			switch (ServerLogic.lvl) {
+			switch (ServerLogic.lvl.get()) {
 			case 1:
 				rest = "lvl1.level";
 				break;

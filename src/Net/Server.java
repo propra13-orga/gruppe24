@@ -66,11 +66,11 @@ public class Server implements Runnable {
 }
 
 
-/******************************************
- * Klasse zur bearbeitung der ServerLogik *
- ******************************************/
+/****************************************
+ * Klasse zuständig für die ServerLogik *
+ ****************************************/
 class ServerLogic implements Runnable{
-	static int lvl = 1;
+	public static AtomicInteger lvl = new AtomicInteger(1);
 	int dis;
 	double deltaX, deltaY;
 	boolean resting, moving;
@@ -93,7 +93,7 @@ class ServerLogic implements Runnable{
 					EnemyMove();					
 				}			
 				doLogic();					
-				Thread.sleep(50);
+				Thread.sleep(10);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
@@ -219,7 +219,7 @@ class ServerLogic implements Runnable{
 
 		int oldY = ((int) (y / 16));
 
-		if (Client.leveldata[((int) (y / 16))- 1][((int) (x / 16)) ] == 1) {
+		if (Client.leveldata[((int) (y/16))- 1][((int) (x/16)) ] == 1) {
 			y = oldY * 16;
 			e.setY(y);
 		} else if (Client.leveldata[((int)(y/16))-1][((int)(x/16))]== 2 || Client.leveldata[((int) (y / 16))-1][((int) (x / 16))] == 3 || Client.leveldata[((int) (y / 16) - 1)][((int) (x / 16))] == 4) {
@@ -294,16 +294,18 @@ class ServerLogic implements Runnable{
 				index++;
 			}
 			
-			if (Client.leveldata[(int)x[0]/16][(int)y[0]/16] == 9 && Client.leveldata[(int)x[1]/16][(int)y[1]/16] == 92) {
-				lvl++;
+			if (Client.leveldata[(int) y[0]/16][(int)x[0]/16] == 9 || Client.leveldata[(int)y[1]/16][(int)x[1]/16] == 92) {
+				lvl.getAndIncrement();
 				Client.read();
+				//Client.sendLevel();
 				Client.SpawnEnemy();
+				
 			}
-			if (Client.leveldata[(int)x[0]/16][(int)y[0]/16] == 8 && Client.leveldata[(int)x[1]/16][(int)y[1]/16] == 82) {
-				lvl--;
+			if (Client.leveldata[(int)y[0]/16][(int)x[0]/16] == 8 || Client.leveldata[(int)y[1]/16][(int)x[1]/16] == 82) {
+				lvl.getAndDecrement();
 				Client.read();
 			}
-			if (Client.leveldata[(int)x[0]/16][(int)y[0]/16] == 42 && Client.leveldata[(int)x[1]/16][(int)y[1]/16] == 42) {
+			if (Client.leveldata[(int)y[0]/16][(int)x[0]/16] == 42 || Client.leveldata[(int)y[1]/16][(int)x[1]/16] == 42) {
 				System.out.println("Finished");
 
 			}

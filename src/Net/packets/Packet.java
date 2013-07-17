@@ -27,21 +27,4 @@ public abstract class Packet implements Serializable  {
     public Packet(int packetId) {
         this.packetId = (byte) packetId;
     }
-
-    private static PacketTypes lookupPacket(String packetId) {
-        try {
-            return lookupPacket(Integer.parseInt(packetId));
-        } catch (NumberFormatException e) {
-            return PacketTypes.INVALID;
-        }
-    }
-
-    private static PacketTypes lookupPacket(int id) {
-        for (PacketTypes p : PacketTypes.values()) {
-            if (p.getId() == id) {
-                return p;
-            }
-        }
-        return PacketTypes.INVALID;
-    }
 }

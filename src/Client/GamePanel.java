@@ -329,8 +329,10 @@ public class GamePanel extends JPanel implements Runnable, ActionListener, KeyLi
 				e.printStackTrace();
 			}
 		}
-		SpawnEnemy();
-		SpawnNPC();
+		if(!join){
+			SpawnEnemy();
+			SpawnNPC();
+		}
 		started = true;
 
 	}
