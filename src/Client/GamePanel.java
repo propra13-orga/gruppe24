@@ -101,6 +101,7 @@ public class GamePanel extends JPanel implements Runnable, ActionListener, KeyLi
 
 	public int[][] leveldata;
 	int lvl = 1;
+	int savelvl;
 	int EnemyCounter = 0;
 	int Coins = 0;
 	int xx = 0, yy = 0;
@@ -477,6 +478,7 @@ public class GamePanel extends JPanel implements Runnable, ActionListener, KeyLi
 			if(check.getX()== hero.getX()&& check.getY()== hero.getY()+16){
 				check.setLoop(1,1);
 				checkp = true;
+				savelvl = lvl;
 			}
 		}
 
@@ -850,9 +852,7 @@ public class GamePanel extends JPanel implements Runnable, ActionListener, KeyLi
 	/****************************************
 	 * Player Zauber mit dem Arcane Atribut *
 	 ****************************************/
-	public void createBolt() {
-		
-		
+	public void createBolt() {		
 		
 		if (dir == 1) { // hoch schieﬂen
 			x = hero.getX();
@@ -903,7 +903,7 @@ public class GamePanel extends JPanel implements Runnable, ActionListener, KeyLi
 	
 	private void startGame() throws IOException {
 		if(checkp){
-			lvl = 6;
+			lvl = savelvl;
 		}else
 			lvl = 1;
 		if(!join){

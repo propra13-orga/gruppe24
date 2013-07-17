@@ -304,6 +304,7 @@ class ServerLogic implements Runnable{
 			if (Client.leveldata[(int)y[0]/16][(int)x[0]/16] == 8 || Client.leveldata[(int)y[1]/16][(int)x[1]/16] == 82) {
 				lvl.getAndDecrement();
 				Client.read();
+				//Client.sendLevel();
 			}
 			if (Client.leveldata[(int)y[0]/16][(int)x[0]/16] == 42 || Client.leveldata[(int)y[1]/16][(int)x[1]/16] == 42) {
 				System.out.println("Finished");

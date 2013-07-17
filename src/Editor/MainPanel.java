@@ -78,7 +78,7 @@ public class MainPanel extends JFrame {
 		LvlLaden.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				String levelLadenPath = "res/lvl/" + laden();
+				String levelLadenPath = "res/lvl/SP/" + laden();
 				EditorErstellen(levelLadenPath);
 				Hauptpanel.setVisible(false);
 				pack();
@@ -180,7 +180,7 @@ public class MainPanel extends JFrame {
 				            button[i][j].setIcon(icon[6]); 
 				            centerPanel.add(button[i][j]);
 				            break;
-					 case 13:				
+					 case 12:				
 						 	button[i][j].setIcon(icon[7]); 
 				            centerPanel.add(button[i][j]);
 				            break;
@@ -226,9 +226,9 @@ public class MainPanel extends JFrame {
 								}
 							else if ((Leveldata[i_final][j_final])==42) {
 								button[i_final][j_final].setIcon(icon[7]);
-								Leveldata[i_final][j_final] =  13;
+								Leveldata[i_final][j_final] =  12;
 								}
-							else if ((Leveldata[i_final][j_final])==13) {
+							else if ((Leveldata[i_final][j_final])==12) {
 								button[i_final][j_final].setIcon(icon[8]);
 								Leveldata[i_final][j_final] =  2;
 								}
@@ -252,7 +252,7 @@ public class MainPanel extends JFrame {
 		LvlLaden.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				String levelLadenPath = "res/lvl/" + laden();
+				String levelLadenPath = "res/lvl/SP/" + laden();
 				EditorErstellen(levelLadenPath);
 				pack();
 			}
@@ -303,7 +303,7 @@ public class MainPanel extends JFrame {
 	}
 		
 	public String laden(){
-		JFileChooser ladenWahl = new JFileChooser("res/lvl/");
+		JFileChooser ladenWahl = new JFileChooser("res/lvl/SP/");
 		ladenWahl.showOpenDialog(null);
 		System.out.println(ladenWahl.getSelectedFile().getName());
 		return ladenWahl.getSelectedFile().getName();
@@ -316,9 +316,9 @@ public class MainPanel extends JFrame {
 	 ***************************************************/
 	@SuppressWarnings("resource")
 	public void speichern(){
-		JFileChooser speicherWahl = new JFileChooser("res/lvl/");
+		JFileChooser speicherWahl = new JFileChooser("res/lvl/SP/");
 		speicherWahl.showSaveDialog(null);
-		File file = new File("res/lvl/" + speicherWahl.getSelectedFile().getName() );
+		File file = new File("res/lvl/SP/" + speicherWahl.getSelectedFile().getName() );
 		try {
 			file.createNewFile();
 			FileWriter inputStream = new FileWriter(file);
@@ -343,7 +343,7 @@ public class MainPanel extends JFrame {
 					}else if(Leveldata[i][j]==7){
 						inputStream.write("7;");
 					}else
-						inputStream.write("13;");
+						inputStream.write("12;");
 				}
 				inputStream.write(System.getProperty("line.separator"));
 			}
