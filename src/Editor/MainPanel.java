@@ -11,9 +11,15 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.channels.FileChannel;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.StringTokenizer;
 
 import javax.imageio.ImageIO;
@@ -22,6 +28,7 @@ import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
 
 
 public class MainPanel extends JFrame {
@@ -84,6 +91,59 @@ public class MainPanel extends JFrame {
 				pack();
 			}
 		});	
+		DungeonBauen.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {							
+				final JFileChooser dungeonlevel = new JFileChooser("res/lvl/SP/");
+				dungeonlevel.setMultiSelectionEnabled(true);
+				if(dungeonlevel.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
+					final JFrame ordnerEingabe = new JFrame();
+					ordnerEingabe.setSize(300, 200);
+					ordnerEingabe.setLocation(500, 500);
+					JPanel oEingabe = new JPanel();
+					final JTextField ordnername = new JTextField(20);
+//					JButton ok = new JButton("OK");
+					oEingabe.add(ordnername);
+//					oEingabe.add(ok);
+					ordnerEingabe.add(oEingabe);
+					ordnerEingabe.setVisible(true);
+					
+					ordnername.addActionListener(new ActionListener() {
+												
+						public void actionPerformed(ActionEvent arg0) {
+							String oName = ordnername.getText();
+							System.out.println(oName);
+							
+							File[] selectedFile = dungeonlevel.getSelectedFiles();
+							File[] newLevel = new File [selectedFile.length]; 
+//							String ordnername = null;
+							File ordner = new File("res/" + oName +"/");
+							ordner.mkdir();
+							int a = 0;
+							for (int i = 0; i < selectedFile.length; i++) {
+								a++;
+								newLevel[i] = new File("res/" + oName + "/" + a + ".level");
+								try {
+									newLevel[i].createNewFile();
+									copyFile(selectedFile[i], newLevel[i]);
+								} catch (IOException e) {
+									// TODO Auto-generated catch block
+									e.printStackTrace();
+								}
+							}
+							ordnerEingabe.dispose();
+							
+							
+							
+						}
+					});
+					
+					
+					}
+				
+			}
+		});
 	}
 	
 	
@@ -194,7 +254,7 @@ public class MainPanel extends JFrame {
 						 
 						 /********************************************************
 						  * Auf Knopfdruck wird durch das Bilderarray geschaltet *
-						  * und der werd in Leveldata geändert                   *
+						  * und der Wert in Leveldata geändert.                  *
 						  ********************************************************/			 
 						@Override
 						public void actionPerformed(ActionEvent e) {
@@ -352,6 +412,22 @@ public class MainPanel extends JFrame {
 			e.printStackTrace();
 		}
 	}
+	
+	@SuppressWarnings("resource")
+	public static void copyFile(File in, File out) throws IOException { 
+        FileChannel inChannel = new FileInputStream(in).getChannel(); 
+        FileChannel outChannel = new FileOutputStream(out).getChannel(); 
+        try { 
+            inChannel.transferTo(0, inChannel.size(), outChannel); 
+        } catch (IOException e) { 
+            throw e; 
+        } finally { 
+            if (inChannel != null) 
+                inChannel.close(); 
+            if (outChannel != null) 
+                outChannel.close(); 
+        } 
+    } 
 	
 	public static void main(String[] args) {
 		new MainPanel();
