@@ -321,19 +321,21 @@ class ServerLogic implements Runnable{
 				index++;
 			}
 			
-			if ((leveldata[(int) y[0]/16][(int)x[0]/16] == 9 || leveldata[(int)y[1]/16][(int)x[1]/16] == 92) && lvl.get()<=3) {
+			if ((leveldata[(int) y[0]/16][(int)x[0]/16] == 9 || leveldata[(int)y[1]/16][(int)x[1]/16] == 92) && lvl.get()<3) {
 				lvl.getAndIncrement();
 				Client.read();
 				this.leveldata = Client.leveldata;
 				sendLevel();
-				Client.SpawnEnemy();
+				//Client.SpawnEnemy();
 				
 				try {
-					Thread.sleep(50);
+					Thread.sleep(500);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
-			}else if (Client.leveldata[(int)y[0]/16][(int)x[0]/16] == 8 || Client.leveldata[(int)y[1]/16][(int)x[1]/16] == 82) {
+			}
+			
+			if (Client.leveldata[(int)y[0]/16+1][(int)x[0]/16] == 8 || Client.leveldata[(int)y[1]/16+1][(int)x[1]/16] == 82) {
 				lvl.getAndDecrement();
 				Client.read();
 				this.leveldata = Client.leveldata;

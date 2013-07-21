@@ -25,9 +25,9 @@ import Net.packets.Packet01Disconnect;
 import Net.packets.Packet02Move;
 import Net.packets.Packet03Map;
 import Net.packets.Packet04Enemy;
-import Net.packets.Packet07Finish;
-//import Net.packets.Packet05EnemyMove;
 import Net.packets.Packet06GetC;
+import Net.packets.Packet07Finish;
+
 
 /***************************************
  * Clienten Klasse für den Multiplayer *
@@ -127,7 +127,7 @@ public class Client implements Runnable {
 			sendLevel(true);
 		} else if(o instanceof Packet06GetC){
 			getCoor2(o);
-			send(o);
+			broadcast(o, true);
 		}
 		
 	}
@@ -165,6 +165,7 @@ public class Client implements Runnable {
 			handleMove(p, false);
 		}else if(o instanceof Packet07Finish){
 			game.finish(((Packet07Finish)o).getUsername());
+			this.socket.close();
 		}
 
 	}
@@ -260,13 +261,13 @@ public class Client implements Runnable {
 		}
 	}
 
-	private void addEnemys(){		
+	/*private void addEnemys(){		
 		for(int index = 0;index < Server.spawnedEnemys.size(); index++){
 			Enemy e = Server.spawnedEnemys.get(index);
 			Packet04Enemy o = new Packet04Enemy(e.getX(), e.getY(), e.getType(), e.getID(), e.getStrength(), e.getWeakness());
 			send(o);
 		}
-	}
+	}*/
 
 	/*private void syncEnemy(){
 		if(Server.connectedPlayers.size() !=0){
