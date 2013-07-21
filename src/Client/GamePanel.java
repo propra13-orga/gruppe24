@@ -34,7 +34,6 @@ import Net.Client;
 import Net.packets.Packet00Login;
 import Net.packets.Packet02Move;
 import Net.packets.Packet03Map;
-import Net.packets.Packet05EnemyMove;
 import Server.GUI;
 
 /********************************************
@@ -354,9 +353,6 @@ public class GamePanel extends JPanel implements Runnable, ActionListener, KeyLi
 				doLogic();
 				moveObjects();
 				cloneVectors();
-				if(join){
-					requestECoor();
-				}
 			}
 			repaint();
 
@@ -1596,15 +1592,6 @@ public class GamePanel extends JPanel implements Runnable, ActionListener, KeyLi
 		
 	}
 	
-	private void requestECoor(){
-		
-		Packet05EnemyMove o = new Packet05EnemyMove();
-		try {
-			c.getOutput().writeObject(o);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
 	
 	public void finish(String name){
 		finish = name +" wins";
