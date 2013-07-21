@@ -610,7 +610,7 @@ public class GamePanel extends JPanel implements Runnable, ActionListener, KeyLi
 		}
 	}
 	
-	public void Clear(boolean MP){
+	public synchronized void Clear(boolean MP){
 		if(!MP){
 			actors.clear();
 			enviroment.clear();
@@ -640,7 +640,7 @@ public class GamePanel extends JPanel implements Runnable, ActionListener, KeyLi
 		}
 	}
 	
-	public void Draw(){
+	public synchronized void Draw(){
 		ground();
 	}
 

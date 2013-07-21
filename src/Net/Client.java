@@ -165,7 +165,6 @@ public class Client implements Runnable {
 			handleMove(p, false);
 		}else if(o instanceof Packet07Finish){
 			game.finish(((Packet07Finish)o).getUsername());
-			this.socket.close();
 		}
 
 	}
