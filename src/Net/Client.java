@@ -249,11 +249,17 @@ public class Client implements Runnable {
 					if (leveldata[row][col] == 2) {
 						((Packet06GetC) o).setX(col * 16);
 						((Packet06GetC) o).setY((row-1) * 16);
+						PlayerMP player = Server.connectedPlayers.get(0);
+						player.x = col*16;
+						player.y = (row-1)*16;
 					}
 				} else if (((Packet06GetC)o).getId()==2) {
 					if (leveldata[row][col] == 22) {
 						((Packet06GetC) o).setX(col * 16);
 						((Packet06GetC) o).setY((row-1) * 16);
+						PlayerMP player = Server.connectedPlayers.get(1);
+						player.x = col*16;
+						player.y = (row-1)*16;
 					}
 				}
 			}
@@ -353,7 +359,7 @@ public class Client implements Runnable {
 							|| leveldata[moveY - 1][moveX] == 31
 							|| leveldata[moveY - 1][moveX] == 99) {
 						moveY = oldY;
-					} else if (leveldata[moveY - 1][moveX] == 9 && Server.spawnedEnemys.size() != 0 || (leveldata[moveY - 1][moveX] == 92 && Server.spawnedEnemys.size() != 0)) {
+					} else if ((leveldata[moveY - 1][moveX] == 9 || (leveldata[moveY - 1][moveX] == 92 || (leveldata[moveY-1][moveX]==42)))) {
 						moveY = oldY;
 					} else
 						moveY--;
@@ -549,7 +555,7 @@ public class Client implements Runnable {
 				+ packet.getUsername() + " has joined the game...");
 		PlayerMP player2 = new PlayerMP(game.pl2,
 				((Packet00Login) packet).getX(),
-				((Packet00Login) packet).getY() - 16, packet.getUsername(),
+				((Packet00Login) packet).getY(), packet.getUsername(),
 				address, port, 100, game, ((Packet00Login) packet).getId());
 		game.addPlayerMP(player2);
 	}

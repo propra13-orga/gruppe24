@@ -81,7 +81,9 @@ class ServerLogic implements Runnable{
 	boolean resting, moving;
 	private int mDirection = -1;
 	private int mSteps = 0;
-	Client c;
+	private double[] xOld;
+	private double[] yOld;
+	private String[] uOld;
 	
 	public ServerLogic(){
 		startThread();
@@ -309,8 +311,8 @@ class ServerLogic implements Runnable{
 	private synchronized void doLogic() {
 		if(Server.connectedPlayers.size() != 0){
 			int index = 0;
-			double[] x = {0,0};
-			double[] y = {0,0};
+			double[] x = {1,1};
+			double[] y = {1,1};
 			String[] u = {null,null};
 			for(PlayerMP p : Server.connectedPlayers){
 				if(p != null){
@@ -327,12 +329,6 @@ class ServerLogic implements Runnable{
 				this.leveldata = Client.leveldata;
 				sendLevel();
 				//Client.SpawnEnemy();
-				
-				try {
-					Thread.sleep(500);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
 			}
 			
 			if (Client.leveldata[(int)y[0]/16+1][(int)x[0]/16] == 8 || Client.leveldata[(int)y[1]/16+1][(int)x[1]/16] == 82) {
@@ -341,14 +337,20 @@ class ServerLogic implements Runnable{
 				this.leveldata = Client.leveldata;
 				sendLevel();
 			}
-			if (Client.leveldata[(int)y[0]/16][(int)x[0]/16] == 9 && lvl.get() == 3) {
+			if (Client.leveldata[(int)y[0]/16+1][(int)x[0]/16] == 42 && lvl.get() == 3) {
 				Packet07Finish o = new Packet07Finish(u[0]);
 				broadcast(o);
-			}else if(Client.leveldata[(int)y[1]/16][(int)x[1]/16] == 92 && lvl.get()==3){
+			}else if(Client.leveldata[(int)y[1]/16+1][(int)x[1]/16] == 42 && lvl.get()==3){
 				Packet07Finish o = new Packet07Finish(u[1]);
 				broadcast(o);
 			}
+			try {
+				Thread.sleep(50);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 		}
+		
 	}
 	
 }
