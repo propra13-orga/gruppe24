@@ -25,8 +25,9 @@ import Net.packets.Packet01Disconnect;
 import Net.packets.Packet02Move;
 import Net.packets.Packet03Map;
 import Net.packets.Packet04Enemy;
-import Net.packets.Packet05EnemyMove;
-import Net.packets.Packet06Dummy;
+import Net.packets.Packet07Finish;
+//import Net.packets.Packet05EnemyMove;
+import Net.packets.Packet06GetC;
 
 /***************************************
  * Clienten Klasse für den Multiplayer *
@@ -115,23 +116,17 @@ public class Client implements Runnable {
 			PlayerMP player2 = new PlayerMP(game.pl2,
 					((Packet00Login) o).getX(), ((Packet00Login) o).getY(),
 					((Packet00Login) o).getUsername(), socket.getInetAddress(),
-					socket.getPort(), 100, game);
+					socket.getPort(), 100, game, ((Packet00Login)o).getId());
 
 			addConnection(player2, o);
-			addEnemys();
-			Packet06Dummy p = new Packet06Dummy();
-			send(p);
+			//addEnemys();
 
 		} else if (o instanceof Packet02Move) {
 			this.handleMove(((Packet02Move) o), true);
-			for(Enemy e : Server.spawnedEnemys){
-				Packet05EnemyMove p = new Packet05EnemyMove(e.getX(), e.getY(),e.getID());
-				broadcast(p, true);
-			}
 		} else if (o instanceof Packet03Map) {
-			sendLevel();
-		}else if(o instanceof Packet06Dummy){
-			syncEnemy();
+			sendLevel(true);
+		} else if(o instanceof Packet06GetC){
+			getCoor2(o);
 			send(o);
 		}
 		
@@ -157,12 +152,19 @@ public class Client implements Runnable {
 			handleMove((Packet02Move) o, false);
 		} else if (o instanceof Packet03Map) {
 			game.leveldata = ((Packet03Map) o).getLevel();
+			if(!((Packet03Map)o).getBool()){
+				game.Clear(true);
+				Packet06GetC p = new Packet06GetC(game.player1.x, game.player1.y, game.player1.id, game.player1.getUsername());
+				send(p);
+				game.Draw();
+			}
 		} else if (o instanceof Packet04Enemy){
 			handleEnemy((Packet04Enemy)o);
-		} else if(o instanceof Packet05EnemyMove){
-			game.syncMove(((Packet05EnemyMove)o).getID(),((Packet05EnemyMove)o).getX(), ((Packet05EnemyMove)o).getY());
-		}else if(o instanceof Packet06Dummy){
-			//send(o);
+		} else if(o instanceof Packet06GetC){
+			Packet02Move p = new Packet02Move(((Packet06GetC)o).getUsername(), ((Packet06GetC)o).getX(), ((Packet06GetC)o).getY(), 1);
+			handleMove(p, false);
+		}else if(o instanceof Packet07Finish){
+			game.finish(((Packet07Finish)o).getUsername());
 		}
 
 	}
@@ -213,16 +215,13 @@ public class Client implements Runnable {
 	Client(Socket socket, boolean isServer) throws IOException {
 		this.socket = socket;
 		this.isServer = isServer;
-		if(isServer){
-			syncEnemy();
-		}
 		socket.setTcpNoDelay(true);
 		output = new ObjectOutputStream(socket.getOutputStream());
 		input = new ObjectInputStream(socket.getInputStream());
 	}
 
 	// SERVER TEIL
-
+	
 	private void getCoor(Object o) {
 		for (int row = 0; row < leveldata.length; row++) {
 			for (int col = 0; col < leveldata[row].length; col++) {
@@ -230,11 +229,31 @@ public class Client implements Runnable {
 					if (leveldata[row][col] == 2) {
 						((Packet00Login) o).setX(col * 16);
 						((Packet00Login) o).setY(row * 16);
+						((Packet00Login)o).setID(Server.player.get());
 					}
 				} else if (Server.player.get() == 2) {
 					if (leveldata[row][col] == 22) {
 						((Packet00Login) o).setX(col * 16);
 						((Packet00Login) o).setY(row * 16);
+						((Packet00Login)o).setID(Server.player.get());
+					}
+				}
+			}
+		}
+	}
+	
+	private void getCoor2(Object o){
+		for (int row = 0; row < leveldata.length; row++) {
+			for (int col = 0; col < leveldata[row].length; col++) {
+				if (((Packet06GetC)o).getId()==1) {
+					if (leveldata[row][col] == 2) {
+						((Packet06GetC) o).setX(col * 16);
+						((Packet06GetC) o).setY((row-1) * 16);
+					}
+				} else if (((Packet06GetC)o).getId()==2) {
+					if (leveldata[row][col] == 22) {
+						((Packet06GetC) o).setX(col * 16);
+						((Packet06GetC) o).setY((row-1) * 16);
 					}
 				}
 			}
@@ -249,17 +268,14 @@ public class Client implements Runnable {
 		}
 	}
 
-	private void syncEnemy(){
+	/*private void syncEnemy(){
 		if(Server.connectedPlayers.size() !=0){
 			for(Enemy e : Server.spawnedEnemys){
 				Packet05EnemyMove em = new Packet05EnemyMove(e.getX(), e.getY(), e.getID());
-				if (tick){
-					broadcast(em, true);
-					System.out.println("ID: "+em.getID()+" X: "+ em.getX()+" Y: "+em.getY());
-				}
+				send(em);
 			}
 		}
-	}
+	}*/
 	
 	
 	private void addConnection(PlayerMP player, Object o) {
@@ -284,7 +300,7 @@ public class Client implements Runnable {
 				broadcast(o, false);
 				// relay to the new player that the currently connect player
 				// exists
-				o = new Packet00Login(p.getUsername(), p.x, p.y);
+				o = new Packet00Login(p.getUsername(), p.x, p.y, 0);
 				send(o);
 			}
 		}
@@ -406,9 +422,16 @@ public class Client implements Runnable {
 		}
 	}
 
-	public void sendLevel() {
-		Packet03Map p = new Packet03Map(leveldata);
-		send(p);
+	public void sendLevel(boolean init) {
+		if(init){
+			Packet03Map p = new Packet03Map(leveldata, init);
+			send(p);
+		}else
+		{
+			Packet03Map p = new Packet03Map(leveldata, "Test", init);
+			send(p);
+		}
+		
 	}
 
 	
@@ -527,13 +550,13 @@ public class Client implements Runnable {
 		PlayerMP player2 = new PlayerMP(game.pl2,
 				((Packet00Login) packet).getX(),
 				((Packet00Login) packet).getY() - 16, packet.getUsername(),
-				address, port, 100, game);
+				address, port, 100, game, ((Packet00Login) packet).getId());
 		game.addPlayerMP(player2);
 	}
 
 	private void handleinit(Object o) {
 		game.setStart(((Packet00Login) o).getUsername(),
-				((Packet00Login) o).getX(), ((Packet00Login) o).getY() - 16);
+				((Packet00Login) o).getX(), ((Packet00Login) o).getY() - 16, ((Packet00Login)o).getId());
 	}
 	
 	@SuppressWarnings("static-access")
@@ -546,5 +569,6 @@ public class Client implements Runnable {
 			game.addEnemy(slime);
 		}
 	}
+
 
 }

@@ -8,17 +8,19 @@ public class Packet00Login extends Packet {
 
 	private String username;
     private double x, y;
+    int id;
     
     public Packet00Login(String username) {
         super(00);
         this.username = username;
     }
 
-    public Packet00Login(String username, double x, double y) {
+    public Packet00Login(String username, double x, double y, int id) {
         super(00);
         this.username = username;
         this.x = x;
         this.y = y;
+        this.id = id;
     }
 
     public String getUsername() {
@@ -33,6 +35,10 @@ public class Packet00Login extends Packet {
         return y;
     }
     
+    public int getId(){
+    	return id;
+    }
+    
     public void setX(double wert){
     	x = wert;
     }
@@ -41,4 +47,7 @@ public class Packet00Login extends Packet {
     	y = wert;
     }
 
+    public void setID(int id){
+    	this.id = id;
+    }
 }

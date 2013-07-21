@@ -8,13 +8,23 @@ package Net.packets;
 public class Packet03Map extends Packet {
 		int levelid;
 		int[][] leveldata;
+		String txt;
+		boolean init;
 
-	    public Packet03Map(int[][] lvl) {
+	    public Packet03Map(int[][] lvl, boolean init) {
 	        super(03);
 	        this.leveldata = lvl;
+	        this.init = init;
 	    }
 	    public Packet03Map() {
 	        super(03);
+	    }
+	    
+	    public Packet03Map(int[][] lvl, String text, boolean init){
+	    	super(03);
+	    	this.leveldata = lvl;
+	    	this.txt = text;
+	    	this.init = init;
 	    }
 	    
 	    public void setLevel(int[][] lvl){
@@ -23,5 +33,13 @@ public class Packet03Map extends Packet {
 	    
 	    public int[][] getLevel(){
 	    	return leveldata;
+	    }
+	    
+	    public boolean getBool(){
+	    	return init;
+	    }
+	    
+	    public String getString(){
+	    	return txt;
 	    }
 }

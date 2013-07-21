@@ -10,6 +10,10 @@ public class Packet05EnemyMove extends Packet {
 	int id;
 	double x,y;
 	
+	public Packet05EnemyMove(){
+		super(05);
+	}
+	
 	public Packet05EnemyMove(double x, double y, int id) {
         super(05);
         this.x = x;

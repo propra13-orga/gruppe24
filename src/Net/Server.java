@@ -12,6 +12,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 import Client.Enemy;
 import Client.PlayerMP;
+import Net.packets.Packet03Map;
+import Net.packets.Packet07Finish;
 
 /******************************
  * Server für den Multiplayer *
@@ -19,7 +21,7 @@ import Client.PlayerMP;
 public class Server implements Runnable {
 
 	public ServerSocket serverSocket;
-	private final List<Client> clients = new LinkedList<>();
+	public final List<Client> clients = new LinkedList<>();
 	private ExecutorService executors = Executors.newCachedThreadPool();
 	public static AtomicInteger player = new AtomicInteger(0);
 	public static List<PlayerMP> connectedPlayers = new ArrayList<PlayerMP>();
@@ -33,9 +35,9 @@ public class Server implements Runnable {
 		executors.execute(this);
 		spawnedEnemys = new Vector<Enemy>();
 		System.out.println("Server startet");
-		sl = new ServerLogic();
 		Client.read();
-		Client.SpawnEnemy();
+		sl = new ServerLogic();
+		//Client.SpawnEnemy();
 	}
 
 	@Override
@@ -51,6 +53,7 @@ public class Server implements Runnable {
 						Client client = new Client(newClient, true);
 						client.clients = clients;
 						clients.add(client);
+						sl.clients.add(client);
 						executors.execute(client);
 						player.getAndIncrement();
 					}
@@ -71,11 +74,14 @@ public class Server implements Runnable {
  ****************************************/
 class ServerLogic implements Runnable{
 	public static AtomicInteger lvl = new AtomicInteger(1);
+	public List<Client> clients = new LinkedList<>();
 	int dis;
+	int[][]leveldata = Client.leveldata;
 	double deltaX, deltaY;
 	boolean resting, moving;
 	private int mDirection = -1;
 	private int mSteps = 0;
+	Client c;
 	
 	public ServerLogic(){
 		startThread();
@@ -85,6 +91,25 @@ class ServerLogic implements Runnable{
 		new Thread(this).start();
 	}
 
+	private void broadcast(Object msg) {
+		for (Client client : clients) {
+				try {
+					client.getOutput().writeObject(msg);
+					client.getOutput().flush();
+				} catch (Exception e) {
+					try {
+						client.getSocket().close();
+					} catch (IOException e1) {
+					}
+				}
+		}
+	}
+	
+	public void sendLevel() {
+			Packet03Map p = new Packet03Map(Client.leveldata, "test", false);
+			broadcast(p);		
+	}
+	
 	@Override
 	public void run() {
 		while(true){
@@ -286,29 +311,40 @@ class ServerLogic implements Runnable{
 			int index = 0;
 			double[] x = {0,0};
 			double[] y = {0,0};
+			String[] u = {null,null};
 			for(PlayerMP p : Server.connectedPlayers){
 				if(p != null){
 					x[index] = p.getX();
 					y[index] = p.getY();
+					u[index] = p.getUsername();
 				}
 				index++;
 			}
 			
-			if (Client.leveldata[(int) y[0]/16][(int)x[0]/16] == 9 || Client.leveldata[(int)y[1]/16][(int)x[1]/16] == 92) {
+			if ((leveldata[(int) y[0]/16][(int)x[0]/16] == 9 || leveldata[(int)y[1]/16][(int)x[1]/16] == 92) && lvl.get()<=3) {
 				lvl.getAndIncrement();
 				Client.read();
-				//Client.sendLevel();
+				this.leveldata = Client.leveldata;
+				sendLevel();
 				Client.SpawnEnemy();
 				
-			}
-			if (Client.leveldata[(int)y[0]/16][(int)x[0]/16] == 8 || Client.leveldata[(int)y[1]/16][(int)x[1]/16] == 82) {
+				try {
+					Thread.sleep(50);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}else if (Client.leveldata[(int)y[0]/16][(int)x[0]/16] == 8 || Client.leveldata[(int)y[1]/16][(int)x[1]/16] == 82) {
 				lvl.getAndDecrement();
 				Client.read();
-				//Client.sendLevel();
+				this.leveldata = Client.leveldata;
+				sendLevel();
 			}
-			if (Client.leveldata[(int)y[0]/16][(int)x[0]/16] == 42 || Client.leveldata[(int)y[1]/16][(int)x[1]/16] == 42) {
-				System.out.println("Finished");
-
+			if (Client.leveldata[(int)y[0]/16][(int)x[0]/16] == 9 && lvl.get() == 3) {
+				Packet07Finish o = new Packet07Finish(u[0]);
+				broadcast(o);
+			}else if(Client.leveldata[(int)y[1]/16][(int)x[1]/16] == 92 && lvl.get()==3){
+				Packet07Finish o = new Packet07Finish(u[1]);
+				broadcast(o);
 			}
 		}
 	}

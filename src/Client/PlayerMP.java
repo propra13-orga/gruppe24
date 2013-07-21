@@ -16,14 +16,16 @@ public class PlayerMP extends Player {
     public String Username;
     GamePanel parent;
     int dir;
+	public int id;
 	
-	public PlayerMP(BufferedImage[] i, double x, double y, String username, InetAddress ipAddress, int port, long delay,GamePanel p) {
+	public PlayerMP(BufferedImage[] i, double x, double y, String username, InetAddress ipAddress, int port, long delay,GamePanel p, int id) {
 		super(i, x, y, delay, p);
 		
 		this.Username = username;
 		this.ipAddress = ipAddress;
 		this.port = port;
 		this.parent = p;
+		this.id = id;
     }
 	
 	public PlayerMP(BufferedImage[] i, double x, double y, long delay, GamePanel p) {

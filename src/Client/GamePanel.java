@@ -34,6 +34,7 @@ import Net.Client;
 import Net.packets.Packet00Login;
 import Net.packets.Packet02Move;
 import Net.packets.Packet03Map;
+import Net.packets.Packet05EnemyMove;
 import Server.GUI;
 
 /********************************************
@@ -97,7 +98,7 @@ public class GamePanel extends JPanel implements Runnable, ActionListener, KeyLi
 	public List<Enemy> spawnedEnemys = new ArrayList<Enemy>();
 	
 	private static final String gameov = "Game Over!";
-	private static final String finish = "Goal!";
+	private static String finish = "Goal!";
 
 	public int[][] leveldata;
 	int lvl = 1;
@@ -353,6 +354,9 @@ public class GamePanel extends JPanel implements Runnable, ActionListener, KeyLi
 				doLogic();
 				moveObjects();
 				cloneVectors();
+				if(join){
+					requestECoor();
+				}
 			}
 			repaint();
 
@@ -445,7 +449,7 @@ public class GamePanel extends JPanel implements Runnable, ActionListener, KeyLi
 		if (leveldata[moveY][moveX] == 9) {
 			lvl++;
 			read();
-			Clear();
+			Clear(false);
 			ground();
 			SpawnPlayer();
 			SpawnEnemy();
@@ -606,13 +610,38 @@ public class GamePanel extends JPanel implements Runnable, ActionListener, KeyLi
 		}
 	}
 	
-	private void Clear(){
-		actors.clear();
-		enviroment.clear();
-		collision.clear();
-		painter.clear();
-		painter2.clear();
-		painter3.clear();
+	public void Clear(boolean MP){
+		if(!MP){
+			actors.clear();
+			enviroment.clear();
+			collision.clear();
+			painter.clear();
+			painter2.clear();
+			painter3.clear();
+		}else{
+			int index = 0;
+			for(Sprite e : actors){
+				if(e instanceof Enemy){
+					actors.remove(index);
+				}
+				index++;
+			}
+			index = 0;
+			for(Sprite e: painter){
+				if(e instanceof Enemy){
+					painter.remove(index);
+				}
+				index++;
+			}
+			enviroment.clear();
+			painter2.clear();
+			collision.clear();
+			painter3.clear();
+		}
+	}
+	
+	public void Draw(){
+		ground();
 	}
 
 	private void ground() {
@@ -656,7 +685,7 @@ public class GamePanel extends JPanel implements Runnable, ActionListener, KeyLi
 					enviroment.add(ground);
 					savex = col;
 					savey = row;
-				} else if (rc == 8) {
+				} else if (rc == 8 || rc == 82) {
 					ps = new Tile(pstart, posx * Tilesize, posy * Tilesize, 0,
 							this);
 					enviroment.add(ps);
@@ -955,7 +984,7 @@ public class GamePanel extends JPanel implements Runnable, ActionListener, KeyLi
 		mana = 100;
 		armor = 100;
 		Coins = 0;
-		Clear();
+		Clear(false);
 		soundlib.stopLoopingSound();
 	}
 
@@ -1553,17 +1582,34 @@ public class GamePanel extends JPanel implements Runnable, ActionListener, KeyLi
 	/*******************************************************
 	 * Funktion zur initalisierung der Startposition im MP *
 	 *******************************************************/
-	public void setStart(String username, double x, double y){		
+	public void setStart(String username, double x, double y, int id){		
     	if(username.equals(player1.Username)){
 	    	player1.x = x;
 	        player1.y = y;
+	        player1.id = id;
 	        
        }else{
     	   	player2.x = x;
 	        player2.y = y;
-       }
+	        player2.id = id;
+       }	
 		
+	}
+	
+	private void requestECoor(){
 		
+		Packet05EnemyMove o = new Packet05EnemyMove();
+		try {
+			c.getOutput().writeObject(o);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void finish(String name){
+		finish = name +" wins";
+		finished = true;
+		stopGame();
 	}
 
 }
