@@ -428,16 +428,9 @@ public class Client implements Runnable {
 		}
 	}
 
-	public void sendLevel(boolean init) {
-		if(init){
+	private void sendLevel(boolean init) {
 			Packet03Map p = new Packet03Map(leveldata, init);
-			send(p);
-		}else
-		{
-			Packet03Map p = new Packet03Map(leveldata, "Test", init);
-			send(p);
-		}
-		
+			send(p);		
 	}
 
 	

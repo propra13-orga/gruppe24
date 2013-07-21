@@ -81,9 +81,7 @@ class ServerLogic implements Runnable{
 	boolean resting, moving;
 	private int mDirection = -1;
 	private int mSteps = 0;
-	private double[] xOld;
-	private double[] yOld;
-	private String[] uOld;
+	
 	
 	public ServerLogic(){
 		startThread();
@@ -107,11 +105,14 @@ class ServerLogic implements Runnable{
 		}
 	}
 	
-	public void sendLevel() {
-			Packet03Map p = new Packet03Map(Client.leveldata, "test", false);
+	private void sendLevel() {
+			Packet03Map p = new Packet03Map(Client.leveldata, false);
 			broadcast(p);		
 	}
 	
+	/*****************************
+	 * ServerLogic HauptSchleife *
+	 *****************************/	
 	@Override
 	public void run() {
 		while(true){

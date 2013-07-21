@@ -20,13 +20,6 @@ public class Packet03Map extends Packet {
 	        super(03);
 	    }
 	    
-	    public Packet03Map(int[][] lvl, String text, boolean init){
-	    	super(03);
-	    	this.leveldata = lvl;
-	    	this.txt = text;
-	    	this.init = init;
-	    }
-	    
 	    public void setLevel(int[][] lvl){
 	    	this.leveldata = lvl;
 	    }
